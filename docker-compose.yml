@@ -29,6 +29,21 @@ services:
       - ./backend:/app
     networks:
       - nestjs-network
+  
+  front:
+    container_name: vuejs-front
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: vuejs:test
+    ports:
+      - 8080:8080
+    depends_on:
+      - back
+    volumes:
+      - ./frontend:/app
+    networks:
+      - nestjs-network
 
 volumes:
   pgdata: {}
