@@ -1,0 +1,15 @@
+/* Footer styles.css */
+.footer-container {
+    position: fixed;
+    bottom: 0;               /* To pin it to the bottom of the screen */
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the content */
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    padding: 8px;
+    color: white;
+    font-size: 0.7rem;
+}

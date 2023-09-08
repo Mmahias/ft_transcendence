@@ -1,0 +1,51 @@
+/* Navbar styles.css */
+.navbar-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 1em 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2em;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.links-container {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    flex-grow: 1;
+}
+
+.router-link {
+    color: white;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    margin: 0 1em;
+}
+
+.router-link:hover {
+    color: grey;
+}
+
+.logo {
+    height: 40px;
+    animation: App-logo-spin infinite 20s linear;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
