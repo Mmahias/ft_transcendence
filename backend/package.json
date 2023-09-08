@@ -9,7 +9,7 @@
     "prisma:dev": "prisma migrate deploy",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "HOST=0.0.0.0 react-scripts start",
     "start:dev": "nest start --watch && sleep 1 && npx prisma:dev",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
+    "@nestjs/common": "^10.2.4",
     "@nestjs/config": "^3.0.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.1.1",

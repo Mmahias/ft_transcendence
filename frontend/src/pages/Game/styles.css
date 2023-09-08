@@ -1,0 +1,15 @@
+:root {
+    --background-color: rgb(168, 166, 166);
+}
+
+.game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background-color);
+    height: 100vh; /* Assuming your navbar height is 5% of screen height which is roughly 60px */
+  }
+  
+  p {
+    margin: 0;
+  }
