@@ -1,15 +1,98 @@
 :root {
-    --background-color: rgb(168, 166, 166);
+  --background-color: rgb(252, 245, 245);
 }
 
 .home-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--background-color);
-    height: 100vh; /* Assuming your navbar height is 5% of screen height which is roughly 60px */
+  display: flex;
+  flex-direction: column; /* Changez de row à column pour les boutons en dessous du h1 */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 3em; /* Taille de police augmentée pour les écrans plus grands */
+}
+
+p {
+  margin: 0;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+span {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2em; /* Taille de police réduite pour les écrans plus petits */
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: linear-gradient(gold, gold);
+  background-size: 100% 10px;
+  background-repeat: no-repeat;
+  background-position: 100% 0%;
+  transition: background-size .7s, background-position .5s ease-in-out;
+}
+
+span:hover {
+  background-size: 100% 100%;
+  background-position: 0% 100%;
+  transition: background-position .7s, background-size .5s ease-in-out;
+}
+
+
+/* Média query pour les écrans plus petits */
+@media screen and (max-width: 768px) {
+  span {
+      font-size: 1.5em; /* Ajustez la taille de la police pour les écrans plus petits */
   }
-  
-  p {
-    margin: 0;
+}
+
+
+/* CSS */
+
+.button-container {
+  display: flex;
+  justify-content: center; /* Centrez les boutons horizontalement */
+  gap: 20px; /* Ajoutez de l'espace entre les boutons (vous pouvez ajuster la valeur selon vos besoins) */
+  flex-wrap: wrap; /* Permet aux boutons de passer à la ligne lorsque l'espace est insuffisant */
+}
+
+.button-52 {
+  font-size: 16px;
+  font-weight: 200;
+  letter-spacing: 1px;
+  padding: 13px 20px 13px;
+  outline: 0;
+  border: 1px solid black;
+  cursor: pointer;
+  position: relative;
+  background-color: rgba(8, 8, 8, 0);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  /*margin-top: 200px;*/
+}
+
+.button-52:after {
+  content: "";
+  background-color: gold;
+  width: 100%;
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  top: 7px;
+  left: 7px;
+  transition: 0.2s;
+}
+
+.button-52:hover:after {
+  top: 0px;
+  left: 0px;
+}
+
+@media (min-width: 768px) {
+  .button-52 {
+    padding: 13px 50px 13px;
   }
+}

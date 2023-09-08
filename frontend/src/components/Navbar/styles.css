@@ -8,8 +8,8 @@
     padding: 1em 0;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2em;
-    background-color: rgba(0, 0, 0, 0.8);
+    padding: 0 em;
+    background-color: black;
     z-index: 1000;
     backdrop-filter: blur(10px);
 }
@@ -23,9 +23,9 @@
 
 .router-link {
     color: white;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Bebas Neue', cursive;;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 25px;
     cursor: pointer;
     transition: color 0.2s ease;
     text-decoration: none;
@@ -33,19 +33,9 @@
 }
 
 .router-link:hover {
-    color: grey;
+    color:gold;
 }
 
 .logo {
     height: 40px;
-    animation: App-logo-spin infinite 20s linear;
-}
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
 }
