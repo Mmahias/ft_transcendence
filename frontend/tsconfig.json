@@ -1,18 +1,33 @@
 {
-    "compilerOptions": {
-      "jsx": "react",
-      "target": "es2016",
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "forceConsistentCasingInFileNames": true,
-      "strict": true,
-      "skipLibCheck": true,
-  
-      "baseUrl": "./src", // It sets the base directory for module resolution. It's usually set to your source directory.
-      "resolveJsonModule": true, // Enables importing .json files. You may not need this right now, but it's a good option to have enabled.
-      "typeRoots": ["./node_modules/@types", "./src/types"], // Add this if you're keeping type declarations in a 'types' folder under 'src'. Otherwise, adjust the path accordingly.
-    },
-    "include": ["src/**/*.ts", "src/**/*.tsx"], // Ensures TypeScript processes all .ts and .tsx files in your src directory.
-    "exclude": ["node_modules"]
-  }
-  
+  "compilerOptions": {
+    "jsx": "preserve",
+    "target": "es2016",
+    "module": "esnext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

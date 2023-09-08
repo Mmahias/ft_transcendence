@@ -5,7 +5,7 @@ const Home: React.FC = () => {
     return (
       <div className="home-container">
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+         <h1> FT TRANSCENDENCE </h1>
         </p>
       </div>
     );

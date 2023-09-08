@@ -23,7 +23,7 @@ services:
       - .env
     image: nestjs:test
     ports:
-      - 3000:3000
+      - 3001:3001
     depends_on:
       - db
     volumes:
@@ -38,11 +38,11 @@ services:
       dockerfile: Dockerfile
     image: reactjs:test
     ports:
-      - 8080:3000
+      - 3000:3000
     depends_on:
       - back
     volumes:
-      - ./frontend/my-app:/app
+      - ./frontend:/app
     networks:
       - nestjs-network
 
