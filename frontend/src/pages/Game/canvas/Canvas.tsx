@@ -1,8 +1,7 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { Ball, Paddle } from '../useGameLogic';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../Game.constants';
 import * as S from './Canvas.styles';
-
 
 type CanvasProps = React.DetailedHTMLProps<
   React.CanvasHTMLAttributes<HTMLCanvasElement>,
@@ -16,35 +15,63 @@ type CanvasProps = React.DetailedHTMLProps<
 
 const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
   ({ draw, ball, leftPaddle, rightPaddle, ...props }, canvasRef) => {
+
+    const [canvasDimensions, setCanvasDimensions] = useState({
+        width: CANVAS_WIDTH(),
+        height: CANVAS_HEIGHT(),
+    });
+
     useEffect(() => {
-      if (!canvasRef) {
-        return;
-      }
-      const canvas = (canvasRef as React.RefObject<HTMLCanvasElement>).current;
-      if (!canvas) {
-        return;
-      }
+        const updateDimensions = () => {
+            setCanvasDimensions({
+                width: CANVAS_WIDTH(),
+                height: CANVAS_HEIGHT(),
+            });
+        };
 
-      const context = canvas.getContext('2d');
-      if (!context) {
-        return;
-      }
+        // Initial call to set dimensions
+        updateDimensions();
 
-      if (draw) {
-        draw(context);
-      }
+        // Listen for window resize events
+        window.addEventListener('resize', updateDimensions);
 
-      return () => context.clearRect(0, 0, window.innerWidth, 400);
+        // Cleanup listener on component unmount
+        return () => {
+            window.removeEventListener('resize', updateDimensions);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!canvasRef) {
+            return;
+        }
+        const canvas = (canvasRef as React.RefObject<HTMLCanvasElement>).current;
+        if (!canvas) {
+            return;
+        }
+
+        const context = canvas.getContext('2d');
+        if (!context) {
+            return;
+        }
+
+        if (draw) {
+            draw(context);
+        }
+
+        return () => context.clearRect(0, 0, window.innerWidth, 400);
     }, [draw, canvasRef, ball, leftPaddle, rightPaddle]);
 
-    if (!canvasRef) {
-      return null;
-    }
-
     return (
-        <S.Canvas width={ CANVAS_WIDTH() } height={ CANVAS_HEIGHT() } ref={canvasRef as any} {...props} />
+        <S.Canvas 
+            canvasWidth={canvasDimensions.width} // <-- passing as canvasWidth
+            canvasHeight={canvasDimensions.height} // <-- passing as canvasHeight
+            width={canvasDimensions.width} 
+            height={canvasDimensions.height} 
+            ref={canvasRef as any} 
+            {...props} 
+        />
     );
-  }
-);
+});
 
 export default Canvas;

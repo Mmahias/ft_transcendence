@@ -49,8 +49,8 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
         width: PADDLE_WIDTH(),
         height: PADDLE_HEIGHT(),
         speed: PADDLE_SPEED(),
-        moveUpKey: 'w',
-        moveDownKey: 's',
+        moveUpKey: 's',
+        moveDownKey: 'w',
         score: 0,
     };
 
@@ -60,8 +60,8 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
         width: PADDLE_WIDTH(),
         height: PADDLE_HEIGHT(),
         speed: PADDLE_SPEED(),
-        moveUpKey: 'o',
-        moveDownKey: 'l',
+        moveUpKey: 'ArrowUp',
+        moveDownKey: 'ArrowDown',
         score: 0,
     };
 
@@ -76,21 +76,27 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
     const [ball, setBall] = useState<Ball>(initialBall);
     const [leftPaddle, setLeftPaddle] = useState<Paddle>(initialLeftPaddle);
     const [rightPaddle, setRightPaddle] = useState<Paddle>(initialRightPaddle);
+    const [canvasDimensions, setCanvasDimensions] = useState({
+        height: CANVAS_HEIGHT(),
+        width: CANVAS_WIDTH(),
+    });
 
     useEffect(() => {
-        if (!canvasHeight || !canvasWidth) return;
+        if (!canvasDimensions.height || !canvasDimensions.width) return;
 
         // Reset paddles and ball to their initial positions
         setBall(initialBall);
         setLeftPaddle(initialLeftPaddle);
         setRightPaddle(initialRightPaddle);
-    }, [canvasHeight, canvasWidth]);
+    }, [canvasDimensions.height, canvasDimensions.width]);
 
     useEffect(() => {
         // Function to update dimensions
         const updateDimensions = () => {
-            canvasHeight = CANVAS_HEIGHT();
-            canvasWidth = CANVAS_WIDTH();
+            setCanvasDimensions({
+                height: CANVAS_HEIGHT(),
+                width: CANVAS_WIDTH(),
+            });
         };
     
         // Initial call to set dimensions
@@ -98,6 +104,7 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
     
         // Listen for window resize events
         window.addEventListener('resize', updateDimensions);
+        console.log('222222: canvasHeight', canvasDimensions.height, 'canvasWidth', canvasDimensions.width);
     
         // Cleanup listener on component unmount
         return () => {
