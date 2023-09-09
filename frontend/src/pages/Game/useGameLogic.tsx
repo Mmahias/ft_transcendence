@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { willBallHitPaddle, willBallHitCanvas, willBallGetOutOfBounds, movePaddle } from './movements';
+import { willBallHitPaddle, willBallHitCanvas, willBallGetOutOfBounds,
+    movePaddle, randomBallSpeed, calculateBounceAngle } from './movements';
 import { GameState } from './Game';
 import useInterval from './utils/useInterval';
 import {
     CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, 
     PADDLE_SPEED, BALL_SIZE, BORDER_PADDING, BORDER_PADDING_SIDE, 
-    BORDER_THICKNESS, BALL_SPEED_X, BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE
+    BORDER_THICKNESS, BALL_SPEED_X, BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE,
+    VELOCITY_FACTOR
 } from './Game.constants';
 
 export interface Ball {
@@ -59,8 +61,8 @@ const initialRightPaddle = {
 const initialBall = {
     x: CANVAS_WIDTH / 2,
     y: CANVAS_HEIGHT / 2,
-    vx: BALL_SPEED_X,
-    vy: BALL_SPEED_Y,
+    vx: randomBallSpeed(BALL_SPEED_X),
+    vy: randomBallSpeed(BALL_SPEED_Y),
     size: BALL_SIZE,
 };
 
@@ -85,10 +87,8 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
 
     const handlePaddleMovement = (event: React.KeyboardEvent<HTMLDivElement>, paddle: Paddle, setPaddle: React.Dispatch<React.SetStateAction<Paddle>>) => {
         if (event.key === paddle.moveUpKey) {
-            console.log('move up');
             setPaddle(prevPaddle => movePaddle(prevPaddle, 'up', canvasHeight));
         } else if (event.key === paddle.moveDownKey) {
-            console.log('move down');
             setPaddle(prevPaddle => movePaddle(prevPaddle, 'down', canvasHeight));
         }
     };
@@ -98,9 +98,13 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
             let newVx = prevBall.vx;
             let newVy = prevBall.vy;
 
-            // Handle ball collisions with the paddles.
             if (willBallHitPaddle(prevBall, leftPaddle) || willBallHitPaddle(prevBall, rightPaddle)) {
-                newVx = -newVx;
+                const hitPaddle = willBallHitPaddle(prevBall, leftPaddle) ? leftPaddle : rightPaddle;
+                const bounceAngle = calculateBounceAngle(prevBall, hitPaddle);
+                console.log('angle', bounceAngle);
+                console.log('paddle', hitPaddle === rightPaddle ? 'right' : 'left');
+                newVx *= -1.03;
+                newVy *= (hitPaddle === rightPaddle ? -1 : 1) * Math.sin(bounceAngle);
             }
 
             // Use the function to check if the ball hits the canvas boundaries
@@ -119,7 +123,11 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
                     onGameOver();
                 }
                 else {
-                    setBall(initialBall);
+                    setBall({
+                        ...initialBall,
+                        vx: randomBallSpeed(BALL_SPEED_X),
+                        vy: randomBallSpeed(BALL_SPEED_Y)
+                    });
                 }
             }
 

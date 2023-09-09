@@ -31,3 +31,15 @@ export const movePaddle = (paddle: Paddle, direction: 'up' | 'down', canvasHeigh
   }
   return paddle;
 };
+
+export const randomBallSpeed = (bound: number): number => {
+    const gap = 4;
+    return Math.floor(Math.random() * gap + bound - gap);
+};
+
+export const calculateBounceAngle = (ball: Ball, paddle: Paddle): number => {
+    const relativeY = ball.y - (paddle.initialY + paddle.height / 2);
+    // Calculate the angle using the arcsine function
+    const angle = Math.asin(relativeY / (paddle.height / 2));
+    return angle;
+};
