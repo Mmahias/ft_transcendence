@@ -1,0 +1,142 @@
+import React, { useRef, useEffect, useState } from 'react';
+import { StyledContainer, StyledParagraph } from './Game.styles';
+import Canvas from './canvas/Canvas';
+import Ball from './ball/Ball';
+import Paddle from './paddle/Paddle';
+import {
+    CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, 
+    PADDLE_SPEED, BALL_SIZE, BORDER_PADDING, BORDER_PADDING_SIDE, 
+    BORDER_THICKNESS, BALL_SPEED_X, BALL_SPEED_Y, TICKS_PER_SEC
+} from './Game.constants';
+
+interface GameProps {}
+
+export enum GameState {
+    RUNNING,
+    PAUSED,
+    GAME_OVER,
+  }
+
+
+const Game: React.FC<GameProps> = ({}) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [gameState, setGameState] = useState<GameState>(GameState.RUNNING);
+
+    const onGameOver = () => setGameState(GameState.GAME_OVER);
+
+    const { ball, leftPaddle, rightPaddle, resetGameState } = usePongGameLogic({
+        onGameOver, 
+        gameState,
+        canvasWidth: CANVAS_WIDTH,
+        canvasHeight: CANVAS_HEIGHT
+    });
+
+    const drawGame = (ctx: CanvasRenderingContext2D) => {
+        draw({ ctx, ball, leftPaddle, rightPaddle });
+    };
+
+    const [ball, setBall] = useState({
+        x: CANVAS_WIDTH / 2,
+        y: CANVAS_HEIGHT / 2,
+        vx: BALL_SPEED_X,
+        vy: BALL_SPEED_Y,
+        size: BALL_SIZE,
+    });
+
+    const [leftPaddle, setLeftPaddle] = useState({
+        initialX: BORDER_PADDING,
+        initialY: (CANVAS_HEIGHT - PADDLE_HEIGHT) / 2,
+        width: PADDLE_WIDTH,
+        height: PADDLE_HEIGHT,
+        speed: PADDLE_SPEED,
+        moveUpKey: 's',
+        moveDownKey: 'w',
+    });
+
+    const [rightPaddle, setRightPaddle] = useState({
+        initialX: CANVAS_WIDTH - PADDLE_WIDTH - BORDER_PADDING,
+        initialY: (CANVAS_HEIGHT - PADDLE_HEIGHT) / 2,
+        width: PADDLE_WIDTH,
+        height: PADDLE_HEIGHT,
+        speed: PADDLE_SPEED,
+        moveUpKey: 'ArrowUp',
+        moveDownKey: 'ArrowDown',
+    });
+    
+    useEffect(() => {
+        const gameLoop = () => {
+            updateGame();
+            drawGame();
+            requestAnimationFrame(gameLoop);
+        };
+    
+        gameLoop();
+    }, []);
+
+    const updateGame = () => {
+        let newX = ball.x + ball.vx;
+        let newY = ball.y + ball.vy;
+
+        // Bounce off top and bottom borders
+        if (newY - ball.size < BORDER_THICKNESS || newY + ball.size > CANVAS_HEIGHT - BORDER_THICKNESS) {
+            setBall(prev => ({ ...prev, vy: -prev.vy }));
+        }
+
+        // Collision with left paddle
+        if (newX - ball.size < leftPaddle.initialX + leftPaddle.width &&
+            newY + ball.size > leftPaddle.initialY &&
+            newY - ball.size < leftPaddle.initialY + leftPaddle.height) {
+            setBall(prev => ({ ...prev, vx: Math.abs(prev.vx) }));
+        }
+
+        // Collision with right paddle
+        if (newX + ball.size > rightPaddle.initialX &&
+            newY + ball.size > rightPaddle.initialY &&
+            newY - ball.size < rightPaddle.initialY + rightPaddle.height) {
+            setBall(prev => ({ ...prev, vx: -Math.abs(prev.vx) }));
+        }
+
+        // Gets off limits and ends the point
+
+        setBall(prev => ({ ...prev, x: newX, y: newY }));
+    };
+
+    const drawGame = () => {
+        if (!canvasRef.current) return;
+
+        const ctx = canvasRef.current.getContext('2d');
+        if (!ctx) return;
+
+        // Clear the entire canvas
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        // Drawing the ball
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.closePath();
+
+        // Drawing the paddles
+        ctx.fillRect(leftPaddle.initialX, leftPaddle.initialY, leftPaddle.width, leftPaddle.height);
+        ctx.fillRect(rightPaddle.initialX, rightPaddle.initialY, rightPaddle.width, rightPaddle.height);
+    };
+
+    useEffect(() => {
+        const gameLoop = () => {
+            updateGame();
+            drawGame();
+            requestAnimationFrame(gameLoop);
+        };
+    
+        gameLoop();
+    }, []);
+
+        return (
+            <StyledContainer>
+                <Canvas ref={canvasRef} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />
+            </StyledContainer>
+        );
+}
+
+export default Game;
