@@ -4,9 +4,7 @@ import draw from './draw/draw';
 import { GameWrapper, Score } from './Game.styles';
 import useGameLogic from './useGameLogic';
 import {
-    CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, 
-    PADDLE_SPEED, BALL_SIZE, BORDER_PADDING, BORDER_PADDING_SIDE, 
-    BORDER_THICKNESS, BALL_SPEED_X, BALL_SPEED_Y, TICKS_PER_SEC
+    CANVAS_WIDTH, CANVAS_HEIGHT
 } from './Game.constants';
 
 interface GameProps {}
@@ -25,8 +23,8 @@ const Game: React.FC<GameProps> = ({}) => {
 
   const { ball, leftPaddle, rightPaddle, onKeyDownHandler } =
     useGameLogic({
-      canvasHeight: CANVAS_HEIGHT,
-      canvasWidth: CANVAS_WIDTH,
+      canvasHeight: CANVAS_HEIGHT(),
+      canvasWidth: CANVAS_WIDTH(),
       onGameOver,
       gameState,
     });

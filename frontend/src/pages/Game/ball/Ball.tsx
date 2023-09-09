@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React  from 'react';
 import { StyledBall } from './Ball.styles';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BORDER_THICKNESS } from '../Game.constants'; // Adjust path as necessary
 
 interface BallProps {
     x: number;

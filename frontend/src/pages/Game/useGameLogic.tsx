@@ -3,12 +3,9 @@ import { willBallHitPaddle, willBallHitCanvas, willBallGetOutOfBounds,
     movePaddle, randomBallSpeed, calculateBounceAngle } from './movements';
 import { GameState } from './Game';
 import useInterval from './utils/useInterval';
-import {
-    CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, 
-    PADDLE_SPEED, BALL_SIZE, BORDER_PADDING, BORDER_PADDING_SIDE, 
-    BORDER_THICKNESS, BALL_SPEED_X, BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE,
-    VELOCITY_FACTOR
-} from './Game.constants';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_SPEED, BALL_SPEED_X,
+    BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE, VELOCITY_FACTOR
+    } from './Game.constants';
 
 export interface Ball {
     x: number;
@@ -36,37 +33,46 @@ interface UseGameLogicArgs {
     gameState: GameState;
 }
 
-const initialLeftPaddle = {
-    initialX: BORDER_PADDING,
-    initialY: (CANVAS_HEIGHT - PADDLE_HEIGHT) / 2,
-    width: PADDLE_WIDTH,
-    height: PADDLE_HEIGHT,
-    speed: PADDLE_SPEED,
-    moveUpKey: 's',
-    moveDownKey: 'w',
-    score: 0,
-};
-
-const initialRightPaddle = {
-    initialX: CANVAS_WIDTH - PADDLE_WIDTH - BORDER_PADDING,
-    initialY: (CANVAS_HEIGHT - PADDLE_HEIGHT) / 2,
-    width: PADDLE_WIDTH,
-    height: PADDLE_HEIGHT,
-    speed: PADDLE_SPEED,
-    moveUpKey: 'ArrowUp',
-    moveDownKey: 'ArrowDown',
-    score: 0,
-};
-
-const initialBall = {
-    x: CANVAS_WIDTH / 2,
-    y: CANVAS_HEIGHT / 2,
-    vx: randomBallSpeed(BALL_SPEED_X),
-    vy: randomBallSpeed(BALL_SPEED_Y),
-    size: BALL_SIZE,
-};
-
 const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseGameLogicArgs) => {
+
+    const PADDLE_WIDTH = () => canvasWidth / 40;
+    const PADDLE_HEIGHT = () => canvasHeight / 5;
+    const BALL_SIZE = () => Math.pow(20 * canvasWidth * canvasHeight, 2/11);
+    const BORDER_PADDING = () => (30 * canvasWidth) / (2 * canvasHeight);
+    const BORDER_PADDING_SIDE = () => BORDER_PADDING() / 2;
+    const BORDER_THICKNESS = () => canvasWidth / 100;
+
+
+    const initialLeftPaddle = {
+        initialX: BORDER_PADDING(),
+        initialY: (CANVAS_HEIGHT() - PADDLE_HEIGHT()) / 2,
+        width: PADDLE_WIDTH(),
+        height: PADDLE_HEIGHT(),
+        speed: PADDLE_SPEED(),
+        moveUpKey: 'w',
+        moveDownKey: 's',
+        score: 0,
+    };
+
+    const initialRightPaddle = {
+        initialX: CANVAS_WIDTH() - PADDLE_WIDTH() - BORDER_PADDING(),
+        initialY: (CANVAS_HEIGHT() - PADDLE_HEIGHT()) / 2,
+        width: PADDLE_WIDTH(),
+        height: PADDLE_HEIGHT(),
+        speed: PADDLE_SPEED(),
+        moveUpKey: 'o',
+        moveDownKey: 'l',
+        score: 0,
+    };
+
+    const initialBall = {
+        x: CANVAS_WIDTH() / 2,
+        y: CANVAS_HEIGHT() / 2,
+        vx: randomBallSpeed(BALL_SPEED_X()),
+        vy: randomBallSpeed(BALL_SPEED_Y()),
+        size: BALL_SIZE(),
+    };
+
     const [ball, setBall] = useState<Ball>(initialBall);
     const [leftPaddle, setLeftPaddle] = useState<Paddle>(initialLeftPaddle);
     const [rightPaddle, setRightPaddle] = useState<Paddle>(initialRightPaddle);
@@ -79,6 +85,25 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
         setLeftPaddle(initialLeftPaddle);
         setRightPaddle(initialRightPaddle);
     }, [canvasHeight, canvasWidth]);
+
+    useEffect(() => {
+        // Function to update dimensions
+        const updateDimensions = () => {
+            canvasHeight = CANVAS_HEIGHT();
+            canvasWidth = CANVAS_WIDTH();
+        };
+    
+        // Initial call to set dimensions
+        updateDimensions();
+    
+        // Listen for window resize events
+        window.addEventListener('resize', updateDimensions);
+    
+        // Cleanup listener on component unmount
+        return () => {
+            window.removeEventListener('resize', updateDimensions);
+        };
+    }, []);
 
     const onKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
         handlePaddleMovement(event, leftPaddle, setLeftPaddle);
@@ -119,14 +144,14 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
                 } else {
                     setLeftPaddle(prevPaddle => ({ ...prevPaddle, score: prevPaddle.score + 1 }));
                 }
-                if (leftPaddle.score >= MAX_SCORE || rightPaddle.score >= MAX_SCORE) {
+                if (leftPaddle.score >= MAX_SCORE() || rightPaddle.score >= MAX_SCORE()) {
                     onGameOver();
                 }
                 else {
                     setBall({
                         ...initialBall,
-                        vx: randomBallSpeed(BALL_SPEED_X),
-                        vy: randomBallSpeed(BALL_SPEED_Y)
+                        vx: randomBallSpeed(BALL_SPEED_X()),
+                        vy: randomBallSpeed(BALL_SPEED_Y())
                     });
                 }
             }
@@ -141,7 +166,7 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
         });
     };
 
-    useInterval(moveBall, gameState === GameState.RUNNING ? 1000 / TICKS_PER_SEC : null);
+    useInterval(moveBall, gameState === GameState.RUNNING ? 1000 / TICKS_PER_SEC() : null);
 
     return {
         ball,

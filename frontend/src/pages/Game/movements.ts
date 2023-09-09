@@ -1,4 +1,5 @@
 import { Ball, Paddle } from './useGameLogic';
+import { GameState } from './Game';
 
 export const willBallHitPaddle = (ball: Ball, paddle: Paddle): boolean => {
   if (
@@ -42,4 +43,14 @@ export const calculateBounceAngle = (ball: Ball, paddle: Paddle): number => {
     // Calculate the angle using the arcsine function
     const angle = Math.asin(relativeY / (paddle.height / 2));
     return angle;
+};
+
+export const handleResize = (gameState: GameState, setBall: React.Dispatch<React.SetStateAction<Ball>>) => {
+    // Pause the game
+    if (gameState !== GameState.GAME_OVER) {
+        gameState = GameState.PAUSED;
+    }
+    
+    // Force re-render to update all elements that depend on the window size
+    setBall(prev => ({ ...prev }));
 };

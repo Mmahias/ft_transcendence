@@ -27,7 +27,7 @@ const Paddle: React.FC<PaddleProps> = ({ initialX, initialY, width, height, spee
             case moveDownKey:
                 setPosition(prevState => ({
                     ...prevState,
-                    y: prevState.y + height + speed < CANVAS_HEIGHT ? prevState.y + speed : prevState.y
+                    y: prevState.y + height + speed < CANVAS_HEIGHT() ? prevState.y + speed : prevState.y
                 }));
                 break;
             default:
