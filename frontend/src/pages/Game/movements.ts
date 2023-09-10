@@ -1,6 +1,6 @@
 import { Ball, Paddle } from './useGameLogic';
 import { GameState } from './Game';
-import { BALL_ACC_X } from './Game.constants';
+import { BALL_ACC_X, MAX_BALL_SPEED } from './Game.constants';
 
 export const willBallHitPaddle = (ball: Ball, paddle: Paddle): boolean => {
     const futureBallX = ball.x + ball.vx;
@@ -40,11 +40,11 @@ export const adjustBallVelocityAfterPaddleHit = (ball: Ball, paddle: Paddle): Ba
     } else {
         ball.vy = -ball.vy;
     }
-    // console.log(factor * degrees);
     
-    ball.vx = Math.abs(ball.vx) <= 10 ? BALL_ACC_X() * Math.abs(ball.vx): Math.abs(ball.vx);
+    ball.vx *= (0.96 + factor / 10) * BALL_ACC_X();
+    ball.vx = Math.abs(ball.vx) <= MAX_BALL_SPEED() ? Math.abs(ball.vx): MAX_BALL_SPEED();
     ball.vx = paddle.side === 'left' ? Math.abs(ball.vx) : -Math.abs(ball.vx);
-    ball.vx *= (0.94 + factor / 10);
+    console.log(ball.vx);
 
     return ball;
 };
@@ -83,9 +83,9 @@ export const movePaddle = (paddle: Paddle, direction: 'up' | 'down', canvasHeigh
   return paddle;
 };
 
-export const randomBallSpeed = (bound: number): number => {
-    const gap = 4;
-    return Math.floor(Math.random() * gap + bound - gap);
+export const randomBallSpeed = (min: number, max: number): number => {
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    return direction * (min + Math.random() * (max - min));
 };
 
 export const calculateBounceAngle = (ball: Ball, paddle: Paddle): number => {

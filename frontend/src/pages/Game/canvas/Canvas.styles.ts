@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { borderColor, canvasBackgroundColor } from '../Game.styles';
 
 export const Canvas = styled.canvas<{ canvasWidth: number, canvasHeight: number }>`
   border: ${props => props.canvasWidth / 100}px solid black;
@@ -6,5 +7,6 @@ export const Canvas = styled.canvas<{ canvasWidth: number, canvasHeight: number 
   height: ${({ canvasHeight }) => canvasHeight}px;
   box-sizing: border-box;
   border-image-slice: 1;
-  border-image-source: linear-gradient(to left, #743ad5, #d53a9d);
+  background-color: ${canvasBackgroundColor};
+  border-color: ${borderColor};
 `;

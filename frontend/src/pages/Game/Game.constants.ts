@@ -1,7 +1,10 @@
 // game.constants.js
 
+const minCanvasWidth = 500;
+const minCanvasHeight = 300;
+
 export function CANVAS_WIDTH() {
-    if (typeof window !== 'undefined' && window.innerHeight > 150 && window.innerWidth > 300) {
+    if (typeof window !== 'undefined' && window.innerHeight > minCanvasHeight && window.innerWidth > minCanvasWidth) {
         return 0.8 * window.innerWidth;
     } else {
         return 0;
@@ -9,8 +12,8 @@ export function CANVAS_WIDTH() {
 }
 
 export function CANVAS_HEIGHT() {
-    if (typeof window !== 'undefined' && window.innerHeight > 150 && window.innerWidth > 300) {
-        return 0.6 * window.innerHeight;
+    if (typeof window !== 'undefined' && window.innerHeight > minCanvasHeight && window.innerWidth > minCanvasWidth) {
+        return 0.7 * window.innerHeight;
     } else {
         return 0;
     }
@@ -28,8 +31,12 @@ export function BALL_SPEED_Y() {
     return 8;
 }
 
+export function MAX_BALL_SPEED() {
+    return 18;
+}
+
 export function BALL_ACC_X() {
-    return 1.05;
+    return 1.02;
 }
 
 export function VELOCITY_FACTOR() {
