@@ -1,13 +1,19 @@
 // game.constants.js
 
 export function CANVAS_WIDTH() {
-    console.log('windowWidth', window.innerWidth);
-    return typeof window !== 'undefined' ? 0.8 * window.innerWidth : 800; // fallback to default value if window is not defined
+    if (typeof window !== 'undefined' && window.innerHeight > 150 && window.innerWidth > 300) {
+        return 0.8 * window.innerWidth;
+    } else {
+        return 0;
+    }
 }
 
 export function CANVAS_HEIGHT() {
-    console.log('windoHeight', window.innerHeight);
-    return typeof window !== 'undefined' ? 0.6 * window.innerHeight : 600; // fallback to default value if window is not defined
+    if (typeof window !== 'undefined' && window.innerHeight > 150 && window.innerWidth > 300) {
+        return 0.6 * window.innerHeight;
+    } else {
+        return 0;
+    }
 }
 
 export function PADDLE_SPEED() {
@@ -20,6 +26,10 @@ export function BALL_SPEED_X() {
 
 export function BALL_SPEED_Y() {
     return 8;
+}
+
+export function BALL_ACC_X() {
+    return 1.05;
 }
 
 export function VELOCITY_FACTOR() {

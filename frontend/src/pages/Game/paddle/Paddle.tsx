@@ -11,9 +11,10 @@ interface PaddleProps {
     moveUpKey: string;
     moveDownKey: string;
     score: number;
+    side: string;
 }
 
-const Paddle: React.FC<PaddleProps> = ({ initialX, initialY, width, height, speed, moveUpKey, moveDownKey }) => {
+const Paddle: React.FC<PaddleProps> = ({ initialX, initialY, width, height, speed, moveUpKey, moveDownKey, score, side }) => {
     const [position, setPosition] = useState({ x: initialX, y: initialY });
 
     const handleKeyDown = (e: KeyboardEvent) => {

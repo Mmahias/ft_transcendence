@@ -1,16 +1,66 @@
 import { Ball, Paddle } from './useGameLogic';
 import { GameState } from './Game';
+import { BALL_ACC_X } from './Game.constants';
 
 export const willBallHitPaddle = (ball: Ball, paddle: Paddle): boolean => {
-  if (
-    ball.x + ball.vx + ball.size > paddle.initialX &&
-    ball.x + ball.vx - ball.size < paddle.initialX + paddle.width &&
-    ball.y + ball.vy + ball.size > paddle.initialY &&
-    ball.y + ball.vy - ball.size < paddle.initialY + paddle.height
-  ) {
-    return true;
-  }
-  return false;
+    const futureBallX = ball.x + ball.vx;
+    const futureBallY = ball.y + ball.vy;
+
+    const ballLeftEdge = futureBallX - ball.size;
+    const ballRightEdge = futureBallX + ball.size;
+    const ballTopEdge = futureBallY - ball.size;
+    const ballBottomEdge = futureBallY + ball.size;
+
+    const paddleLeftEdge = paddle.initialX;
+    const paddleRightEdge = paddle.initialX + paddle.width;
+    const paddleTopEdge = paddle.initialY;
+    const paddleBottomEdge = paddle.initialY + paddle.height;
+
+    const overlapsX = (ballLeftEdge < paddleRightEdge) && (ballRightEdge > paddleLeftEdge);
+    const overlapsY = (ballTopEdge < paddleBottomEdge) && (ballBottomEdge > paddleTopEdge);
+
+    return overlapsX && overlapsY;
+};
+
+export const adjustBallVelocityAfterPaddleHit = (ball: Ball, paddle: Paddle): Ball => {
+    const ballCenterY = ball.y + ball.size / 2;
+    const paddleCenterY = paddle.initialY + paddle.height / 2;
+    const halfHeight = paddle.height / 2;
+    const stepSize = halfHeight / 10;
+    const degrees = 0.7;
+
+    let factor = 0;
+
+    if (ballCenterY < paddleCenterY) {
+        factor = (paddleCenterY - ballCenterY) / stepSize;
+        ball.vy = -Math.round(factor * degrees);
+    } else if (ballCenterY > paddleCenterY) {
+        factor = (ballCenterY - paddleCenterY) / stepSize;
+        ball.vy = Math.round(factor * degrees);
+    } else {
+        ball.vy = -ball.vy;
+    }
+    // console.log(factor * degrees);
+    
+    ball.vx = Math.abs(ball.vx) <= 10 ? BALL_ACC_X() * Math.abs(ball.vx): Math.abs(ball.vx);
+    ball.vx = paddle.side === 'left' ? Math.abs(ball.vx) : -Math.abs(ball.vx);
+    ball.vx *= (0.94 + factor / 10);
+
+    return ball;
+};
+
+export const adjustBallVelocityAfterCanvasHit = (ball: Ball, canvasHeight: number): Ball => {
+    if (ball.y + ball.size > canvasHeight || ball.y - ball.size < 0) {
+        ball.vy = -ball.vy;
+    }
+    return ball;
+};
+
+export const adjustBallVelocityAfterOutOfBounds = (ball: Ball, canvasWidth: number): Ball => {
+    if (ball.x + ball.size > canvasWidth || ball.x - ball.size < 0) {
+        ball.vx = -ball.vx;
+    }
+    return ball;
 };
 
 export const willBallHitCanvas = (ball: Ball, canvasHeight: number, canvasWidth: number): boolean => {
@@ -45,10 +95,13 @@ export const calculateBounceAngle = (ball: Ball, paddle: Paddle): number => {
     return angle;
 };
 
-export const handleResize = (gameState: GameState, setBall: React.Dispatch<React.SetStateAction<Ball>>) => {
+export const handleResize = (gameState: GameState,
+    setBall: React.Dispatch<React.SetStateAction<Ball>>,
+    setGameState: React.Dispatch<React.SetStateAction<GameState>>
+    ) => {
     // Pause the game
     if (gameState !== GameState.GAME_OVER) {
-        gameState = GameState.PAUSED;
+        setGameState(GameState.PAUSED);
     }
     
     // Force re-render to update all elements that depend on the window size
