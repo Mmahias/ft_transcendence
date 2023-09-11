@@ -1,15 +1,14 @@
 body {
   font-family: 'Quicksand', sans-serif;
-  color: #324e63;
+  color: black;
 }
 
 .wrapper {
   width: 100%;
   min-height: 100vh;
   padding: 50px 20px;
-  padding-top: 100px;
+  padding-top: 50px;
   display: flex;
-  background-image: linear-gradient(-20deg, #ff2846 0%, #6944ff 100%);
 }
 
 .profile-card {
@@ -19,7 +18,7 @@ body {
   box-shadow: 0px 8px 60px -10px rgba(13, 28, 39, 0.6);
   background: #fff;
   border-radius: 12px;
-  max-width: 700px;
+  max-width: 900px;
   position: relative;
 }
 
@@ -33,7 +32,7 @@ body {
   overflow: hidden;
   position: relative;
   z-index: 4;
-  box-shadow: 0px 5px 50px 0px rgb(108, 68, 252), 0px 0px 0px 7px rgba(107, 74, 255, 0.5);
+  box-shadow: 0px 5px 50px 0px black, 0px 0px 0px 7px rgba(12, 12, 12, 0.5);
 }
 
 .profile-card__img img {
@@ -55,14 +54,14 @@ body {
 .profile-card__name {
   font-weight: 700;
   font-size: 24px;
-  color: #6944ff;
+  color: black;
   margin-bottom: 15px;
 }
 
 .profile-card__txt {
   font-size: 18px;
   font-weight: 500;
-  color: #324e63;
+  color: #131414;
   margin-bottom: 15px;
 }
 
@@ -81,7 +80,7 @@ body {
 }
 
 .profile-card-loc__txt {
-  color: #324e63;
+  color: #101111;
 }
 
 .profile-card-inf {
@@ -100,7 +99,7 @@ body {
 .profile-card-inf__title {
   font-weight: 700;
   font-size: 27px;
-  color: #324e63;
+  color: #070707;
 }
 
 .profile-card-inf__txt {
@@ -173,7 +172,7 @@ textarea {
   left: 0;
   pointer-events: none;
   opacity: 0;
-  background: rgba(22, 33, 72, 0.35);
+  background:  rgba(22, 33, 72, 0.35);
   border-radius: 12px;
   transition: all .3s;
 }
@@ -181,7 +180,7 @@ textarea {
 
 /* CSS */
 .button-32 {
-    margin-top: 50px;
+    margin-top: 70px;
     flex: 1; /* Ajoutez ceci pour que les boutons occupent un espace égal dans le conteneur */
     margin-right: 30px; /* Espacement entre les boutons */
     font-family: "Open Sans", sans-serif;
@@ -189,7 +188,7 @@ textarea {
     letter-spacing: 2px;
     text-decoration: none;
     text-transform: uppercase;
-    color: #ce1490 ;
+    color: gold ;
     cursor: pointer;
     border: 3px solid;
     padding: 0.25em 0.5em;

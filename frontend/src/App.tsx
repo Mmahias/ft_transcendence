@@ -7,6 +7,8 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Game from './pages/Game/Game';
 import Profile from './pages/User/profile'
+import History from './pages/User/history'
+import Friends from './pages/User/friends'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 const App: React.FC = () => {
@@ -20,6 +22,8 @@ const App: React.FC = () => {
                             <Route path="/" element={<Home/>} />
                             <Route path="/game" element={<Game />} />
                             <Route path="/user/profile" element={<Profile />} />
+                            <Route path="/user/history" element={<History />} />
+                            <Route path="/user/friends" element={<Friends />} />
                         </Routes>
                     </MainContentWrapper>
                     <Footer />
