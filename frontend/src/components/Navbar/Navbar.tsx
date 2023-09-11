@@ -11,7 +11,7 @@ function Navbar() {
       <div className="links-container">
           <RouterLink className="router-link" to="/">HOME</RouterLink>
           <RouterLink className="router-link" to="/game">GAME</RouterLink>
-          <RouterLink className="router-link" to="/">CHAT</RouterLink>
+          <RouterLink className="router-link" to="/chat">CHAT</RouterLink>
       </div>
     </nav>
 
