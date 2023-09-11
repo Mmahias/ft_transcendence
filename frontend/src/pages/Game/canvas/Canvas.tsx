@@ -64,8 +64,8 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
 
     return (
         <S.Canvas 
-            canvasWidth={canvasDimensions.width} // <-- passing as canvasWidth
-            canvasHeight={canvasDimensions.height} // <-- passing as canvasHeight
+            canvasWidth={canvasDimensions.width}
+            canvasHeight={canvasDimensions.height}
             width={canvasDimensions.width} 
             height={canvasDimensions.height} 
             ref={canvasRef as any} 
