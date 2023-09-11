@@ -44,7 +44,6 @@ export const adjustBallVelocityAfterPaddleHit = (ball: Ball, paddle: Paddle): Ba
     ball.vx *= (0.96 + factor / 10) * BALL_ACC_X();
     ball.vx = Math.abs(ball.vx) <= MAX_BALL_SPEED() ? Math.abs(ball.vx): MAX_BALL_SPEED();
     ball.vx = paddle.side === 'left' ? Math.abs(ball.vx) : -Math.abs(ball.vx);
-    console.log(ball.vx);
 
     return ball;
 };

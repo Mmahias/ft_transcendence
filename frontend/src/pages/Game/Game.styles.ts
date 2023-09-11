@@ -5,7 +5,7 @@ export const ballColor = 'rgb(0, 0, 0)';
 export const rightPaddleColor = 'rgb(220, 220, 40)';
 export const leftPaddleColor = 'rgb(220, 220, 40)';
 
-// Game environment colors
+// Game colors
 export const scoreCardColor = 'rgb(195, 195, 80)';
 export const borderColor = 'rgb(195, 195, 80)';
 export const canvasBackgroundColor = 'rgb(160, 160, 160)';
@@ -16,6 +16,10 @@ export const buttonBackgroundColor = 'rgb(195, 195, 80)';
 export const buttonFontColor = 'rgb(0, 0, 0)';
 export const buttonHoverColor = 'rgb(215, 215, 180)';
 export const buttonDisabledColor = 'rgb(217, 217, 217)';
+
+// Winning message colors
+export const winningMessageBackgroundColor = 'rgb(220, 220, 40)';
+export const winningMessageFontColor = 'rgb(40, 40, 40)';
 
 export const GameWrapper = styled.div`
     width: 100vw;
@@ -77,4 +81,15 @@ export const StyledButton = styled.button`
   &:not(:last-child) {
     margin-right: 10px;  // Adds some space between buttons if there are multiple.
   }
+`;
+
+export const WinningMessage = styled.h2`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: ${winningMessageBackgroundColor};
+  padding: 10px;
+  border-radius: 8px;
+  color: ${winningMessageFontColor};
 `;

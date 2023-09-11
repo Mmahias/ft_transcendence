@@ -45,7 +45,6 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
     // const BORDER_PADDING_SIDE = () => BORDER_PADDING() / 2;
     // const BORDER_THICKNESS = () => canvasWidth / 100;
 
-
     const initialLeftPaddle = {
         initialX: BORDER_PADDING(),
         initialY: (CANVAS_HEIGHT() - PADDLE_HEIGHT()) / 2,
@@ -118,7 +117,16 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
         };
     }, []);
 
+    const resetGame = () => {
+        setBall(initialBall);
+        setLeftPaddle(initialLeftPaddle);
+        setRightPaddle(initialRightPaddle);
+    };
+
     const onKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            event.preventDefault(); // Prevents default browser behavior
+          }
         keysPressed.current[event.key] = true;
     };
         
@@ -142,6 +150,9 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
     };
 
     const moveBall = () => {
+        if (leftPaddle.score >= MAX_SCORE() || rightPaddle.score >= MAX_SCORE()) {
+            onGameOver();
+        }
         setBall(prevBall => {
           let newBall = { ...prevBall };
     
@@ -156,26 +167,33 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
           // If the ball goes out of bounds
           if (willBallGetOutOfBounds(prevBall, canvasHeight, canvasWidth)) {
             const now = Date.now();
-            if (!lastScoredAt.current || now - lastScoredAt.current > 1000) {
+            let newLeftScore = leftPaddle.score;
+            let newRightScore = rightPaddle.score;
+        
+            if (!lastScoredAt.current || now - lastScoredAt.current > 200) {
                 if (prevBall.x < canvasWidth / 2) {
-                    setRightPaddle(prevPaddle => ({ ...prevPaddle, score: prevPaddle.score + 1 }));
+                    setRightPaddle(prevPaddle => {
+                        newRightScore = prevPaddle.score + 1;
+                        return { ...prevPaddle, score: newRightScore };
+                    });
                 } else {
-                    setLeftPaddle(prevPaddle => ({ ...prevPaddle, score: prevPaddle.score + 1 }));
+                    setLeftPaddle(prevPaddle => {
+                        newLeftScore = prevPaddle.score + 1;
+                        return { ...prevPaddle, score: newLeftScore };
+                    });
                 }
                 lastScoredAt.current = now;
+        
+                // Now, you can use the local variables for accurate logging
+                console.log(newLeftScore, "-", newRightScore, "==>", MAX_SCORE()); 
             }
-                
-                if (leftPaddle.score >= MAX_SCORE() || rightPaddle.score >= MAX_SCORE()) {
-                    onGameOver();
-                } else {
-                    newBall = adjustBallVelocityAfterOutOfBounds(newBall, canvasWidth);
-                    newBall = {
-                        ...initialBall,
+            newBall = adjustBallVelocityAfterOutOfBounds(newBall, canvasWidth);
+            newBall = {
+                ...initialBall,
                 vx: randomBallSpeed(0.6 * BALL_SPEED_X(), BALL_SPEED_X()),
                 vy: randomBallSpeed(0.8 * BALL_SPEED_Y(), BALL_SPEED_Y()),
-              };
             }
-          }
+        }
           newBall.x += newBall.vx;
           newBall.y += newBall.vy;
           return newBall;
@@ -192,7 +210,8 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
         leftPaddle,
         rightPaddle,
         onKeyDownHandler,
-        onKeyUpHandler
+        onKeyUpHandler,
+        resetGame,
     };
 };
 

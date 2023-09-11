@@ -48,5 +48,5 @@ export function TICKS_PER_SEC() {
 }
 
 export function MAX_SCORE() {
-    return 10;
+    return 3;
 }
