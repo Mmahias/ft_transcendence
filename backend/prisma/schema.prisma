@@ -14,8 +14,7 @@ model User {
   user_id       Int      @id @default(autoincrement())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
-  email         String   @unique
-  hash          String
+  login_42      String   @unique
   name          String   @unique
   role          Role     @default(USER)
   avatar        String?
