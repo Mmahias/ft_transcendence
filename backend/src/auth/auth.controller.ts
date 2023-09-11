@@ -1,6 +1,14 @@
-import { Controller, Get, Req, UseGuards, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  UseGuards,
+  Headers,
+  UseFilters
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { TokenErrorFilter } from './error/token.error.filter';
 
 @Controller('auth')
 export class AuthController {
@@ -12,6 +20,7 @@ export class AuthController {
     return;
   }
 
+  @UseFilters(TokenErrorFilter)
   @Get('42/redirect')
   @UseGuards(AuthGuard(['jwt', 'oauth_42']))
   async oAuth42Redirect(
