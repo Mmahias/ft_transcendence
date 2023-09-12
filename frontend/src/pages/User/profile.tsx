@@ -7,7 +7,8 @@ import { Link as RouterLink } from "react-router-dom";
 const Profile: React.FC = () => {
   return (
     <div className="wrapper">
-    <div className="profile-card js-profile-card">
+    <h1 style={{justifyContent: "center", marginTop: "100px"}}><span className="profile-p">Profile</span></h1>
+    <div className="profile-card js-profile-card" style={{marginTop: '250px'}}>
       <div className="profile-card__img">
         <img
           src= {userImage}

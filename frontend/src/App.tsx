@@ -11,6 +11,7 @@ import History from './pages/User/history'
 import Friends from './pages/User/friends'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
+
 const App: React.FC = () => {
     return (
         <Router>

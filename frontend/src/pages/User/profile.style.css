@@ -1,7 +1,7 @@
-body {
+/* body {
   font-family: 'Quicksand', sans-serif;
   color: black;
-}
+} */
 
 .wrapper {
   width: 100%;
@@ -11,18 +11,41 @@ body {
   display: flex;
 }
 
+.profile-p{
+  font-family: 'Bebas Neue', cursive;
+  color: black;
+  font-size: 70px; /* Taille de police réduite pour les écrans plus petits */
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: linear-gradient(gold, gold);
+  background-size: 100% 10px;
+  background-repeat: no-repeat;
+  background-position: 100% 0%;
+  transition: background-size .7s, background-position .5s ease-in-out;
+}
+
+.profile-p:hover {
+  background-size: 100% 100%;
+  background-position: 0% 100%;
+  transition: background-position .7s, background-size .5s ease-in-out;
+}
+
 .profile-card {
   width: 100%;
   min-height: 460px;
   margin: auto;
-  box-shadow: 0px 8px 60px -10px rgba(13, 28, 39, 0.6);
+  /* box-shadow: 0px 8px 60px -10px rgba(13, 28, 39, 0.6); */
+  box-shadow: 0px 0px 0px 2px rgb(168, 167, 167), 8px 8px 0px 0px gold;
   background: #fff;
-  border-radius: 12px;
+  /* border-radius: 12px; */
   max-width: 900px;
   position: relative;
 }
 
 .profile-card__img {
+  margin-top: 100px;
   width: 150px;
   height: 150px;
   margin-left: auto;
@@ -183,7 +206,7 @@ textarea {
     margin-top: 70px;
     flex: 1; /* Ajoutez ceci pour que les boutons occupent un espace égal dans le conteneur */
     margin-right: 30px; /* Espacement entre les boutons */
-    font-family: "Open Sans", sans-serif;
+    font-family: 'Bebas Neue', cursive;
     font-size: 16px;
     letter-spacing: 2px;
     text-decoration: none;
