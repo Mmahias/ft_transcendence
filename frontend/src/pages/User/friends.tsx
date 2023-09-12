@@ -7,7 +7,7 @@ const Friends: React.FC = () => {
     return (
         <div className="content">
             <h1 style={{justifyContent: "center", marginTop: "100px"}}><span className="friends-p">Friends List</span></h1>
-            <ul className="team" style={{marginTop: '300px'}}>
+            <ul className="team" style={{marginTop: '250px'}}>
                 <li className="member co-funder">
                     <div className="thumb"><img src= {userImage} /></div>
                     <div className="description">

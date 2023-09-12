@@ -1,6 +1,6 @@
 import React from "react";
 import './profile.style.css';
-import userImage from '../../assets/user.png'
+import userImage from '../../assets/user2.png'
 import { Link as RouterLink } from "react-router-dom";
 
 
