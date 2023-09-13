@@ -8,4 +8,12 @@ export class UserService {
   async getAllUser() {
     return this.prisma.user.findMany();
   }
+
+  async getUserByLogin42(login: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        login_42: login
+      }
+    });
+  }
 }
