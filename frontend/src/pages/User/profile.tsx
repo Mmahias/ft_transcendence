@@ -45,7 +45,7 @@ const Profile: React.FC = () => {
             <div className="profile-card-inf__txt">12/02/2023</div>
           </div>
           <div className="button-container">
-            <RouterLink to='/'><button className="button-32" role="button">Add/Edit</button></RouterLink>
+            <RouterLink to='/user/edit'><button className="button-32" role="button">Add/Edit</button></RouterLink>
             <RouterLink to='/user/history'><button className="button-32" role="button">History</button></RouterLink>
             <RouterLink to='/game'><button className="button-32" role="button">Play Game</button></RouterLink>
             <RouterLink to='/user/friends'><button className="button-32" role="button">Friends</button></RouterLink>
