@@ -8,7 +8,7 @@ import useInterval from './utils/useInterval';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_SPEED, BALL_SPEED_X,
     BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE
     } from './Game.constants';
-
+import { io, Socket } from 'socket.io-client';
 export interface Ball {
     x: number;
     y: number;
@@ -87,6 +87,31 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
     const lastScoredAt = useRef<number | null>(null);
     const keysPressed = useRef<{ [key: string]: boolean }>({});
 
+    const socket = useRef<Socket | null>(null);
+
+    useEffect(() => {
+        socket.current = io('http://localhost:3001');
+
+        socket.current.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+    
+        socket.current.on('opponentMove', (data: Paddle) => {
+            // Here, check the side of the paddle and update the game state based on the received data
+            if (data.side === 'left') {
+                setLeftPaddle(data);
+            } else if (data.side === 'right') {
+                setRightPaddle(data);
+            }
+        });
+
+        return () => {
+            if (socket.current) {
+                socket.current.disconnect();
+            }
+        };
+    }, []);
+
     useEffect(() => {
         if (!canvasDimensions.height || !canvasDimensions.width) return;
 
@@ -135,19 +160,32 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
     };
 
     const handlePaddleMovement = () => {
+        const updatePaddlePosition = (paddle: Paddle, direction: 'up' | 'down') => {
+            const updatedPaddle = movePaddle(paddle, direction, canvasHeight);
+            if (socket.current) {
+                socket.current.emit('playerMove', updatedPaddle);
+            }
+            return updatedPaddle;
+        };
+    
         if (keysPressed.current[leftPaddle.moveDownKey]) {
-            setLeftPaddle(prevPaddle => movePaddle(prevPaddle, 'down', canvasHeight));
-        } 
+            setLeftPaddle(prevPaddle => updatePaddlePosition(prevPaddle, 'down'));
+        }
+    
         if (keysPressed.current[leftPaddle.moveUpKey]) {
-            setLeftPaddle(prevPaddle => movePaddle(prevPaddle, 'up', canvasHeight));
-        } 
+            setLeftPaddle(prevPaddle => updatePaddlePosition(prevPaddle, 'up'));
+        }
+    
         if (keysPressed.current[rightPaddle.moveDownKey]) {
-            setRightPaddle(prevPaddle => movePaddle(prevPaddle, 'down', canvasHeight));
-        } 
+            setRightPaddle(prevPaddle => updatePaddlePosition(prevPaddle, 'down'));
+        }
+    
         if (keysPressed.current[rightPaddle.moveUpKey]) {
-            setRightPaddle(prevPaddle => movePaddle(prevPaddle, 'up', canvasHeight));
+            setRightPaddle(prevPaddle => updatePaddlePosition(prevPaddle, 'up'));
         }
     };
+    
+    
 
     const moveBall = () => {
         if (leftPaddle.score >= MAX_SCORE() || rightPaddle.score >= MAX_SCORE()) {

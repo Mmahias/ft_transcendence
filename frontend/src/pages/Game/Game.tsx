@@ -6,19 +6,21 @@ import useGameLogic from './useGameLogic';
 import {
     CANVAS_WIDTH, CANVAS_HEIGHT
 } from './Game.constants';
+import socket from './socket';
 
 interface GameProps {}
 
 export enum GameState {
-  RUNNING,
-  PAUSED,
-  GAME_OVER,
+    RUNNING,
+    PAUSED,
+    GAME_OVER,
+    WAITING_FOR_PLAYERS,
 }
 
 const Game: React.FC<GameProps> = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameWrapperRef = useRef<HTMLDivElement>(null);
-  const [gameState, setGameState] = useState<GameState>(GameState.RUNNING);
+  const [gameState, setGameState] = useState<GameState>(GameState.WAITING_FOR_PLAYERS);
 
   const onGameOver = () => setGameState(GameState.GAME_OVER);
 
@@ -40,10 +42,43 @@ const Game: React.FC<GameProps> = () => {
     draw({ ctx, ball, leftPaddle, rightPaddle });
   };
 
+  const [lobby, setLobby] = useState<any | null>(null);
+
+  const createLobbyHandler = () => {
+    console.log("Create lobby clicked!");
+    const player = { /* your player data here */ }; 
+    socket.emit('createLobby', player);
+  };
+
+  const joinLobbyHandler = (lobbyID: string) => {
+    console.log("Joining lobby with ID:", lobbyID);
+    const player = { /* your player data here */ };
+    socket.emit('joinLobby', lobbyID, player);
+  };
+
+  const [lobbyID, setLobbyID] = useState<string>('');
+
   useEffect(() => {
     if (gameWrapperRef && gameWrapperRef.current) {
       gameWrapperRef.current.focus(); // Sets focus on the div when the component mounts
     }
+  }, []);
+
+  useEffect(() => {
+    // Listen for lobby updates
+    socket.on('lobbyUpdate', (updatedLobby) => {
+      setLobby(updatedLobby);
+      if(updatedLobby.players.length === 2) {
+        setGameState(GameState.RUNNING);
+      } else {
+        setGameState(GameState.WAITING_FOR_PLAYERS);
+      }
+    });
+
+    // Cleanup when component unmounts
+    return () => {
+      socket.off('lobbyUpdate');
+    };
   }, []);
 
   const determineWinner = () => {
@@ -55,6 +90,19 @@ const Game: React.FC<GameProps> = () => {
   return (
     <div tabIndex={0} onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler}>
       <GameWrapper ref={gameWrapperRef} tabIndex={0} onKeyDown={onKeyDownHandler} style={{ position: 'relative' }}>
+        
+        {/* Display the lobby creation and joining UI if waiting for players */}
+        {gameState === GameState.WAITING_FOR_PLAYERS && (
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <button onClick={createLobbyHandler}>Create Lobby</button>
+            <div style={{ marginTop: '20px' }}>
+              <input placeholder="Enter Lobby ID" value={lobbyID} onChange={(e) => joinLobbyHandler(e.target.value)} />
+              <button onClick={() => joinLobbyHandler(lobbyID)}>Join</button>
+            </div>
+          </div>
+        )}
+  
+        {/* Display the game's main content */}
         <Score>{`${leftPaddle.score} - ${rightPaddle.score}`}</Score>
         <Canvas ref={canvasRef} draw={drawGame} ball={ball} leftPaddle={leftPaddle} rightPaddle={rightPaddle} />
         
