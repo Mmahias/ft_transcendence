@@ -10,12 +10,14 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const user_module_1 = require("./user/user.module");
+const game_gateway_1 = require("./game/game.gateway");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [config_1.ConfigModule.forRoot(), user_module_1.UserModule],
+        providers: [game_gateway_1.GameGateway],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
