@@ -13,7 +13,7 @@ export class AuthController {
   @UseGuards(AuthGuard('oauth_42'))
   @Get('/redirect')
   oauthRedirect(@Req() req) {
-    this.logger.log(`redirect call and user in request is : ${req.user}`);
+    // Return the jwt created
     return req.user;
   }
 }

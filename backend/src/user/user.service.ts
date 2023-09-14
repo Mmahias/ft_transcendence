@@ -16,4 +16,22 @@ export class UserService {
       }
     });
   }
+
+  async createUser(login: string, email: string) {
+    return this.prisma.user.create({
+      data: {
+        login_42: login,
+        nickname: login,
+        email: email
+      }
+    });
+  }
+
+  async getUserById(id: number) {
+    return this.prisma.user.findUnique({
+      where: {
+        id
+      }
+    });
+  }
 }
