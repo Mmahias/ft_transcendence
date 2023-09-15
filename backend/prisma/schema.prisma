@@ -11,10 +11,25 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  login_42  String   @unique
-  nickname  String   @unique
-  email     String
+  id       Int    @id @default(autoincrement())
+  login_42 String @unique
+  nickname String @unique
+  email    String
+
+  friends   User[] @relation("Friendship")
+  friendsTo User[] @relation("Friendship")
+
+  friendsRequestSent     FriendRequest[] @relation("SentRequests")
+  friendsRequestReceived FriendRequest[] @relation("ReceivedRequests")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+}
+
+model FriendRequest {
+  id     Int  @id @default(autoincrement())
+  from   User @relation("SentRequests", fields: [fromId], references: [id])
+  fromId Int
+  to     User @relation("ReceivedRequests", fields: [toId], references: [id])
+  toId   Int
 }
