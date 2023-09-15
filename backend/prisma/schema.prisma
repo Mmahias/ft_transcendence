@@ -15,6 +15,7 @@ model User {
   login_42 String @unique
   nickname String @unique
   email    String
+  avatar   String
 
   friends   User[] @relation("Friendship")
   friendsTo User[] @relation("Friendship")
