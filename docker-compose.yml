@@ -10,9 +10,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - '5433:5432'
+      - '5432:5432'
     networks:
       - nestjs-network
+        #    healthcheck:
+        #test: nc -z localhost 3306
+        #interval: 2s
+        #retries: 3
 
   back:
     container_name: nestjs-back
@@ -25,6 +29,9 @@ services:
       - 3030:3030
     depends_on:
       - db
+        #        condition: service_healthy
+    volumes:
+      - ./backend:/app
     networks:
       - nestjs-network
   
@@ -37,8 +44,8 @@ services:
       - 3000:3000
     depends_on:
       - back
-        #volumes:
-        #- ./frontend:/app
+    volumes:
+      - ./frontend:/app
     networks:
       - nestjs-network
 

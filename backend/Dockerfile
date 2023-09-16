@@ -8,16 +8,13 @@ WORKDIR /app
 COPY . .
 
 # Install application dependencies inside the container
-RUN yarn install
-
-# Generate the Prisma client
-RUN npx prisma generate
+RUN npm install
 
 # Build the application
-RUN yarn run build
+RUN npm run build
 
 # Expose port 3030
 EXPOSE 3030
 
 # Start the application in development mode
-CMD [ "yarn", "run", "start:dev" ]
+CMD [ "sh", "run.sh" ]
