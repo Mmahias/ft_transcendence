@@ -1,21 +1,21 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
-import {User} from "./decorator";
-import {UserDto} from "./dto";
+import { User } from './decorator';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/me')
-  async userInformation(@User('id') id: number): Promise<UserDto> {
-    const user = await this.userService.getUserById(id);
-    return {
-      id: user.id,
-      nickname: user.nickname
-    };
+  @Get('me')
+  async userInformation(@User('id') id: number) {
+    return this.userService.getUserById(id);
+  }
+
+  @Get(':nickname')
+  async userByNickname(@Param('nickname') nickname: string) {
+    return this.userService.getUserByNickname(nickname);
   }
 
   @Get()
