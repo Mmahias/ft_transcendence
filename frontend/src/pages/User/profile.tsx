@@ -5,6 +5,16 @@ import { Link as RouterLink } from "react-router-dom";
 
 
 const Profile: React.FC = () => {
+  const [is2FAEnabled, set2FA] = React.useState(false); // Ajoutez cette ligne après `const Profile: React.FC = () => {`
+  const [stats, setStats] = React.useState({
+    rank: 1,
+    level: 10,
+    wins: 5,
+    losses: 3
+  });
+  
+
+
   return (
     <div className="wrapper">
     <h1 style={{justifyContent: "center", marginTop: "100px"}}><span className="profile-p">Profile</span></h1>
@@ -29,6 +39,34 @@ const Profile: React.FC = () => {
           <p style={{marginTop: '3px', marginLeft: '3px', color: 'red'}}> Online </p>
           </div>
 
+
+
+
+          <div className="profile-card-stats">
+  <div className="profile-card-stats__item">
+    <div className="profile-card-stats__title">Rank</div>
+    <div className="profile-card-stats__value">{stats.rank}</div>
+  </div>
+
+  <div className="profile-card-stats__item">
+    <div className="profile-card-stats__title">Level</div>
+    <div className="profile-card-stats__value">{stats.level}</div>
+  </div>
+
+  <div className="profile-card-stats__item">
+    <div className="profile-card-stats__title">Wins</div>
+    <div className="profile-card-stats__value">{stats.wins}</div>
+  </div>
+
+  <div className="profile-card-stats__item">
+    <div className="profile-card-stats__title">Losses</div>
+    <div className="profile-card-stats__value">{stats.losses}</div>
+  </div>
+</div>
+
+
+
+
         <div className="profile-card-inf">
           <div className="profile-card-inf__item">
             <div className="profile-card-inf__title">user_id</div>
@@ -44,6 +82,7 @@ const Profile: React.FC = () => {
             <div className="profile-card-inf__title">created_at</div>
             <div className="profile-card-inf__txt">12/02/2023</div>
           </div>
+
           <div className="button-container">
             <RouterLink to='/user/edit'><button className="button-32" role="button">Add/Edit</button></RouterLink>
             <RouterLink to='/user/history'><button className="button-32" role="button">History</button></RouterLink>
@@ -51,7 +90,18 @@ const Profile: React.FC = () => {
             <RouterLink to='/user/friends'><button className="button-32" role="button">Friends</button></RouterLink>
         </div>
         </div>
+        <div className="toggle-container">
+  <label>2FA Authentication:</label>
+  <input 
+    type="checkbox" 
+    checked={is2FAEnabled} 
+    onChange={() => set2FA(prevState => !prevState)}
+  />
+</div>
+
+
       </div>
+      
     </div>
     </div>
   );
