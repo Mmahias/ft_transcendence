@@ -1,6 +1,8 @@
 import React from 'react';
 import './styles.css';
+import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
+import axios from 'axios';
 
 const Home: React.FC = () => {
     return (

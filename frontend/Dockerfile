@@ -38,7 +38,7 @@
 # # CMD ["nginx", "-g", "daemon off;"]
 # CMD ["nginx -g 'daemon off;' & npm start"]
 # Utilisez une image de node.js
-FROM node:14
+FROM node:18
 
 # Définissez le répertoire de travail dans l'image
 WORKDIR /app
