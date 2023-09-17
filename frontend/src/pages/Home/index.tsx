@@ -11,9 +11,7 @@ const Home: React.FC = () => {
             <h1> <span> FT_TRANSCENDENCE </span> </h1>
           </p>
         <div className="button-container">
-        <button className="button-52" role="button" >42_Login</button>
-        <RouterLink to="/"><button className="button-52" role="button">Sign_In</button></RouterLink>
-        <RouterLink to="/"><button className="button-52" role="button">Sign_Up</button></RouterLink>
+        <RouterLink to="/"><button className="button-52" role="button">42_Login</button></RouterLink>
         </div>
       </div>
     );
