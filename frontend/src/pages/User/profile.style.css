@@ -233,3 +233,68 @@ textarea {
       padding: 0.25em 0.75em;
     }
   }
+
+  
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    justify-content: center;  /* Centrer horizontalement */
+  }
+  
+  .toggle-container label {
+    margin-right: 10px;
+  }
+  
+  .toggle-container input[type="checkbox"] {
+    appearance: none;
+    background-color: #e6e6e6;
+    border-radius: 50px;
+    cursor: pointer;
+    height: 24px;
+    position: relative;
+    width: 48px;
+  }
+  
+  .toggle-container input[type="checkbox"]:checked {
+    background-color: #3dbb3d;
+  }
+  
+  .toggle-container input[type="checkbox"]::before {
+    background-color: white;
+    border-radius: 50%;
+    content: "";
+    height: 20px;
+    left: 2px;
+    position: absolute;
+    top: 2px;
+    transition: left 0.3s;
+    width: 20px;
+  }
+  
+  .toggle-container input[type="checkbox"]:checked::before {
+    left: 26px;
+  }
+
+  .profile-card-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .profile-card-stats__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-card-stats__title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .profile-card-stats__value {
+    font-size: 1.2em;
+  }
+  
+  

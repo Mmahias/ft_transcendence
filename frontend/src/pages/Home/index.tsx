@@ -10,8 +10,6 @@ const Home: React.FC = () => {
           </p>
         <div className="button-container">
         <RouterLink to="/"><button className="button-52" role="button">42_Login</button></RouterLink>
-        <RouterLink to="/"><button className="button-52" role="button">Sign_In</button></RouterLink>
-        <RouterLink to="/"><button className="button-52" role="button">Sign_Up</button></RouterLink>
         </div>
       </div>
     );
