@@ -27,8 +27,8 @@ const Edit: React.FC = () => {
                     <input type="text" className="input-txt" style={{ alignContent: 'center' }} />
                     <div className="profile-card-inf">
                         <div className="button-container" style={{ marginTop: '0' }}>
-                            <RouterLink to=''><button className="button-32" role="button" style={{ marginLeft: '50px' }}>Save</button></RouterLink>
-                            <RouterLink to='/user/profile'><button className="button-32" role="button">Cancel</button></RouterLink>
+                            <RouterLink to=''><button className="button-32" style={{ marginLeft: '50px' }}>Save</button></RouterLink>
+                            <RouterLink to='/user/profile'><button className="button-32">Cancel</button></RouterLink>
                         </div>
                     </div>
                 </div>

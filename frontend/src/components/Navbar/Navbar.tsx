@@ -18,11 +18,14 @@ function Navbar() {
 
       {/* Menu déroulant */}
       <div className="dropdown">
-        <div className="dropbtn">MENU</div>
+        <div className="dropbtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-list" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+          </svg>
+        </div>
         <div className="dropdown-content">
-            <RouterLink className="router-link" to="/profile">PROFILE</RouterLink>
-            <RouterLink className="router-link" to="/settings">SETTINGS</RouterLink>
-            <RouterLink className="router-link" to="/logout">LOGOUT</RouterLink>
+            <RouterLink className="router-link" to="/user/profile">PROFILE</RouterLink>
+            <RouterLink className="router-link" to="/">LOGOUT</RouterLink>
         </div>
       </div>
     </nav>

@@ -1,5 +1,5 @@
 import { ThemeProvider } from 'styled-components';
-import { AppLogo, AppHeader, AppLink, MainContentWrapper, AppWrapper } from './App.styles';
+import { MainContentWrapper, AppWrapper } from './App.styles';
 import theme from './theme';
 import React from 'react';
 import Navbar from './components/Navbar';
