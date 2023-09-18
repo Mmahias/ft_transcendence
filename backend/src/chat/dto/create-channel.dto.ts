@@ -30,7 +30,7 @@ export class CreateChannelDto {
 	ownerId: number;
 
 	@IsOptional()
-	admins      : User[];
+	adminUsers : User[];
 
 	@IsOptional()
 	joinedUsers: User[];
