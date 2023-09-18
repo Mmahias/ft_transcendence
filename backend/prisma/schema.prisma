@@ -54,8 +54,8 @@ model Channel {
   mode        ChanMode  @default(PUBLIC)
   password    String?
   name        String    @unique
-  owner       User      @relation(fields: [ownerId], references: [id], name: "owner")
   ownerId     Int
+  owner       User      @relation(fields: [ownerId], references: [id], name: "owner")
   adminUsers  User[]    @relation("admins") // users that can manage the channel
   joinedUsers User[]    @relation("joined") // users that joined the channel
   bannedUsers User[]    @relation("banned") // users that are banned from the channel

@@ -125,4 +125,57 @@ export class ChatService {
       }
     });
   }
+
+  async getPrivateChannelsByUserId(id: number) {
+    const user = await this.userService.getUserById(id);
+    const privateChans = await prisma.channel.findMany({
+      where: { 
+        joinedUsers: {
+          some: {
+            id: user.id,
+          },
+        },
+        mode: ChanMode.PRIVATE
+      },
+    });
+    return privateChans;	
+  }
+
+  async getProtectedChannelsByUserId(id: number) {
+    const user = await this.userService.getUserById(id);
+    const protectedChans = await prisma.channel.findMany({
+      where: { 
+        joinedUsers: {
+          some: {
+            id: user.id,
+          },
+        },
+        mode: ChanMode.PROTECTED
+      },
+    });
+    return protectedChans;	
+  }
+
+  async getDmByUserId(id: number) {
+    const user = await this.userService.getUserById(id);
+    const directMessages = await prisma.channel.findMany({
+      where: { 
+        joinedUsers: {
+          some: {
+            id: user.id,
+          },
+        },
+        mode: ChanMode.DM
+      },
+    });
+    return directMessages;	
+  }
+
+  async deleteOneChannel(id: number) {
+    
+    await prisma.channel.delete({
+      where: { id },
+    });
+  
+  }
 }
