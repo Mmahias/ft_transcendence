@@ -46,7 +46,7 @@ export class ChatService {
         where: { id: ownerId },
         data: {
           ownerChans: { connect: { id: createdChannel.id } },
-          adminsChans: { connect: { id: createdChannel.id } },
+          adminChans: { connect: { id: createdChannel.id } },
           joinedChans: { connect: { id: createdChannel.id } },
         },
       });
@@ -171,11 +171,51 @@ export class ChatService {
     return directMessages;	
   }
 
-  async deleteOneChannel(id: number) {
+  async deleteChannelById(id: number) {
     
+    // delete all messages in the channel
+    this.deleteMessagesByChannelId(id);
+
+    // delete the channel from all users that have it in their chans lists
+    for (const user of await this.findUsersByChannelId(id)) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          ownerChans: { disconnect: { id } },
+          adminChans: { disconnect: { id } },
+          joinedChans: { disconnect: { id } },
+          bannedChans: { disconnect: { id } },
+          kickedFromChans: { disconnect: { id } },
+          mutedFromChans: { disconnect: { id } },
+        },
+      });
+    }
+
+    // delete the channel
     await prisma.channel.delete({
       where: { id },
     });
-  
   }
+
+  async deleteMessagesByChannelId(id: number) {
+    await prisma.message.deleteMany({
+      where: { channel: { id } },
+    });
+  }
+
+  async findUsersByChannelId(id: number) {
+    return await prisma.user.findMany({
+      where: { 
+        OR: [
+          { ownerChans: { some: { id } } },
+          { adminChans: { some: { id } } },
+          { joinedChans: { some: { id } } },
+          { bannedChans: { some: { id } } },
+          { kickedFromChans: { some: { id } } },
+          { mutedFromChans: { some: { id } } },
+        ]
+      },
+    });
+  }
+
 }

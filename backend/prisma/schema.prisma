@@ -27,11 +27,11 @@ model User {
 
   // channels relations
   ownerChans      Channel[] @relation("owner") // channels that the user owns
-  adminChans     Channel[] @relation("admins") // channels that the user can manage
+  adminChans      Channel[] @relation("admins") // channels that the user can manage
   bannedChans     Channel[] @relation("banned") // channels that the user is banned from
   joinedChans     Channel[] @relation("joined") // channels that the user joined
   kickedFromChans Channel[] @relation("kicked") // channels that the user is banned from
-  mutedInChans    Channel[] @relation("muted") // channels that the user is muted in
+  mutedFromChans    Channel[] @relation("muted") // channels that the user is muted in
 
   // messages relations
   sentMessages    Message[] @relation("messages") // messages that the user sent
