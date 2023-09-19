@@ -1,3 +1,5 @@
-export const URL = "http://localhost:3030/auth/42"
-export const API_URL = "https://api.intra.42.fr/oauth/authorize"
-export const API_REDIR = "http://localhost:3030/users/me"
+export const BACK_URL = "http://localhost:3030/auth/42"
+export const API_REDIR = "http://localhost:3030/auth/42/redirect"
+export const AUTH_URL="https://api.intra.42.fr/oauth/authorize"
+export const FRONT_URL = "http://localhost:3000"
+export const CLIENT_ID = "u-s4t2ud-b18fadad934f054c76413a09b381c6aeed080eac63ed399defa83ddbed3a8a71"
