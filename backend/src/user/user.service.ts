@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   ForbiddenException,
   Injectable,
@@ -7,6 +8,10 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserDto, UserUpdateDto } from './dto';
+=======
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@app/prisma/prisma.service';
+>>>>>>> chat
 
 @Injectable()
 export class UserService {

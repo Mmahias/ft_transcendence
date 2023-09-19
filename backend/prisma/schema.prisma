@@ -12,26 +12,78 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  login_42 String @unique
-  nickname String @unique
-  email    String
-  avatar   String
+    // general info
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+    nickname  String   @unique
+    login_42  String   @unique
+    email     String
+    avatar   String
 
-  friends   User[] @relation("Friendship")
-  friendsTo User[] @relation("Friendship")
+    // friends relations
+    friends                User[]          @relation("friendship")
+    friendedBy             User[]          @relation("friendship")
+    friendsRequestSent     FriendRequest[] @relation("sentRequests")
+    friendsRequestReceived FriendRequest[] @relation("receivedRequests")
 
-  friendsRequestSent     FriendRequest[] @relation("SentRequests")
-  friendsRequestReceived FriendRequest[] @relation("ReceivedRequests")
+    // channels relations
+    ownerChans      Channel[] @relation("owner") // channels that the user owns
+    adminChans      Channel[] @relation("admins") // channels that the user can manage
+    bannedChans     Channel[] @relation("banned") // channels that the user is banned from
+    joinedChans     Channel[] @relation("joined") // channels that the user joined
+    kickedFromChans Channel[] @relation("kicked") // channels that the user is banned from
+    mutedFromChans  Channel[] @relation("muted") // channels that the user is muted in
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+    // messages relations
+    sentMessages    Message[] @relation("messages") // messages that the user sent
+
+    @@map("users")
 }
 
 model FriendRequest {
   id     Int  @id @default(autoincrement())
-  from   User @relation("SentRequests", fields: [fromId], references: [id])
+  from   User @relation("sentRequests", fields: [fromId], references: [id])
   fromId Int
-  to     User @relation("ReceivedRequests", fields: [toId], references: [id])
+  to     User @relation("receivedRequests", fields: [toId], references: [id])
   toId   Int
+}
+
+model Channel {
+  id          Int       @id @default(autoincrement())
+  date        DateTime  @default(now())
+  lastUpdate  DateTime  @default(now()) @updatedAt
+  mode        ChanMode  @default(PUBLIC)
+  password    String?
+  name        String    @unique
+  ownerId     Int
+  owner       User      @relation(fields: [ownerId], references: [id], name: "owner")
+  adminUsers  User[]    @relation("admins") // users that can manage the channel
+  joinedUsers User[]    @relation("joined") // users that joined the channel
+  bannedUsers User[]    @relation("banned") // users that are banned from the channel
+  kickedUsers User[]    @relation("kicked") // users that are kicked from the channel
+  mutedUsers  User[]    @relation("muted") // users that are muted in the channel
+  messages    Message[] @relation("messages")
+
+  @@map("channels")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @default(now())
+  from      User     @relation(fields: [fromId], references: [id], name: "messages")
+  fromId    Int
+  to        String   // channel name OR username if DM
+  content   String
+  channel   Channel  @relation(fields: [channelId], references: [id], name: "messages")
+  channelId Int
+
+  @@map("messages")
+}
+
+enum ChanMode {
+  PUBLIC // everyone can join
+  PRIVATE // need to be invited to join
+  PROTECTED // need password join
+  DM // private message between 2 users
 }
