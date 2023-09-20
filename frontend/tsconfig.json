@@ -2,13 +2,16 @@
     "compilerOptions": {
       "jsx": "react",
       "target": "es2016",
-      "module": "commonjs",
+      "module": "esnext",
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
       "strict": true,
       "skipLibCheck": true,
   
       "baseUrl": "./src", // It sets the base directory for module resolution. It's usually set to your source directory.
+      "paths": {
+        "@app/*": ["src/*"] 
+      },
       "resolveJsonModule": true, // Enables importing .json files. You may not need this right now, but it's a good option to have enabled.
       // "typeRoots": ["./node_modules/@types", "./src/types"], // Add this if you're keeping type declarations in a 'types' folder under 'src'. Otherwise, adjust the path accordingly.
     },
