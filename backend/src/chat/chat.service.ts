@@ -281,7 +281,7 @@ export class ChatService {
                 where: { id: channelId },
                 data: { ownerId: newOwnerId }
             });
-        } 
+        }
         // if no new owner is found, delete the channel
         else {
             await prisma.channel.delete({ where: { id: channelId } });

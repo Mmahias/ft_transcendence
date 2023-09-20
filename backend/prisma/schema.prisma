@@ -14,12 +14,13 @@ datasource db {
 model User {
     // general info
     id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now())
     nickname  String   @unique
     login_42  String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
     email     String
     avatar   String
+    bio            String?
 
     // friends relations
     friends                User[]          @relation("friendship")
