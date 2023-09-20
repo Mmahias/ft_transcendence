@@ -10,7 +10,7 @@ import Profile from './pages/User/profile';
 import History from './pages/User/history';
 import Friends from './pages/User/friends';
 import Edit from './pages/User/edit';
-import Error from 'pages/Error/Error';
+import Error from './pages/Error/Error';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 
