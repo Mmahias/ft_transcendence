@@ -93,7 +93,7 @@ export class UserService {
           login_42: login,
           nickname: login,
           email: email,
-          avatar: 'default_path_avatar'
+          avatar: 'default_path_avatar.png'
         }
       })
       .catch((error) => {
@@ -130,5 +130,50 @@ export class UserService {
         }
         throw error;
       });
+  }
+
+  async getAvatarFilenameById(userID: number) {
+    return this.prisma.user
+      .findUnique({
+        where: {
+          id: userID
+        },
+        select: {
+          avatar: true
+        }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`UserId [${userID}] is not found`);
+          throw new NotFoundException(`UserId [${userID}] is not found`);
+        }
+        throw error;
+      });
+  }
+
+  async getAvatarFilenameByNickname(nickname: string) {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: {
+          nickname
+        },
+        select: {
+          avatar: true
+        }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`Nickname [${nickname}] is not found`);
+          throw new NotFoundException(`Nickname [${nickname}] is not found`);
+        }
+        throw error;
+      });
+  }
+
+  async updateUserAvatarFilename(userId: number, filename: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { avatar: filename }
+    });
   }
 }
