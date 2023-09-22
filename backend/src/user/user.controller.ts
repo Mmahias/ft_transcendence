@@ -45,8 +45,8 @@ export class UserController {
 
   @Get('avatar')
   async userAvatar(@User('id') id: number, @Res() res: Response, @Next() next) {
-    const { avatar } = await this.userService.getAvatarFilenameById(id);
-    return res.sendFile(`${avatar}`, { root: 'avatars' }, (err) => {
+    const { avatarFilename } = await this.userService.getAvatarFilenameById(id);
+    return res.sendFile(`${avatarFilename}`, { root: 'avatars' }, (err) => {
       if (err) {
         this.logger.error(err.message);
         next();
@@ -60,8 +60,9 @@ export class UserController {
     @Res() res: Response,
     @Next() next
   ) {
-    const { avatar } = await this.userService.getAvatarFilenameByNickname(nickname);
-    return res.sendFile(`${avatar}`, { root: 'avatars' }, (err) => {
+    const { avatarFilename } =
+      await this.userService.getAvatarFilenameByNickname(nickname);
+    return res.sendFile(`${avatarFilename}`, { root: 'avatars' }, (err) => {
       if (err) {
         this.logger.error(err.message);
         next();

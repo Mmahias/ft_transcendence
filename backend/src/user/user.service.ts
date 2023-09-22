@@ -7,11 +7,15 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserDto, UserUpdateDto } from './dto';
+import { PasswordService } from '@app/password/password.service';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private passwordService: PasswordService
+  ) {}
 
   async getAllUser() {
     return this.prisma.user.findMany();
@@ -63,43 +67,38 @@ export class UserService {
       });
   }
 
-  async getUserByLogin42(login: string) {
+  async getUserByUsername(username: string) {
     return this.prisma.user
       .findUniqueOrThrow({
         where: {
-          login_42: login
+          username
         }
-      })
-      .then((user) => {
-        const userDto: UserDto = {
-          id: user.id,
-          nickname: user.nickname
-        };
-        return userDto;
       })
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
-          this.logger.log(`Login [${login}] is not found`);
-          throw new NotFoundException(`Login [${login}] is not found`);
+          const error = `Username [${username}] is not found`;
+          this.logger.log(error);
+          throw new NotFoundException(error);
         }
         throw error;
       });
   }
 
-  async createUser(login: string, email: string) {
+  async createUser(username: string, password: string, nickname?: string) {
+    const hashPassword = await this.passwordService.hashPassword(password);
+
     return this.prisma.user
       .create({
         data: {
-          login_42: login,
-          nickname: login,
-          email: email,
-          avatar: 'default_path_avatar.png'
+          username,
+          password: hashPassword,
+          nickname: nickname || username
         }
       })
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
           if (error.code === 'P2002') {
-            throw new ForbiddenException(`Login [${login}] is already taken`);
+            throw new ForbiddenException(`Username [${username}] is already taken`);
           }
         }
         throw error;
@@ -139,7 +138,7 @@ export class UserService {
           id: userID
         },
         select: {
-          avatar: true
+          avatarFilename: true
         }
       })
       .catch((error) => {
@@ -158,7 +157,7 @@ export class UserService {
           nickname
         },
         select: {
-          avatar: true
+          avatarFilename: true
         }
       })
       .catch((error) => {
@@ -173,7 +172,7 @@ export class UserService {
   async updateUserAvatarFilename(userId: number, filename: string) {
     return this.prisma.user.update({
       where: { id: userId },
-      data: { avatar: filename }
+      data: { avatarFilename: filename }
     });
   }
 }
