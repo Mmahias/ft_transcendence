@@ -9,6 +9,8 @@ import Game from './pages/Game/Game';
 import Profile from './pages/User/profile';
 import History from './pages/User/history';
 import Friends from './pages/User/friends';
+import Request from './pages/User/Request';
+import Login from './pages/Login/Login';
 import Edit from './pages/User/edit';
 import Error from './pages/Error/Error';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -23,10 +25,12 @@ const App: React.FC = () => {
                     <MainContentWrapper>
                         <Routes>
                             <Route path="/" element={<Home/>} />
+                            <Route path="/login" element={<Login />}/>
                             <Route path="/game" element={<Game />} />
                             <Route path="/user/profile" element={<Profile />} />
                             <Route path="/user/history" element={<History />} />
                             <Route path="/user/friends" element={<Friends />} />
+                            <Route path="/user/request" element={<Request />} />
                             <Route path="/user/edit" element={<Edit />} />
                             <Route path='*' element={<Error />}/>
                         </Routes>
