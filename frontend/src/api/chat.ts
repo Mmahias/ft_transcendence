@@ -11,7 +11,7 @@ const CHAT_API = `/chat`
 
 // ----- CREATE -----
 
-export async function createChannel(name: string, password?: string, mode: string)
+export async function createChannel(name: string, mode: string, password?: string)
   : Promise<Channel> {
   try {
     const user: User = await getMe();
@@ -107,7 +107,7 @@ export async function leaveChannel(userId: number, channelId: number) {
  * @param channelId channel id
  * @returns message object
  */
-export async function createMessage(channel: Channel, content: string): Promise<Message> {
+export async function newMessage(channel: Channel, content: string): Promise<Message> {
 
   try {
     const { name, id } = channel;
@@ -178,7 +178,7 @@ export async function getDMs(senderUsername: string, receiverUsername: string): 
     .join('@');                      // Separate the names with an '@' symbol
     let conv: Channel = await getChannelByName(roomName);
       if (!conv) {
-        conv = await createChannel(roomName, undefined, 'DM'); // Using '' for password for DM type
+        conv = await createChannel(roomName, 'DM');
       }
   } catch (error) {
     throw new Error('Error: cannot establish this personal convo');
