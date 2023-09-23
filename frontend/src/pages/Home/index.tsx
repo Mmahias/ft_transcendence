@@ -1,6 +1,6 @@
 import React from 'react';
 import './styles.css';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink, redirect } from 'react-router-dom';
 import axios from 'axios';
 import { CLIENT_ID, BACK_URL, API_REDIR } from '../../constants/constants'; 
