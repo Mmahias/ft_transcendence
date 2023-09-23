@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator';
@@ -22,4 +22,10 @@ export class UserController {
   async allUsers() {
     return this.userService.getAllUser();
   }
+
+  @Get('logincheck')
+  checkIfLoggedIn(@User('sub') sub: number) {
+    return this.userService.checkIfLoggedIn(sub);
+  }
+  
 }
