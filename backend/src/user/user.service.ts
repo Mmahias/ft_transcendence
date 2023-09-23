@@ -7,7 +7,6 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserDto, UserUpdateDto } from './dto';
-import { PasswordService } from '@app/password/password.service';
 
 @Injectable()
 export class UserService {

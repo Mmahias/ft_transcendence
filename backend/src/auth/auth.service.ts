@@ -1,17 +1,9 @@
-import {
-  BadGatewayException,
-  Injectable,
-  Logger,
-  NotFoundException,
-  UnauthorizedException
-} from '@nestjs/common';
+import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '@app/user/user.service';
-import { PasswordService } from '@app/password/password.service';
 
 @Injectable()
 export class AuthService {

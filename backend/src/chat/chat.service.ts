@@ -2,19 +2,10 @@ import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/com
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { PrismaClient, Prisma, Channel } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { PasswordService } from '@app/password/password.service';
 import { UserService } from '@app/user/user.service';
-import { ChanMode, Message } from '@prisma/client';
-
-// scrypt parameters for password hashing
-const SCRYPT_PARAMS = {
-  N: 16384, // CPU/memory cost parameter. Must be a power of 2.
-  r: 8, // block size parameter
-  p: 1, // parallelization parameter
-  dkLen: 64, // derived key length in bytes
-  maxmem: 0 // maximum memory (in bytes) to use
-};
+import { ChanMode} from '@prisma/client';
 
 const prisma = new PrismaClient();
 
