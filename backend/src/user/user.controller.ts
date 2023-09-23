@@ -1,4 +1,5 @@
-import { Controller, Get, UseGuards, Query, Req } from '@nestjs/common';
+import { Response } from 'express';
+import { Controller, Get, UseGuards, Query, Post, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator';
@@ -24,8 +25,12 @@ export class UserController {
   }
 
   @Get('logincheck')
-  checkIfLoggedIn(@User('sub') sub: number) {
-    return this.userService.checkIfLoggedIn(sub);
+  checkIfLoggedIn(@User('sub') userId: number) {
+    return this.userService.checkIfLoggedIn(userId);
   }
-  
+
+  @Post('logout')
+  logout(@Res() res: Response) {
+      res.clearCookie('jwt');
+  }
 }
