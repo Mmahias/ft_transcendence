@@ -23,7 +23,7 @@ export const Log42: React.FC = () => {
   
   return (
     <div className="button-container">
-      <button className="button-52" onClick={handleButtonClick}>42_Login</button>
+      <button className="button-52" onClick={handleButtonClick}>Login</button>
     </div>
   );
 };
