@@ -2,7 +2,7 @@ import './Navbar.css';
 import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { IsLoggedInContext, SocketContext } from '../../context/contexts';
-import { logout, checkIfLoggedIn } from "../../api/users-api";
+import { logout, checkIfLoggedIn } from "../../api/auth-api";
 import { createSocketConnexion } from '../../sockets/sockets';
 import { Socket } from 'socket.io-client';
 
