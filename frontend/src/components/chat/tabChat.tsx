@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 // import '../../styles/Tab_Chat.css';
 import { ChatStatusContext, SocketContext } from '../../context/contexts';
-import { Channel, Message, User } from '../../api/interfaces';
+import { Channel, Message, User } from '../../api/interfaces-api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { newMessage, getAllMessages, getChannelByName, leaveChannel } from '../../api/chat';
+import { newMessage, getAllMessages, getChannelByName, leaveChannel } from '../../api/chat-api';
 import { OneMessage } from './oneMessage';
 import { TabChatHeader } from './tabChatHeader';
 import toast from 'react-hot-toast';
@@ -24,7 +24,7 @@ function TabChat({ chan, loggedUser }: { chan: Channel, loggedUser: User }) {
   });
   
     // query all channel's messages
-    const { allMessages } = useQuery({
+    const { data: allMessages } = useQuery({
       queryKey: ['messages', chan.id],
       queryFn: () => getAllMessages(chan.id),
       refetchInterval: 100,
@@ -72,7 +72,7 @@ function TabChat({ chan, loggedUser }: { chan: Channel, loggedUser: User }) {
   useEffect(() => {
     if (channel) {
       if (loggedUser && channel.kickedUsers.some((user: User) => user.id === loggedUser.id)) {
-        leaveChannelRequest.mutate([loggedUser, channel.id]);
+        leaveChannelRequest.mutate([loggedUser.id, channel.id]);
         toast(`You were kicked from this channel: (${channel.name})!`, {
           icon: '👏',
         }); 
@@ -80,7 +80,7 @@ function TabChat({ chan, loggedUser }: { chan: Channel, loggedUser: User }) {
         setActiveChan(null);
       }
       if (loggedUser && channel.bannedUsers.some((user: User) => user.id === loggedUser.id)) {
-        leaveChannelRequest.mutate([loggedUser, channel.id]);
+        leaveChannelRequest.mutate([loggedUser.id, channel.id]);
         toast(`You were banned from this channel: (${channel.name})!`, {
           icon: '👏',
         }); 

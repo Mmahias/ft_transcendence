@@ -1,9 +1,9 @@
-import { Channel, User } from "../../api/interfaces";
+import { Channel, User } from "../../api/interfaces-api";
 import React, { useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 // import '../../styles/Tab_Chat.css';
-import { leaveChannel } from "../../api/chat";
-import { getMe } from "../../api/users";
+import { leaveChannel } from "../../api/chat-api";
+import { getMe } from "../../api/users-api";
 import toast from 'react-hot-toast';
 import { ChatStatusContext } from "../../context/contexts";
 // import { ChannelTitle } from "./ChannelTitle";
@@ -17,16 +17,16 @@ const getDate = (channel : Channel) => {
 }
 
 
-export function TabChatHeader({ conv }: { conv: Channel}) {
+export function TabChatHeader({ chan }: { chan: Channel}) {
 
-	const { setActiveTab, setActiveConv } = useContext(ChatStatusContext);
-	const convName: string = (conv.type === 'DM') ? conv.roomName.replace(' ', ' , ').trim() : conv.roomName;
+	const { setActiveTab, setActiveChan } = useContext(ChatStatusContext);
+	const convName: string = (chan.type === 'DM') ? chan.name.replace(' ', ' , ').trim() : chan.name;
 	const queryClient = useQueryClient();
 
 	const {data: user, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: getMe});
 
 	const leaveChannelRequest = useMutation({
-		mutationFn: (user: User) => leaveChannel(user.id, conv.id),
+		mutationFn: (user: User) => leaveChannel(user.id, chan.id),
 		onSuccess: () => { 
 			queryClient.invalidateQueries(['channels']);
 			toast.success(`You left the channel!`) 
@@ -37,7 +37,7 @@ export function TabChatHeader({ conv }: { conv: Channel}) {
 	if (error) {
 		return <div>Error</div>
 	}
-	if (isLoading || !isSuccess || conv === undefined || !conv) {
+	if (isLoading || !isSuccess || chan === undefined || !chan) {
 		return <div>Is Loading...</div>
 	}
 
@@ -46,7 +46,7 @@ export function TabChatHeader({ conv }: { conv: Channel}) {
 		if (user) {
 			leaveChannelRequest.mutate(user);
 			setActiveTab(0);
-			setActiveConv(null);
+			setActiveChan(null);
 		}
 	};
 
@@ -56,9 +56,9 @@ export function TabChatHeader({ conv }: { conv: Channel}) {
 			{/* <ChannelTitle conv={conv} initialName={convName} /> */}
 			<button id="convo__header_leave-btn" onClick={handleClick}>Leave Conversation</button>
 		</div>
-		<p>Channel created on {getDate(conv)}</p>
-		<p>Owner is: {conv?.owner.nickname} </p>
-		{/* <ChannelType channelId={conv.id} loggedUser={user}/> */}
+		<p>Channel created on {getDate(chan)}</p>
+		<p>Owner is: {chan?.owner.nickname} </p>
+		{/* <ChannelType channelId={chan.id} loggedUser={user}/> */}
 		</div>
 	);
 }

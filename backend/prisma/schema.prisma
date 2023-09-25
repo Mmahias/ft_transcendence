@@ -11,16 +11,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// password en ? en attendant de fix la creation de profil pour ceux qui s'auth
+// par 42
 model User {
     // general info
     id        Int      @id @default(autoincrement())
     nickname  String   @unique
-    login_42  String   @unique
+    login_42  String?  @unique
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
-    email     String
-    avatar   String
-    bio            String?
+    email     String?
+    avatar    String?
+    password  String?
+    bio       String?
 
     // friends relations
     friends                User[]          @relation("friendship")

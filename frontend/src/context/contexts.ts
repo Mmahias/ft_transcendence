@@ -1,7 +1,7 @@
 
 import React, { createContext} from 'react';
 import { Socket } from 'socket.io-client';
-import { Channel } from '../api/interfaces';
+import { Channel } from '../api/interfaces-api';
 
 export const IsLoggedInContext = React.createContext<boolean>(false);
 

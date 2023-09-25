@@ -1,10 +1,10 @@
 // import '../../styles/Tab_Chat.css';
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
 import { faGamepad, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { updateUserInChannel } from "../../api/chat";
-import { getMe } from "../../api/users";
-import { Channel, Message } from "../../api/interfaces";
-// import { AdminOptions } from './AdminOptions';
+import { updateUserInChannel } from "../../api/chat-api";
+import { getMe } from "../../api/users-api";
+import { Channel, Message } from "../../api/interfaces-api";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -67,7 +67,7 @@ export function OneMessage({ chan, message, index, myNickname } :
   }
 
   // if it is a message from someone I blocked:
-  if (userMe?.blockList && userMe.blockList.some((user) => user.nickname === message.from.nickname) === true) {
+  if (userMe?.blockedList && userMe.blockedList.some((user) => user.nickname === message.from.nickname) === true) {
     return (
       <div key={index + 2} className='one__msg_role'>
         <div key={index + 1} className='one__msg_header_info'>

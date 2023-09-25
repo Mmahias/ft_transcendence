@@ -1,13 +1,13 @@
-import /*React,*/  { useContext }  from 'react';
+import React,  { useContext }  from 'react';
 // import '../styles/Chat.css';
 // import '../styles/Tab_channels.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesLeft, faAnglesRight} from "@fortawesome/free-solid-svg-icons";
 // import TabChannels from './ChatElements/TabChannels';
 import TabChat from './tabChat';
-// import TabMore from './ChatElements/TabMore';
+import TabMore from './tabMore';
 import { useQuery } from "@tanstack/react-query";
-import { getMe } from '../../api/users';
+import { getMe } from '../../api/users-api';
 import { ChatStatusContext } from '../../context/contexts';
 
 interface Tab {
@@ -18,7 +18,7 @@ interface Tab {
 const Chat = () => {
 	const {data: userMe, status: statusMe } = useQuery({queryKey: ['user'], queryFn: getMe});
 
-	const { activeTab, setActiveTab, activeConv, isExpanded, setIsExpanded } = useContext(ChatStatusContext);
+	const { activeTab, setActiveTab, activeChan, isExpanded, setIsExpanded } = useContext(ChatStatusContext);
 
 	const toggleExpand = () => {
 		setIsExpanded(!isExpanded);
@@ -37,7 +37,7 @@ const Chat = () => {
 	
 	const tabs: Tab[] = [
 				// { label: 'Convs', content: <div><TabChannels/></div> },
-	activeConv ? { label: 'Chat', content: <div><TabChat conv={activeConv} loggedUser={userMe}/></div> } : { label: 'Chat', content: <div id='chat_no-chat'>Join convos to see the chat!</div> },
+	activeChan ? { label: 'Chat', content: <div><TabChat chan={activeChan} loggedUser={userMe}/></div> } : { label: 'Chat', content: <div id='chat_no-chat'>Join convos to see the chat!</div> },
 				{ label: 'More', content: <div><TabMore /></div> },
 	];
 
