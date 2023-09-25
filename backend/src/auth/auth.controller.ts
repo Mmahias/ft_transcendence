@@ -4,6 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Public } from './decorators/public-decorator';
 import AuthDto from './dto/auth.dto';
 import { AuthService } from './auth.service';
+import { User } from '../users/decorator';
+
 
 @Controller('auth')
 export class AuthController {
@@ -33,5 +35,16 @@ export class AuthController {
   @Post('login')
   login(@Body() body: AuthDto, @Res({ passthrough: true }) res: Response) {
     return this.authService.login(body, res);
+  }
+
+  @Get('isloggedin')
+  checkIfLoggedIn(@User('sub') userId: number, @Req() req: Request) {
+    console.log("logincheck cookies = ", (req as any).cookies);
+    return this.authService.checkIfLoggedIn(userId);
+  }
+
+  @Post('logout')
+  logout(@Res() res: Response) {
+      res.clearCookie('jwt');
   }
 }

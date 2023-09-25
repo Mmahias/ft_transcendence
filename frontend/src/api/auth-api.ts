@@ -52,3 +52,19 @@ export async function login(nickname: string, password: string) {
     throw new Error('Invalid credentials');
   }
 }
+
+export async function checkIfLoggedIn(): Promise<boolean> {
+  const response = await api.get<boolean>(`${AUTH_API}/isloggedin`);
+  return response.data;
+}
+
+// ----- DELETE -----
+
+export async function logout(): Promise<void> {
+  try {
+    await api.post(`${AUTH_API}/logout`);
+    // maybe need to clear some cache on client side here ?
+  } catch (error) {
+    console.error('Error logging out:', error);
+  }
+}

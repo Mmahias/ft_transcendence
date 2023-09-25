@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { Controller, Get, UseGuards, Query, Post, Res, Req } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator';
 
@@ -24,14 +24,4 @@ export class UserController {
     return this.userService.getAllUser();
   }
 
-  @Get('logincheck')
-  checkIfLoggedIn(@User('sub') userId: number, @Req() req: Request) {
-    console.log("logincheck cookies = ", (req as any).cookies);
-    return this.userService.checkIfLoggedIn(userId);
-  }
-
-  @Post('logout')
-  logout(@Res() res: Response) {
-      res.clearCookie('jwt');
-  }
 }

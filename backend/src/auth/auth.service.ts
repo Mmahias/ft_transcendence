@@ -108,7 +108,21 @@ export class AuthService {
         signed: true,
         sameSite: 'lax',
     });
-
     return true;
+  }
+
+  async checkIfLoggedIn(userId: number | undefined): Promise<boolean> {
+    if (userId === undefined) {
+      return false;
+    } else {
+      const ret: boolean = await prisma.user.findUnique({
+        where: { id: userId }
+      })
+        .then(user => {
+          if (user) { return true; }
+          return false;
+        }).catch(() => { return false });
+      return ret;
+    }
   }
 }
