@@ -4,6 +4,9 @@ FROM node:18
 # Set the working directory inside the container
 WORKDIR /app
 
+# Install Prisma globally
+RUN npm install -g prisma
+
 # Copy the application to the container
 COPY . .
 

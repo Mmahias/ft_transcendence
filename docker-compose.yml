@@ -2,21 +2,17 @@ version: '3.8'
 
 services:
   db:
-    image: postgres
-    restart: always
-    env_file:
-      - .env
-    container_name: postgres
+    image: postgres:15.4
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+      POSTGRES_DB: my_database
     volumes:
+      - ./database:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
-    networks:
-      - nestjs-network
-        #    healthcheck:
-        #test: nc -z localhost 3306
-        #interval: 2s
-        #retries: 3
+      - 5432:5432
 
   back:
     container_name: nestjs-back
@@ -29,7 +25,6 @@ services:
       - 3030:3030
     depends_on:
       - db
-        #        condition: service_healthy
     volumes:
       - ./backend:/app
     networks:
@@ -41,7 +36,7 @@ services:
       context: ./frontend
     image: reactjs:test
     ports:
-      - 3000:3000
+      - 3001:3001
     depends_on:
       - back
     volumes:

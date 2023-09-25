@@ -6,8 +6,6 @@ import { Oauth42Strategy } from './strategies';
 import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { PasswordModule } from '@app/password/password.module';
-import { LocalStrategy } from '@app/auth/strategies/local.strategy';
 
 @Module({
   imports: [HttpModule, UserModule, JwtModule, PasswordModule],

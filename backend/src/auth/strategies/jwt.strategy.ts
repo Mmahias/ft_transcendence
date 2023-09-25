@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '@app/user/user.service';
 
@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private userService: UserService
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: cookieExtractor, // Use the custom extractor
       secretOrKey: config.get('JWT_SECRET')
     });
   }
@@ -22,4 +22,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new ForbiddenException();
     });
   }
+}
+
+function cookieExtractor(req: any): null | string {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies['jwt'];
+  }
+  console.log(`cookieExtractor: ${token}`)
+  return token;
 }
