@@ -13,6 +13,7 @@ import Request from './pages/User/Request';
 import Login from './pages/Login/Login';
 import Edit from './pages/User/edit';
 import Error from './pages/Error/Error';
+import SignUp from './pages/Signup/Signup';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 
@@ -26,6 +27,7 @@ const App: React.FC = () => {
                         <Routes>
                             <Route path="/" element={<Home/>} />
                             <Route path="/login" element={<Login />}/>
+                            <Route path="/signUp" element={<SignUp />}/>
                             <Route path="/game" element={<Game />} />
                             <Route path="/user/profile" element={<Profile />} />
                             <Route path="/user/history" element={<History />} />

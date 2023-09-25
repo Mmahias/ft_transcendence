@@ -1,31 +1,8 @@
-
-/* Style général de la page */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Style pour le contenu de la page */
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 100px;
-  }
   
   /* Style pour le titre */
   .request-p {
     font-size: 2em;
     margin-bottom: 20px;
-  }
-  
-  /* Style pour la liste des demandes d'amis */
-  .team {
-    list-style-type: none;
-    padding: 0;
-    margin-top: 150px;
   }
   
   /* Style pour chaque demande d'ami */
@@ -52,17 +29,50 @@ body {
   }
   
   /* Style pour les boutons */
-  .button-32 {
-    background-color: #28a745;
-    color: #fff;
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
+  .button-32-A {
+    margin-top: 10px;
+    flex: 1; /* Ajoutez ceci pour que les boutons occupent un espace égal dans le conteneur */
+    margin-right: 30px; /* Espacement entre les boutons */
+    font-family: 'Bebas Neue', cursive;;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: rgb(32, 158, 27) ;
     cursor: pointer;
+    border: 3px solid;
+    padding: 0.25em 0.5em;
+    box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+
+  .button-32-R {
+    margin-top: 10px;
+    flex: 1; /* Ajoutez ceci pour que les boutons occupent un espace égal dans le conteneur */
+    margin-right: 30px; /* Espacement entre les boutons */
+    font-family: 'Bebas Neue', cursive;;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: rgb(184, 35, 35) ;
+    cursor: pointer;
+    border: 3px solid;
+    padding: 0.25em 0.5em;
+    box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
   }
   
-  .button-32:hover {
-    background-color: #218838;
+  .button-32-A:hover {
+    background-color: #cae4d0;
   }
   
+  .button-32-R:hover {
+    background-color: #f5d0c4;
+  }
