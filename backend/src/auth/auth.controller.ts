@@ -1,51 +1,39 @@
-
-import { Response, Request } from 'express';
-import { Controller, Get, Logger, Req, UseGuards, Post, Body, Res } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards, Post, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Public } from './decorators/public-decorator';
-import AuthDto from './dto/auth.dto';
 import { AuthService } from './auth.service';
-import { User } from '../users/decorator';
-
+import { RegisterDto } from '@app/auth/dto';
+import { UserService } from '@app/user/users.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService
+  ) {}
 
-  private readonly logger = new Logger(AuthController.name);
   @UseGuards(AuthGuard('oauth_42'))
-  @Get('')
+  @Get('42')
   oauthLogin() {
     return;
   }
 
   @UseGuards(AuthGuard('oauth_42'))
-  @Get('redirect')
+  @Get('42/redirect')
   oauthRedirect(@Req() req) {
     // Return the jwt created
     return req.user;
   }
 
-  @Public()
-  @Post('signup')
-  signup(@Body() body: AuthDto, @Res({ passthrough: true }) res: Response) {
-    return this.authService.signup(body, res);
-  }
-
-  @Public()
+  @UseGuards(AuthGuard('local'))
   @Post('login')
-  login(@Body() body: AuthDto, @Res({ passthrough: true }) res: Response) {
-    return this.authService.login(body, res);
+  async login(@Req() req) {
+    // Return the jwt created
+    return req.user;
   }
 
-  @Get('isloggedin')
-  checkIfLoggedIn(@User('sub') userId: number, @Req() req: Request) {
-    console.log("logincheck cookies = ", (req as any).cookies);
-    return this.authService.checkIfLoggedIn(userId);
-  }
-
-  @Post('logout')
-  logout(@Res() res: Response) {
-      res.clearCookie('jwt');
+  @Post('signup')
+  async signup(@Body() body: RegisterDto) {
+    await this.userService.createUser(body.username, body.password, body.nickname);
+    return;
   }
 }
