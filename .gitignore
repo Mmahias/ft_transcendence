@@ -2,8 +2,11 @@
 .DS_Store
 **/node_modules
 **/dist
-**/*.vscode
 
 # lock files
 **/yarn.lock
 **/package-lock.json
+
+#vscode
+**/*.vscode
+**/.nfs*
