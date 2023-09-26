@@ -13,7 +13,6 @@ import Profile from './pages/User/profile';
 import History from './pages/User/history';
 import Friends from './pages/User/friends';
 import Request from './pages/User/Request';
-import Login from './pages/Login/Login';
 import Edit from './pages/User/edit';
 import Error from './pages/Error/Error';
 import SignUp from './pages/Signup/Signup';

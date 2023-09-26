@@ -6,7 +6,6 @@ WORKDIR /app
 # Install esbuild for Linux (for cross-platforms runs)
 RUN if [ "$(uname -m)" = "aarch64" ]; then npm install @esbuild/linux-arm64; else npm install @esbuild/linux-x64; fi
 
-
 # Copy only the essential files
 COPY package.json .
 

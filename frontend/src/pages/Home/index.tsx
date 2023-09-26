@@ -3,7 +3,7 @@ import './styles.css';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { CLIENT_ID, BACK_URL, API_REDIR } from '../../constants/constants'; 
-
+import { testBackendEndpoint } from '../../api/test-api';
 
 export const Log42: React.FC = () => {
   const log = {
@@ -36,18 +36,13 @@ const callTestEndpoint = async () => {
 };
 
 const Home: React.FC = () => {
-    return (
-      <div className="home-container">
-        <p>
-          <h1> <span> FT_TRANSCENDENCE </span> </h1>
-          <div className="button-container">
-            <RouterLink to='/SignUp'><button className="button-52">SignUp</button></RouterLink>
-            <RouterLink to='/Login'><button className="button-52">Login</button></RouterLink>
-          </div>
-        </p>
-
-      </div>
-    );
+  return (
+    <div className="home-container">
+        <h1>FT_TRANSCENDENCE</h1>
+        <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
+        <Log42 />
+    </div>
+  );
 }
 
 export default Home;

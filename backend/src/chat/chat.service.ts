@@ -4,7 +4,7 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { PrismaClient, Prisma } from '@prisma/client';
 import { PasswordService } from '@app/password/password.service';
-import { UserService } from '@app/user/user.service';
+import { UserService } from '@app/users/users.service';
 import { ChanMode } from '@prisma/client';
 
 const prisma = new PrismaClient();

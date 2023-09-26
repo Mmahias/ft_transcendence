@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { UserService } from './users.service';
 import {
   Controller,
   Get,
@@ -12,7 +13,6 @@ import {
   Next,
   Param
 } from '@nestjs/common';
-import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -69,4 +69,5 @@ export class UserController {
       }
     });
   }
+
 }

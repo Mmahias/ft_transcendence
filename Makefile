@@ -28,4 +28,8 @@ tail:
 logs:
 	$(DC) logs
 
+reset: fclean 
+reset: ./reset.sh
+reset: all
+
 .PHONY: all up logs down fclean re tail

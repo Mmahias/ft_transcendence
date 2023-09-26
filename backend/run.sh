@@ -1,6 +1,6 @@
 !#/bin/sh
 
-sleep 5
+sleep 2
 
 npx prisma migrate dev
 
