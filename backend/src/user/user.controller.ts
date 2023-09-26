@@ -1,22 +1,22 @@
+import { Response } from 'express';
 import {
   Controller,
   Get,
+  UseGuards,
+  Query,
   Post,
+  Res,
+  Logger,
   UseInterceptors,
   UploadedFile,
-  Res,
-  Query,
-  UseGuards,
   Next,
-  Logger,
   Param
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '@app/user/validator/file.validator';
-import { Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
+import { multerOptions } from '@app/user/validator';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')

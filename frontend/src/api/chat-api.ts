@@ -1,6 +1,6 @@
-import { api, BASE_URL } from './config';
-import { getMe, getUserByNickname } from './users';
-import { Channel, Message, User } from './interfaces';
+import { api } from './config-api';
+import { getMe, getUserByNickname } from './users-api';
+import { Channel, Message, User } from './interfaces-api';
 
 const CHAT_API = `/chat`
 
@@ -11,7 +11,7 @@ const CHAT_API = `/chat`
 
 // ----- CREATE -----
 
-export async function createChannel(name: string, password?: string, mode: string)
+export async function createChannel(name: string, mode: string, password?: string)
   : Promise<Channel> {
   try {
     const user: User = await getMe();
@@ -88,6 +88,27 @@ export async function updateUserInChannel(userId: number, channelId: number, use
   }
 }
 
+export async function updateMeInChannel(channelId: number, usergroup: string, action: string) {
+  try {
+    const user = await getMe();
+    const response = await api.post(`${CHAT_API}/channel/${channelId}/users`,
+      {
+        userId: user.id,
+        usergroup,
+        action,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error('Error: cannot join this channel');
+  }
+}
+
 export async function leaveChannel(userId: number, channelId: number) {
   try {
     const response = await api.delete(`${CHAT_API}/channel/${channelId}/users`,
@@ -107,7 +128,7 @@ export async function leaveChannel(userId: number, channelId: number) {
  * @param channelId channel id
  * @returns message object
  */
-export async function createMessage(channel: Channel, content: string): Promise<Message> {
+export async function newMessage(channel: Channel, content: string): Promise<Message> {
 
   try {
     const { name, id } = channel;
@@ -173,14 +194,16 @@ export async function getDMs(senderUsername: string, receiverUsername: string): 
     }
 
     const roomName = [senderUsername, receiverUsername]
-    .map(name => name.toLowerCase()) // Convert to lowercase to ensure case-insensitivity
-    .sort()                          // Sort the names alphabetically
-    .join('@');                      // Separate the names with an '@' symbol
+      .map(name => name.toLowerCase()) // Convert to lowercase to ensure case-insensitivity
+      .sort()                          // Sort the names alphabetically
+      .join('@');                      // Separate the names with an '@' symbol
     let conv: Channel = await getChannelByName(roomName);
-      if (!conv) {
-        conv = await createChannel(roomName, undefined, 'DM'); // Using '' for password for DM type
-      }
+    if (!conv) {
+      conv = await createChannel(roomName, 'DM');
+    }
+    await updateUserInChannel(sender.id, conv.id, 'joinedUsers', 'connect');
+    return conv;
   } catch (error) {
-    throw new Error('Error: cannot establish this personal convo');
+    throw new Error('Error: cannot establish the DMs');
   }
 }

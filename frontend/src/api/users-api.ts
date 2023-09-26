@@ -1,5 +1,5 @@
-import { api, BASE_URL } from './config';
-import { User } from './interfaces';
+import { api, BASE_URL } from './config-api';
+import { User } from './interfaces-api';
 
 const USERS_API = `/users`
 

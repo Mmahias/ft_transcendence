@@ -1,38 +1,89 @@
-// Navbar.tsx
-import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import './Navbar.css';
+import React, { useState, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { IsLoggedInContext, SocketContext } from '../../context/contexts';
+import { logout, checkIfLoggedIn } from "../../api/auth-api";
+import { createSocketConnexion } from '../../sockets/sockets';
+import { Socket } from 'socket.io-client';
+
 import logo from '../../assets/school_42.jpeg';
-import './styles.css';
+// import Avatar from './Avatar';
+// import LoginBtn from './LoginBtn';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-// Votre import ...
-
-function Navbar() {
-  return (
-    <nav className="navbar-container">
-      <img className="logo" src={logo} alt="App Logo" />
-      <div className="links-container">
-          <RouterLink className="router-link" to="/">HOME</RouterLink>
-          <RouterLink className="router-link" to="/game">GAME</RouterLink>
-          <RouterLink className="router-link" to="/chat">CHAT</RouterLink>
-      </div>
-
-      {/* Menu déroulant */}
-      <div className="dropdown">
-        <div className="dropbtn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-list" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-          </svg>
-        </div>
-        <div className="dropdown-content">
-            <RouterLink className="router-link" to="/user/profile">PROFILE</RouterLink>
-            <RouterLink className="router-link" to="/">LOGOUT</RouterLink>
-        </div>
-      </div>
-    </nav>
-  );
+interface NavbarProps {
+  theme: string;
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  setSocket: React.Dispatch<React.SetStateAction<Socket | null>>;
 }
 
+const Navbar: React.FC<NavbarProps> = (props) => {
+  const [sidebar, setSidebar] = useState<boolean>(false);
+  const isLoggedIn = useContext(IsLoggedInContext);
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userStatus = await checkIfLoggedIn();
+      props.setLoggedIn(userStatus);
+      if (isLoggedIn && !socket) {
+        const newSocket = createSocketConnexion();
+        props.setSocket(newSocket);
+      }
+    };
+
+    fetchData();
+  }, [props, isLoggedIn, socket]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      props.setLoggedIn(false);
+      if (socket) {
+        socket.disconnect();
+      }
+    } catch (error) {
+      console.log("logout error");
+    }
+  };
+
+  const showSidebar = () => setSidebar(!sidebar);
+
+  return (
+    <>
+      <nav className="navbar-container">
+        <img className="logo" src={logo} alt="App Logo" />
+        <Link to="/" className="router-link">HOME</Link>
+        <Link to="/game" className="router-link">GAME</Link>
+        <Link to="/chat" className="router-link">CHAT</Link>
+        <Link to="/login" className="router-link">LOGIN</Link>
+
+        { isLoggedIn ? (
+          <div className="nav-avatar">
+            <button onClick={handleLogout}>
+              <FontAwesomeIcon className='nav-logout-icon' icon={faRightFromBracket} />
+            </button>
+          </div>
+        ) : (
+          <div className="nav-avatar">
+            {/* <LoginBtn /> */}
+          </div>
+        ) }
+
+        {/* Dropdown section */}
+        <div className="dropdown">
+          <div className="dropbtn">
+            <FontAwesomeIcon icon={faRightFromBracket} />
+          </div>
+          <div className="dropdown-content">
+            <Link to="/user/profile" className="router-link">PROFILE</Link>
+            <Link to="/" onClick={handleLogout} className="router-link">LOGOUT</Link>
+          </div>
+        </div>
+      </nav>
+    </>
+  );
+};
+
 export default Navbar;
-
-
-
