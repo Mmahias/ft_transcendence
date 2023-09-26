@@ -5,11 +5,11 @@ services:
     image: postgres:15.4
     container_name: postgres-db
     environment:
-<<<<<<< HEAD
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: my_password
       POSTGRES_DB: transcendence
     volumes:
+      # Cross-platform(m1 mac): uncomment following line
       # - ./database:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -19,16 +19,6 @@ services:
     image: adminer
     ports:
       - 8080:8080
-=======
-      POSTGRES_USER: my_user
-      POSTGRES_PASSWORD: my_password
-      POSTGRES_DB: my_database
-    volumes:
-      - ./database:/docker-entrypoint-initdb.d
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
->>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
 
   back:
     container_name: nestjs-back
