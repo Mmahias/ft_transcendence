@@ -29,10 +29,7 @@
     "react": "^18.2.0",
     "react-bootstrap-icons": "^1.10.3",
     "react-dom": "^18.2.0",
-<<<<<<< HEAD
-=======
     "react-hook-form": "^7.46.2",
->>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
     "react-query": "^3.39.3",

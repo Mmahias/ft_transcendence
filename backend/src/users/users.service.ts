@@ -131,7 +131,6 @@ export class UserService {
       });
   }
 
-<<<<<<< HEAD:backend/src/users/users.service.ts
   async checkIfLoggedIn(userId: number | undefined): Promise<boolean> {
     if (userId === undefined) {
       return false;
@@ -147,7 +146,6 @@ export class UserService {
     }
   }
 
-=======
   async getAvatarFilenameById(userID: number) {
     return this.prisma.user
       .findUnique({
@@ -192,5 +190,4 @@ export class UserService {
       data: { avatarFilename: filename }
     });
   }
->>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea:backend/src/user/user.service.ts
 }

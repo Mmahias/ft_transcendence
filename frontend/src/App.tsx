@@ -13,13 +13,9 @@ import Profile from './pages/User/profile';
 import History from './pages/User/history';
 import Friends from './pages/User/friends';
 import Request from './pages/User/Request';
-import Login from './pages/Login/Login';
 import Edit from './pages/User/edit';
 import Error from './pages/Error/Error';
-<<<<<<< HEAD
-=======
 import SignUp from './pages/Signup/Signup';
->>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
 import { Socket } from 'socket.io-client';
 import { IsLoggedInContext, SocketContext, ChatStatusContext } from './context/contexts';
 import { Channel } from './api/interfaces-api';

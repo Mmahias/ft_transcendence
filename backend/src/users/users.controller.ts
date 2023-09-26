@@ -1,8 +1,5 @@
 import { Response } from 'express';
-<<<<<<< HEAD:backend/src/users/users.controller.ts
-import { Controller, Get, UseGuards, Query, Post, Res, Req } from '@nestjs/common';
 import { UserService } from './users.service';
-=======
 import {
   Controller,
   Get,
@@ -16,8 +13,6 @@ import {
   Next,
   Param
 } from '@nestjs/common';
-import { UserService } from './user.service';
->>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea:backend/src/user/user.controller.ts
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
