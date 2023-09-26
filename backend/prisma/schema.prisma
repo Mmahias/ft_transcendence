@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"] // Use for docker mac M1
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -11,6 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// TO FIX
 // password en ? en attendant de fix la creation de profil pour ceux qui s'auth
 // par 42
 model User {

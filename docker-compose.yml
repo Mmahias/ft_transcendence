@@ -5,14 +5,19 @@ services:
     image: postgres:15.4
     container_name: postgres-db
     environment:
-      POSTGRES_USER: my_user
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: my_password
-      POSTGRES_DB: my_database
+      POSTGRES_DB: transcendence
     volumes:
-      - ./database:/docker-entrypoint-initdb.d
+      # - ./database:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
 
   back:
     container_name: nestjs-back
