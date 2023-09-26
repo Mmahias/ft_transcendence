@@ -1,12 +1,18 @@
-import { BadGatewayException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '@prisma/client';
+import { UserService } from '@app/user/user.service';
+import { PasswordService } from '@app/password/password.service';
 
-const prisma = new PrismaClient();
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -14,7 +20,9 @@ export class AuthService {
   constructor(
     private readonly httpService: HttpService,
     private readonly config: ConfigService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly passwordService: PasswordService
   ) {}
 
   async get42Login(accessToken: string): Promise<string> {
@@ -48,7 +56,6 @@ export class AuthService {
     });
     return { access_token: token };
   }
-
 
   async validateUser(username: string, password: string) {
     const user = await this.userService.getUserByUsername(username).catch((error) => {

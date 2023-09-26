@@ -1,14 +1,12 @@
-import { Module, MiddlewareConsumer, RequestMethod, Injectable } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserModule } from './users/users.module';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { UserModule } from '@app/user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { GameGateway } from './game/game.gateway';
-import { HttpsMiddleware } from './https/https-middleware';
 import { TestModule } from './test/test.module';
-import { LoggerMiddleware } from './middlewares/logger-middleware';
-import cookieParser from 'cookie-parser';
+import { FriendModule } from '@app/friend/friend.module';
 
 @Module({
   imports: [

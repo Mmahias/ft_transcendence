@@ -1,7 +1,7 @@
 import { PrismaService } from '../../prisma/prisma.service';
 import { Test } from '@nestjs/testing';
-import { UserModule } from '../users.module';
-import { UserService } from '../users.service';
+import { UserModule } from '../user.module';
+import { UserService } from '../user.service';
 import { User } from '@prisma/client';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { UserDto, UserUpdateDto } from '../dto';
