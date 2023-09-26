@@ -36,6 +36,7 @@ const callTestEndpoint = async () => {
 };
 
 const Home: React.FC = () => {
+<<<<<<< HEAD
   return (
     <div className="home-container">
         <h1>FT_TRANSCENDENCE</h1>
@@ -43,6 +44,20 @@ const Home: React.FC = () => {
         <Log42 />
     </div>
   );
+=======
+    return (
+      <div className="home-container">
+        <p>
+          <h1> <span> FT_TRANSCENDENCE </span> </h1>
+          <div className="button-container">
+            <RouterLink to='/SignUp'><button className="button-52">SignUp</button></RouterLink>
+            <RouterLink to='/Login'><button className="button-52">Login</button></RouterLink>
+          </div>
+        </p>
+
+      </div>
+    );
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
 }
 
 export default Home;

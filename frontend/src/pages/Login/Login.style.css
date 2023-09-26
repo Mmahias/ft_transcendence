@@ -4,31 +4,44 @@
   --background-color: rgb(252, 245, 245);
 }
 
-.home-container {
+.login-container {
   display: flex;
-  flex-direction: column; /* Changez de row à column pour les boutons en dessous du h1 */
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 100vh;
+  justify-content: center;
+  margin-top: 0;
 }
 
-h1 {
+.login-container h1 {
   display: flex;
   align-items: center;
-  justify-content: center;}
+  justify-content: center;
+}
 
-p {
-  margin: 0;
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-form input {
+  margin-bottom: 10px; /* Vous pouvez ajuster cette valeur selon votre préférence */
+}
+
+.login-form button {
+  margin-top: 10px; /* Vous pouvez ajuster cette valeur selon votre préférence */
+}
+
+
+h1 {
+  font-size: 3em;
 }
 
 span {
   font-family: 'Bebas Neue', cursive;
   color: black;
-  font-size: 2em; /* Taille de police réduite pour les écrans plus petits */
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  font-size: 2em;
+  position: relative;
   background-image: linear-gradient(gold, gold);
   background-size: 100% 10px;
   background-repeat: no-repeat;
@@ -43,21 +56,23 @@ span:hover {
 }
 
 
-/* Média query pour les écrans plus petits */
-@media screen and (max-width: 768px) {
-  span {
-      font-size: 1.5em; /* Ajustez la taille de la police pour les écrans plus petits */
-  }
+.login-form label {
+  font-weight: bold;
+  font-size: 25px;
 }
 
-
-/* CSS */
+.login-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
 
 .button-container {
   display: flex;
-  justify-content: center; /* Centrez les boutons horizontalement */
-  gap: 20px; /* Ajoutez de l'espace entre les boutons (vous pouvez ajuster la valeur selon vos besoins) */
-  flex-wrap: wrap; /* Permet aux boutons de passer à la ligne lorsque l'espace est insuffisant */
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .button-52 {
@@ -73,7 +88,6 @@ span:hover {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  /*margin-top: 200px;*/
 }
 
 .button-52:after {
@@ -93,8 +107,8 @@ span:hover {
   left: 0px;
 }
 
-@media (min-width: 768px) {
-  .button-52 {
-    padding: 13px 50px 13px;
+@media (max-width: 768px) {
+  span {
+    font-size: 1.5em;
   }
 }

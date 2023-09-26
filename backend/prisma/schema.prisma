@@ -26,24 +26,24 @@ model User {
     password  String?
     bio       String?
 
-    // friends relations
-    friends                User[]          @relation("friendship")
-    friendedBy             User[]          @relation("friendship")
-    friendsRequestSent     FriendRequest[] @relation("sentRequests")
-    friendsRequestReceived FriendRequest[] @relation("receivedRequests")
+  // friends relations
+  friends                User[]          @relation("friendship")
+  friendedBy             User[]          @relation("friendship")
+  friendsRequestSent     FriendRequest[] @relation("sentRequests")
+  friendsRequestReceived FriendRequest[] @relation("receivedRequests")
 
-    // channels relations
-    ownerChans      Channel[] @relation("owner") // channels that the user owns
-    adminChans      Channel[] @relation("admins") // channels that the user can manage
-    bannedChans     Channel[] @relation("banned") // channels that the user is banned from
-    joinedChans     Channel[] @relation("joined") // channels that the user joined
-    kickedFromChans Channel[] @relation("kicked") // channels that the user is banned from
-    mutedFromChans  Channel[] @relation("muted") // channels that the user is muted in
+  // channels relations
+  ownerChans      Channel[] @relation("owner") // channels that the user owns
+  adminChans      Channel[] @relation("admins") // channels that the user can manage
+  bannedChans     Channel[] @relation("banned") // channels that the user is banned from
+  joinedChans     Channel[] @relation("joined") // channels that the user joined
+  kickedFromChans Channel[] @relation("kicked") // channels that the user is banned from
+  mutedFromChans  Channel[] @relation("muted") // channels that the user is muted in
 
-    // messages relations
-    sentMessages    Message[] @relation("messages") // messages that the user sent
+  // messages relations
+  sentMessages Message[] @relation("messages") // messages that the user sent
 
-    @@map("users")
+  @@map("users")
 }
 
 model FriendRequest {
@@ -78,7 +78,7 @@ model Message {
   date      DateTime @default(now())
   from      User     @relation(fields: [fromId], references: [id], name: "messages")
   fromId    Int
-  to        String   // channel name OR username if DM
+  to        String // channel name OR username if DM
   content   String
   channel   Channel  @relation(fields: [channelId], references: [id], name: "messages")
   channelId Int

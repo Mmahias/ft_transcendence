@@ -75,6 +75,7 @@ const Profile: React.FC = () => {
               <RouterLink to='/user/history'><button className="button-32">History</button></RouterLink>
               <RouterLink to='/game'><button className="button-32">Play Game</button></RouterLink>
               <RouterLink to='/user/friends'><button className="button-32">Friends</button></RouterLink>
+              <RouterLink to='/user/request'><button className="button-32">Request</button></RouterLink>
             </div>
           </div>
           <div className="toggle-container">

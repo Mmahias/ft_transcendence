@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 import { PasswordService } from '@app/password/password.service';
+import { UserService } from '@app/users/users.service';
 import AuthDto from './dto/auth.dto';
 
 const prisma = new PrismaClient();
@@ -17,12 +18,13 @@ export class AuthService {
     private readonly httpService: HttpService,
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
-    private readonly passwordService: PasswordService,
-    ) {}
+    private readonly userService: UserService,
+    private readonly passwordService: PasswordService
+  ) {}
 
   private readonly logger = new Logger(AuthService.name);
 
-  async get42Login(accessToken: string) {
+  async get42Login(accessToken: string): Promise<string> {
     const axiosResponse = await firstValueFrom(
       this.httpService
         .get('https://api.intra.42.fr/v2/me', {
@@ -38,19 +40,20 @@ export class AuthService {
         )
     );
 
-    const { login, email } = axiosResponse.data;
-    return { login, email };
+    const { login } = axiosResponse.data;
+    return login;
   }
 
   async signToken(userId: number) {
     const payload = { sub: userId };
     const secret = this.config.get('JWT_SECRET');
     const token = await this.jwtService.signAsync(payload, {
-      expiresIn: '60m',
+      expiresIn: '24h',
       secret: secret
     });
     return { access_token: token };
   }
+
 
   async signup(body: AuthDto, @Res({ passthrough: true }) res: Response) {
     try {

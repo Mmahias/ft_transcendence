@@ -8,6 +8,6 @@ import { UserModule } from '@app/users/users.module';
   imports: [PasswordModule, UserModule],
   providers: [ChatService],
   controllers: [ChatController],
-  exports: [ChatService],
+  exports: [ChatService]
 })
 export class ChatModule {}

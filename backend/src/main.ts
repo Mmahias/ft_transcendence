@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+<<<<<<< HEAD
 
   app.setGlobalPrefix('api');
   // app.enableCors({
@@ -10,9 +12,20 @@ async function bootstrap() {
   //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   //   credentials: true,
   // });
+=======
+  app.useGlobalPipes(new ValidationPipe());
+
+  app.setGlobalPrefix('api');
+  app.enableCors({
+    origin: 'http://localhost:3000', // replace with your front-end domain/port
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
   await app.listen(3030);
   console.log('Server running on http://localhost:3030');
 }
+
 bootstrap();
 
 

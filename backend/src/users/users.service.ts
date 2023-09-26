@@ -7,11 +7,15 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserDto, UserUpdateDto } from './dto';
+import { PasswordService } from '@app/password/password.service';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private passwordService: PasswordService
+  ) {}
 
   async getAllUser() {
     return this.prisma.user.findMany();
@@ -63,43 +67,38 @@ export class UserService {
       });
   }
 
-  async getUserByLogin42(login: string) {
+  async getUserByUsername(username: string) {
     return this.prisma.user
       .findUniqueOrThrow({
         where: {
-          login_42: login
+          username
         }
-      })
-      .then((user) => {
-        const userDto: UserDto = {
-          id: user.id,
-          nickname: user.nickname
-        };
-        return userDto;
       })
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
-          this.logger.log(`Login [${login}] is not found`);
-          throw new NotFoundException(`Login [${login}] is not found`);
+          const error = `Username [${username}] is not found`;
+          this.logger.log(error);
+          throw new NotFoundException(error);
         }
         throw error;
       });
   }
 
-  async createUser(login: string, email: string) {
+  async createUser(username: string, password: string, nickname?: string) {
+    const hashPassword = await this.passwordService.hashPassword(password);
+
     return this.prisma.user
       .create({
         data: {
-          login_42: login,
-          nickname: login,
-          email: email,
-          avatar: 'default_path_avatar'
+          username,
+          password: hashPassword,
+          nickname: nickname || username
         }
       })
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
           if (error.code === 'P2002') {
-            throw new ForbiddenException(`Login [${login}] is already taken`);
+            throw new ForbiddenException(`Username [${username}] is already taken`);
           }
         }
         throw error;
@@ -132,6 +131,7 @@ export class UserService {
       });
   }
 
+<<<<<<< HEAD:backend/src/users/users.service.ts
   async checkIfLoggedIn(userId: number | undefined): Promise<boolean> {
     if (userId === undefined) {
       return false;
@@ -147,4 +147,50 @@ export class UserService {
     }
   }
 
+=======
+  async getAvatarFilenameById(userID: number) {
+    return this.prisma.user
+      .findUnique({
+        where: {
+          id: userID
+        },
+        select: {
+          avatarFilename: true
+        }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`UserId [${userID}] is not found`);
+          throw new NotFoundException(`UserId [${userID}] is not found`);
+        }
+        throw error;
+      });
+  }
+
+  async getAvatarFilenameByNickname(nickname: string) {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: {
+          nickname
+        },
+        select: {
+          avatarFilename: true
+        }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`Nickname [${nickname}] is not found`);
+          throw new NotFoundException(`Nickname [${nickname}] is not found`);
+        }
+        throw error;
+      });
+  }
+
+  async updateUserAvatarFilename(userId: number, filename: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarFilename: filename }
+    });
+  }
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea:backend/src/user/user.service.ts
 }

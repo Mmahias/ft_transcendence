@@ -2,7 +2,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-oauth2';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth.service';
+<<<<<<< HEAD
 import { UserService } from '../../users/users.service';
+=======
+import { UserService } from '@app/user/user.service';
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
 import {
   Injectable,
   Logger,
@@ -35,22 +39,19 @@ export class Oauth42Strategy extends PassportStrategy(Strategy, 'oauth_42') {
   ) {
     try {
       // call 42 api to retrieve 42 login
-      const userAuthenticated = await this.authService.get42Login(accessToken);
-      if (!userAuthenticated.login || !userAuthenticated.email) {
+      const login = await this.authService.get42Login(accessToken);
+      if (!login) {
         return done(null, false);
       }
 
       let user;
       // Check if the user is saved in db otherwise create it
       try {
-        user = await this.userService.getUserByLogin42(userAuthenticated.login);
+        user = await this.userService.getUserByUsername(login);
       } catch (error) {
         if (error instanceof NotFoundException) {
           // Create a new user in DB
-          user = await this.userService.createUser(
-            userAuthenticated.login,
-            userAuthenticated.email
-          );
+          user = await this.userService.createUser(login, accessToken);
         } else {
           this.logger.error(error.message);
           return done(new UnauthorizedException(), false);

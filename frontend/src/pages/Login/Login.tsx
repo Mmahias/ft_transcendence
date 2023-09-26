@@ -16,10 +16,17 @@ import { signUp, login } from "../../api/auth-api";
 // import { createSocketConnexion } from '../sockets/sockets';
 import { Socket } from 'socket.io-client';
 
+<<<<<<< HEAD
 export default function Login({ setLoggedIn, setSocket }: { 
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
   setSocket: React.Dispatch<React.SetStateAction<Socket | null>> }) {
   
+=======
+export default function Login({ setLoggedIn, setSocket }: {
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
+  setSocket: React.Dispatch<React.SetStateAction<Socket | null>> }) {
+
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
   const [nickname, setNickname] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -28,7 +35,11 @@ export default function Login({ setLoggedIn, setSocket }: {
 
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
     try {
       await signUp(nickname, password);
       setLoggedIn(true);
@@ -47,7 +58,11 @@ export default function Login({ setLoggedIn, setSocket }: {
 
   const handleLogin = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
     try {
       await login(nickname, password);
       setLoggedIn(true);
@@ -76,7 +91,11 @@ export default function Login({ setLoggedIn, setSocket }: {
             placeholder="username"
             id="username"
           />
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
           <LoginLabel htmlFor="password">Password</LoginLabel>
           <LoginInput
             onChange={(event) => { setPassword(event.target.value) }}
@@ -84,19 +103,33 @@ export default function Login({ setLoggedIn, setSocket }: {
             placeholder="Password"
             id="password"
           />
+<<<<<<< HEAD
   
           {successMsg && 
+=======
+
+          {successMsg &&
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
             <AlertSuccess>
               <h6>{successMsg}</h6>
             </AlertSuccess>
           }
+<<<<<<< HEAD
   
           {errorMsg && 
+=======
+
+          {errorMsg &&
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
             <AlertError>
               <h6>{errorMsg}</h6>
             </AlertError>
           }
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> b5cbb09eba67d2b70242c9d02e21c07755051dea
           <SocialWrapper>
             <SocialButton className="go">
               <a href={import.meta.env.VITE_URL_42}>Log with 42</a>
