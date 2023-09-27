@@ -131,27 +131,6 @@ export class UserService {
       });
   }
 
-  async checkIfLoggedIn(userId: number | undefined): Promise<boolean> {
-    if (userId === undefined) {
-      return false;
-    } else {
-      const ret: boolean = await this.prisma.user
-        .findUnique({
-          where: { id: userId }
-        })
-        .then((user) => {
-          if (user) {
-            return true;
-          }
-          return false;
-        })
-        .catch(() => {
-          return false;
-        });
-      return ret;
-    }
-  }
-
   async getAvatarFilenameById(userID: number) {
     return this.prisma.user
       .findUnique({
@@ -159,7 +138,7 @@ export class UserService {
           id: userID
         },
         select: {
-          avatarFilename: true
+          avatar: true
         }
       })
       .catch((error) => {
@@ -178,7 +157,7 @@ export class UserService {
           nickname
         },
         select: {
-          avatarFilename: true
+          avatar: true
         }
       })
       .catch((error) => {
@@ -193,7 +172,7 @@ export class UserService {
   async updateUserAvatarFilename(userId: number, filename: string) {
     return this.prisma.user.update({
       where: { id: userId },
-      data: { avatarFilename: filename }
+      data: { avatar: filename }
     });
   }
 }

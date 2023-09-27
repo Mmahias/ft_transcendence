@@ -303,7 +303,7 @@ export class ChatService {
         from: {
           select: {
             id: true,
-            avatarFilename: true,
+            avatar: true,
             nickname: true
           }
         }
