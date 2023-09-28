@@ -11,12 +11,13 @@ const AUTH_API = `/auth`
 
 // ----- CREATE -----
 
-export async function signUp(newNickname: string, password: string) {
+export async function signUp(newUsername: string, password: string, newNickname: string) {
   try {
     const response = await api.post(`${AUTH_API}/signup`,
       {
-        nickname: newNickname,
-        password: password
+        username: newUsername,
+        password: password,
+        nickname: newNickname
       },
       {
         headers: {
@@ -33,11 +34,11 @@ export async function signUp(newNickname: string, password: string) {
 
 // ----- READ -----
 
-export async function login(nickname: string, password: string) {
+export async function login(username: string, password: string) {
   try {
     const response = await api.post(`${AUTH_API}/login`,
       {
-        nickname: nickname,
+        username: username,
         password: password
       },
       {

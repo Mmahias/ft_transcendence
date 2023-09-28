@@ -11,26 +11,30 @@ import {
 } from './Login.styles';
 import "./../../App.styles";
 import React, { useState }  from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { signUp, login } from "../../api/auth-api";
 // import { createSocketConnexion } from '../sockets/sockets';
 import { Socket } from 'socket.io-client';
 
-export default function Login({ setLoggedIn, setSocket }: { 
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
+
+export default function Login({ onSetLoggedIn, setSocket }: { 
+  onSetLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
   setSocket: React.Dispatch<React.SetStateAction<Socket | null>> }) {
   
   const [nickname, setNickname] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [successMsg, setSuccessMsg] = useState<string>("");
   const navigate = useNavigate();
 
+
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
-      await signUp(nickname, password);
-      setLoggedIn(true);
+      await signUp(username, password, nickname);
+      onSetLoggedIn(true);
+      console.log("OK S");
       setSuccessMsg("Successfully signed up! ")
       setErrorMsg('');
       // const newSocket = createSocketConnexion();
@@ -39,6 +43,7 @@ export default function Login({ setLoggedIn, setSocket }: {
         navigate('/settings');
       }, 2000);
     } catch (error) {
+      console.log("KO S");
       setSuccessMsg('');
       setErrorMsg("A user with this nickname already exists");
     }
@@ -47,8 +52,9 @@ export default function Login({ setLoggedIn, setSocket }: {
   const handleLogin = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
-      await login(nickname, password);
-      setLoggedIn(true);
+      await login(username, password);
+      onSetLoggedIn(true);
+      console.log("OK L");
       setSuccessMsg("Successfully logged in! ")
       setErrorMsg('');
       // const newSocket = createSocketConnexion();
@@ -57,9 +63,11 @@ export default function Login({ setLoggedIn, setSocket }: {
         navigate('/settings');
       }, 2000);
     } catch (error) {
+      console.log("KO L", error);
       setSuccessMsg('');
       setErrorMsg("Wrong nickname or password");
     }
+    
   }
 
   return (
@@ -69,7 +77,7 @@ export default function Login({ setLoggedIn, setSocket }: {
         <LoginForm>
           <LoginLabel htmlFor="username">Username</LoginLabel>
           <LoginInput
-            onChange={(event) => { setNickname(event.target.value) }}
+            onChange={(event) => { setUsername(event.target.value) }}
             type="text"
             placeholder="username"
             id="username"
@@ -80,6 +88,12 @@ export default function Login({ setLoggedIn, setSocket }: {
             type="password"
             placeholder="Password"
             id="password"
+          />
+          <LoginInput
+            onChange={(event) => { setNickname(event.target.value) }}
+            type="text"
+            placeholder="nickname"
+            id="nickname"
           />
           {successMsg && 
             <AlertSuccess>
@@ -107,3 +121,15 @@ export default function Login({ setLoggedIn, setSocket }: {
     </>
   );
 }
+
+
+function LoggedStatus() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentSocket, setSocket] = useState<Socket | null>(null);
+
+  return (
+    <Login onSetLoggedIn={setIsLoggedIn} setSocket={setSocket} />
+  );
+}
+
+export { LoggedStatus };

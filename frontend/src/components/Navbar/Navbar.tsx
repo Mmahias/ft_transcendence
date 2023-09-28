@@ -40,11 +40,12 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     try {
       await logout();
       props.setLoggedIn(false);
+      console.log("Ok OUT");
       if (socket) {
         socket.disconnect();
       }
     } catch (error) {
-      console.log("logout error");
+      console.log("logout error", error);
     }
   };
 

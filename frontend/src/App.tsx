@@ -8,7 +8,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Chat from './components/chat/chat';
 import Game from './pages/Game/Game';
-import Login from './pages/Login/Login';
+import  {LoggedStatus} from './pages/Login/Login';
 import Profile from './pages/User/profile';
 import History from './pages/User/history';
 import Friends from './pages/User/friends';
@@ -38,7 +38,7 @@ const App: React.FC = () => {
                     <MainContentWrapper>
                         <Routes>
                             <Route path="/" element={<Home/>} />
-                            <Route path="/login" element={<Login />}/>
+                            {/* <Route path="/login" element={<Login />}/> */}
                             <Route path="/signUp" element={<SignUp />}/>
                             <Route path="/game" element={<Game />} />
                             <Route path="/user/profile" element={<Profile />} />
@@ -47,7 +47,7 @@ const App: React.FC = () => {
                             <Route path="/user/request" element={<Request />} />
                             <Route path="/user/edit" element={<Edit />} />
                             <Route path="/chat" element={ <Chat/> } />
-                            <Route path='/login' element={<Login setLoggedIn={setLoggedIn} setSocket={setSocket} />} />
+                            <Route path="/login" element={<LoggedStatus />} />
                             <Route path='*' element={<Error />}/>
                         </Routes>
                     </MainContentWrapper>
