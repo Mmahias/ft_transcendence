@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  db:
+  postgres:
     image: postgres:15.4
-    container_name: postgres-db
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: my_password
@@ -14,14 +14,18 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    networks:
+      - ft_network
 
   adminer:
     image: adminer
     ports:
       - 8080:8080
+    networks:
+      - ft_network
 
   back:
-    container_name: nestjs-back
+    container_name: back
     build: 
       context: ./backend
     env_file:
@@ -30,28 +34,28 @@ services:
     ports:
       - 3030:3030
     depends_on:
-      - db
+      - postgres
     volumes:
       - ./backend:/app
     networks:
-      - nestjs-network
+      - ft_network
   
   front:
-    container_name: reactjs-front
+    container_name: front
     build: 
       context: ./frontend
     image: reactjs:test
     ports:
       - 3001:3001
-    depends_on:
-      - back
+    # depends_on:
+    #   - back
     volumes:
       - ./frontend:/app
     networks:
-      - nestjs-network
+      - ft_network
 
 volumes:
   pgdata: {}
 
 networks:
-  nestjs-network:
+  ft_network:

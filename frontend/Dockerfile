@@ -18,5 +18,8 @@ COPY . .
 # Expose port 3001
 EXPOSE 3001
 
+CMD ["tail", "-f", "/dev/null"]
+
+
 # Start the application
-CMD ["npm", "start"]
+# CMD ["npm", "start"]
