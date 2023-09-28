@@ -47,8 +47,8 @@ services:
     image: reactjs:test
     ports:
       - 3001:3001
-    # depends_on:
-    #   - back
+    depends_on:
+      - back
     volumes:
       - ./frontend:/app
     networks:
