@@ -1,35 +1,55 @@
+# Makefile for managing docker-compose services
+
 # Variables
 DC = docker-compose
 
 # Default rule
 all: up
 
-# Start the application
-up:
-	$(DC) up --build -d
+# Primary rules
+up: ## Start the application
+	@$(DC) up --build -d
 
-# Stop and remove all containers
-down:
-	$(DC) down
+down: ## Stop and remove all containers
+	@$(DC) down
 
-# Clean the application
-fclean: down
-	$(DC) rm -v
-	$(DC) down --volumes
+clean: down ## Clean the application
+	@$(DC) rm -v
+	@$(DC) down --volumes
 
-# Re-build and start the application
-re: fclean up
+fclean:  ## Force clean: stop all containers and prune the system
+	@if [ -n "$$(docker ps -aq)" ]; then \
+		docker stop $$(docker ps -aq); \
+		docker rm $$(docker ps -aq); \
+	fi
+	@docker system prune -af
 
-# Display logs for running containers in "follow" mode
-tail:
-	$(DC) logs -f
+re: fclean up ## Re-build and start the application
 
-# Display logs for all containers
-logs:
-	$(DC) logs
+fresh: ## Reset the Docker environment to a completely fresh state
+	@if [ -n "$$(docker ps -aq)" ]; then \
+		echo "Removing all containers..."; \
+		docker stop $$(docker ps -aq); \
+		docker rm $$(docker ps -aq); \
+	fi
+	@if [ -n "$$(docker images -q)" ]; then \
+		echo "Removing all images..."; \
+		docker rmi -f $$(docker images -q); \
+	fi
+	@echo "Removing all volumes..."
+	@docker volume prune -f
+	@echo "Removing all networks..."
+	@docker network prune -f
+	@echo "Removing all build caches..."
+	@docker builder prune -af
+	@echo "Docker environment is now fresh!"
 
-reset: fclean 
-reset: ./reset.sh
-reset: all
 
-.PHONY: all up logs down fclean re tail
+tail: ## Display logs for running containers in "follow" mode
+	@$(DC) logs -f
+
+logs: ## Display logs for all containers
+	@$(DC) logs
+
+# Declare phony targets
+.PHONY: all up down clean fclean re tail logs reset reset_script

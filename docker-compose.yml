@@ -50,6 +50,7 @@ services:
     image: reactjs:test
     ports:
       - 3001:3001
+    command: sh -c "npm rebuild esbuild && npm start"
     # depends_on:
     #   - back
     volumes:

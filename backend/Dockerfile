@@ -1,6 +1,9 @@
 # Use an official Node.js runtime as the parent image
 FROM node:18
 
+# FIX IT:
+# On supprimera les commandes pour la prod
+
 # Update the package lists for upgrades and new packages
 RUN apt-get update
 
