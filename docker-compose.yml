@@ -18,6 +18,7 @@ services:
       - ft_network
 
   adminer:
+    container_name: adminer
     image: adminer
     ports:
       - 8080:8080
@@ -29,7 +30,7 @@ services:
     build: 
       context: ./backend
     env_file:
-      - .env
+      - backend/.env
     image: nestjs:test
     ports:
       - 3030:3030
@@ -44,11 +45,13 @@ services:
     container_name: front
     build: 
       context: ./frontend
+    env_file:
+      - frontend/.env
     image: reactjs:test
     ports:
       - 3001:3001
-    depends_on:
-      - back
+    # depends_on:
+    #   - back
     volumes:
       - ./frontend:/app
     networks:

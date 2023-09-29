@@ -1,6 +1,15 @@
 # Use an official Node.js runtime as the parent image
 FROM node:18
 
+# Update the package lists for upgrades and new packages
+RUN apt-get update
+
+# Install ping
+RUN apt-get install -y iputils-ping
+
+# Install PostgreSQL client
+RUN apt-get install -y postgresql-client
+
 # Set the working directory inside the container
 WORKDIR /app
 
