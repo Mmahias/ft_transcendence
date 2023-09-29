@@ -52,9 +52,10 @@ services:
     image: reactjs:test
     ports:
       - 3001:3001
+    # Cross-platform(m1 mac)
     # command: sh -c "npm rebuild esbuild"
-    # depends_on:
-    #   - back
+    depends_on:
+      - back
     volumes:
       - ./frontend:/app
     networks:

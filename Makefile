@@ -17,14 +17,16 @@ clean: down ## Clean the application
 	@$(DC) rm -v
 	@$(DC) down --volumes
 
+re: fclean up ## Re-build and start the application
+
+ref: fresh up ## Big fresh start the application
+
 fclean:  ## Force clean: stop all containers and prune the system
 	@if [ -n "$$(docker ps -aq)" ]; then \
 		docker stop $$(docker ps -aq); \
 		docker rm $$(docker ps -aq); \
 	fi
 	@docker system prune -af
-
-re: fclean up ## Re-build and start the application
 
 fresh: ## Reset the Docker environment to a completely fresh state
 	@if [ -n "$$(docker ps -aq)" ]; then \
