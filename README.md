@@ -1,6 +1,6 @@
 # ft_transcendence
 ##### Léo: 29/09
-Jai enfin compris d'ou venaient tous les pb de build. Tout venait de notre config docker.
+Tous nos problèmes de buils venaient de notre config docker.
 
 * Déja, on chargeait le ```.env``` dans notre back au lieu de ```backend/.env```
 Du coup on avait beau modifier comme on voulait le ```backend/.env``` ca ne faisait rien.
@@ -12,14 +12,11 @@ Mais quand tu fais la même dans un container, ca test le port xxx du container,
 
 * Enfin, comme nos containers sont sur le même réseau ils peuvent communiquer chacun les uns avec les autres. Pour bien le voir:
 
-```bash
-
-  docker network inspect ft_transcendence_ft_network | grep -E 'Subnet|Name|IPv4Address'
-```
-
+  ```bash
+  docker network inspect ft_transcendence_ft_network | grep -E 'Subnet|Name|IPv4Address'```
 * J'ai installé ping et psql dans le container back pour pouvoir tester la connection avec la db et les autres containers. En +, docker est bien fait, si vous voulez ping un autre container sur le même réseau, vous pouvez juste le mentionner par son nom. (```ping postgres``` ou ```ping front```)
 
-Enfin, **LE truc qui ma tout fait tilté**, je me suis connecté au container back et j'ai fait tous mes tests dedans. Ce que j'aurais du faire dès le début mais j'avais pas réalisé. Commande 
+**Le truc qui ma tout fait tilté**, je me suis connecté au container back et j'ai fait tous mes tests dedans, ce que j'aurais du faire dès le début mais j'avais pas réalisé. 
 
 ``` bash
 
@@ -27,3 +24,8 @@ docker exec -it back bash
 ```
 
 Maintenant, tout tourne chez moi
+
+
+TRUCS:
+* pour avoir accès aux logs d'un container en direct:
+  ```docker logs -f <container_name>```
