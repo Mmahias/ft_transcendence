@@ -1,4 +1,4 @@
-import { api } from './config-api';
+import { api } from './axios-config';
 
 export async function testBackendEndpoint(): Promise<string> {
   try {

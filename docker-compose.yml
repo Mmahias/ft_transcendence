@@ -30,6 +30,7 @@ services:
     build: 
       context: ./backend
     env_file:
+      - .env
       - backend/.env
     image: nestjs:test
     ports:
@@ -46,6 +47,7 @@ services:
     build: 
       context: ./frontend
     env_file:
+      - .env
       - frontend/.env
     image: reactjs:test
     ports:

@@ -1,4 +1,4 @@
-import { api, BASE_URL } from './config-api';
+import { api, BASE_URL } from './axios-config';
 import { User } from './interfaces-api';
 
 const USERS_API = `/users`

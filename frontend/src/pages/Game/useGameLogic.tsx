@@ -9,6 +9,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_SPEED, BALL_SPEED_X,
     BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE
     } from './Game.constants';
 import { io, Socket } from 'socket.io-client';
+import { BACKEND_FULL_URL } from 'constants/constants';
 export interface Ball {
     x: number;
     y: number;
@@ -90,7 +91,7 @@ const useGameLogic = ({ canvasHeight, canvasWidth, onGameOver, gameState }: UseG
     const socket = useRef<Socket | null>(null);
 
     useEffect(() => {
-        socket.current = io('http://localhost:3001');
+        socket.current = io(BACKEND_FULL_URL);
 
         socket.current.on('connect', () => {
             console.log('Connected to WebSocket server');

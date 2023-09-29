@@ -1,4 +1,4 @@
-import { api } from './config-api';
+import { api } from './axios-config';
 import { getMe, getUserByNickname } from './users-api';
 import { Channel, Message, User } from './interfaces-api';
 

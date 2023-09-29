@@ -3,7 +3,7 @@ import { Socket } from 'socket.io-client';
 import { Channel } from '../api/interfaces-api';
 
 export function createSocketConnexion() {
-  const APP_URL = import.meta.env.VITE_APP_URL;
+  const APP_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT;
   const BASE_URL = `${APP_URL}:${BACKEND_PORT}`;
 
