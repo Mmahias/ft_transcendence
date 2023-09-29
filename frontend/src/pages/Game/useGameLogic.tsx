@@ -9,7 +9,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_SPEED, BALL_SPEED_X,
     BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE
     } from './Game.constants';
 import { io, Socket } from 'socket.io-client';
-import { BACKEND_FULL_URL } from 'constants/constants';
+import { BACKEND_FULL_URL } from '../../constants/envConstants';
 export interface Ball {
     x: number;
     y: number;

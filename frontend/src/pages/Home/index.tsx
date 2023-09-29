@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.css';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { CLIENT_ID, BACK_URL, API_REDIR } from '../../constants/constants'; 
+import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
 import { testBackendEndpoint } from '../../api/test-api';
 
 export const Log42: React.FC = () => {
@@ -13,7 +13,7 @@ export const Log42: React.FC = () => {
     scope: "public",
   }
 
-  const url_42 = `${BACK_URL}?${new URLSearchParams(log).toString()}`;
+  const url_42 = `${BACKEND_FULL_URL}?${new URLSearchParams(log).toString()}`;
 
   const handleButtonClick = () => {
     window.location.href = url_42;
