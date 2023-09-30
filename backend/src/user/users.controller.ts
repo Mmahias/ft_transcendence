@@ -1,18 +1,8 @@
 import { Response } from 'express';
 import { UserService } from './users.service';
-import {
-  Controller,
-  Get,
-  UseGuards,
-  Query,
-  Post,
-  Res,
-  Logger,
-  UseInterceptors,
-  UploadedFile,
-  Next,
-  Param
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, Post,
+  Res, Logger, UseInterceptors, UploadedFile,
+  Next, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator';
 import { FileInterceptor } from '@nestjs/platform-express';

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
 import { testBackendEndpoint } from '../../api/test-api';
+import { getMe } from '../../api/users-api';
 
 export const Log42: React.FC = () => {
   const log = {
@@ -38,9 +39,10 @@ const callTestEndpoint = async () => {
 const Home: React.FC = () => {
   return (
     <div className="home-container">
-        <h1>FT_TRANSCENDENCE</h1>
-        <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
-        <Log42 />
+      <h1>FT_TRANSCENDENCE</h1>
+      <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
+      <button onClick={getMe}>Test User Me</button>
+      <Log42 />
     </div>
   );
 }

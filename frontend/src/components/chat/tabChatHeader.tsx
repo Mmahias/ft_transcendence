@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { leaveChannel } from "../../api/chat-api";
 import { getMe } from "../../api/users-api";
 import toast from 'react-hot-toast';
-import { ChatStatusContext } from "../../context/contexts";
+import { ChatStatusContext } from "../../contexts";
 // import { ChannelTitle } from "./ChannelTitle";
 // import { ChannelType } from "./ChannelType";
 

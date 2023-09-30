@@ -6,7 +6,7 @@ import {
 import '../../styles/Tab_channels.css';
 import toast from 'react-hot-toast';
 import { createChannel } from '../../api/chat-api';
-import { SocketContext } from '../../context/contexts';
+import { SocketContext } from '../../contexts';
 import { sendNotificationToServer } from '../../sockets/sockets';
 
 export default function ChanCreationForm() {

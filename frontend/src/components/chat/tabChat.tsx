@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 // import '../../styles/Tab_Chat.css';
-import { ChatStatusContext, SocketContext } from '../../context/contexts';
+import { ChatStatusContext, SocketContext } from '../../contexts';
 import { Channel, Message, User } from '../../api/interfaces-api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { newMessage, getAllMessages, getChannelByName, leaveChannel } from '../../api/chat-api';

@@ -16,10 +16,10 @@ export class RegisterDto {
   @IsNotEmpty()
   @IsStrongPassword({
     minLength: 6,
-    minLowercase: 2,
-    minUppercase: 2,
-    minNumbers: 2,
-    minSymbols: 2
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1
   })
   password: string;
 

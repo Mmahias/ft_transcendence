@@ -12,9 +12,10 @@ import {
 import "./../../App.styles";
 import React, { useState }  from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { signUp, login } from "../../api/auth-api";
+import AuthService from "../../api/auth-api";
 // import { createSocketConnexion } from '../sockets/sockets';
 import { Socket } from 'socket.io-client';
+import useAuth from '../../hooks/useAuth';
 
 
 export default function Login({ onSetLoggedIn, setSocket }: { 
@@ -27,12 +28,12 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [successMsg, setSuccessMsg] = useState<string>("");
   const navigate = useNavigate();
-
+  const { auth, login } = useAuth();
 
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
-      await signUp(username, password, nickname);
+      await AuthService.signUp(username, password, nickname);
       onSetLoggedIn(true);
       console.log("OK S");
       setSuccessMsg("Successfully signed up! ")
@@ -52,16 +53,20 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   const handleLogin = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
-      await login(username, password);
-      onSetLoggedIn(true);
-      console.log("OK L");
-      setSuccessMsg("Successfully logged in! ")
-      setErrorMsg('');
-      // const newSocket = createSocketConnexion();
-      // setSocket(newSocket);
-      setTimeout(() => {
-        navigate('/settings');
-      }, 2000);
+      const response = await AuthService.login(username, password);
+      if (response) {
+        login(response);
+        setSuccessMsg("Successfully logged in!");
+        setErrorMsg('');
+        // const newSocket = createSocketConnexion();
+        // setSocket(newSocket);
+        console.log("auth", auth);
+        setTimeout(() => {
+          navigate('/settings');
+        }, 2000);
+      } else {
+        throw new Error('Invalid credentials');
+      }
     } catch (error) {
       console.log("KO L", error);
       setSuccessMsg('');

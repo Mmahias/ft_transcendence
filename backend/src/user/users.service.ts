@@ -86,7 +86,6 @@ export class UserService {
 
   async createUser(username: string, password: string, nickname?: string) {
     const hashPassword = await this.passwordService.hashPassword(password);
-
     return this.prisma.user
       .create({
         data: {

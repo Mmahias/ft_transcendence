@@ -8,7 +8,7 @@ import TabChat from './tabChat';
 import TabMore from './tabMore';
 import { useQuery } from "@tanstack/react-query";
 import { getMe } from '../../api/users-api';
-import { ChatStatusContext } from '../../context/contexts';
+import { ChatStatusContext } from '../../contexts';
 
 interface Tab {
   label: string;
