@@ -9,7 +9,7 @@ COPY package*.json ./
 
 # Install global and local npm packages
 RUN npm install -g prisma && \
-    npm install
+    npm ci
 
 # Update and install system packages in a single layer
 RUN apt-get update && apt-get install -y \
@@ -27,5 +27,5 @@ RUN npx prisma generate && \
 EXPOSE 3030
 
 # Start the application in development mode
-# CMD [ "sh", "run.sh" ]
-CMD ["tail", "-f", "/dev/null"]
+CMD [ "sh", "run.sh" ]
+# CMD ["tail", "-f", "/dev/null"]

@@ -4,6 +4,8 @@
 .gitignore
 README.md
 npm-debug.log
-dist
 *.map
 *.tsbuildinfo
+
+// node_modules
+// dist

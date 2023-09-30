@@ -7,7 +7,7 @@ COPY package*.json .
 
 # Install global and local npm packages
 RUN npm install -g vite && \
-    npm install
+    npm ci
 
 # Install esbuild for Linux (for cross-platforms runs)
 RUN if [ "$(uname -m)" = "aarch64" ]; then npm install @esbuild/linux-arm64; else npm install @esbuild/linux-x64; fi
@@ -23,7 +23,7 @@ COPY . .
 EXPOSE 3001
 
 # Start the application
-# CMD ["npm", "start"]
+CMD ["npm", "start"]
 
-CMD ["tail", "-f", "/dev/null"]
+# CMD ["tail", "-f", "/dev/null"]
 
