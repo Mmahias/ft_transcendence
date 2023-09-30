@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { SocketContext } from '../../context/contexts';
+import { SocketContext } from '../../contexts';
 
 const getDate = (message: Message) => {
   const options: Intl.DateTimeFormatOptions = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit' } as const;

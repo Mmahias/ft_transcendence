@@ -17,9 +17,34 @@ import Edit from './pages/User/edit';
 import Error from './pages/Error/Error';
 import SignUp from './pages/Signup/Signup';
 import { Socket } from 'socket.io-client';
-import { IsLoggedInContext, SocketContext, ChatStatusContext } from './context/contexts';
+import { IsLoggedInContext, SocketContext, ChatStatusContext } from './contexts';
 import { Channel } from './api/interfaces-api';
 import Footer from './components/Footer';
+import { AuthProvider } from './contexts/AuthContext';
+import useAxiosPrivate from './hooks/useAxiosPrivate';
+
+const MainContent: React.FC = () => {
+  useAxiosPrivate();
+
+  return (
+    <MainContentWrapper>
+      <Routes>
+        <Route path="/" element={<Home/>} />
+        {/* <Route path="/login" element={<Login />}/> */}
+        <Route path="/signUp" element={<SignUp />}/>
+        <Route path="/game" element={<Game />} />
+        <Route path="/user/profile" element={<Profile />} />
+        <Route path="/user/history" element={<History />} />
+        <Route path="/user/friends" element={<Friends />} />
+        <Route path="/user/request" element={<Request />} />
+        <Route path="/user/edit" element={<Edit />} />
+        <Route path="/chat" element={ <Chat/> } />
+        <Route path="/login" element={<LoggedStatus />} />
+        <Route path='*' element={<Error />}/>
+      </Routes>
+    </MainContentWrapper>
+  );
+};
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -28,36 +53,23 @@ const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
     return (
-        <Router>
-            <ThemeProvider theme={theme}>
-                <AppWrapper>
-                  <ChatStatusContext.Provider value={ {activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded}}>
-                  <SocketContext.Provider value={socket}>
-                  <IsLoggedInContext.Provider value={isLoggedIn}>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <AuthProvider>
+            <ChatStatusContext.Provider value={ {activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded}}>
+              <SocketContext.Provider value={socket}>
+                <IsLoggedInContext.Provider value={isLoggedIn}>
+                  <AppWrapper>
                     <Navbar theme={'dark'} setLoggedIn={setLoggedIn} setSocket={setSocket} />
-                    <MainContentWrapper>
-                        <Routes>
-                            <Route path="/" element={<Home/>} />
-                            {/* <Route path="/login" element={<Login />}/> */}
-                            <Route path="/signUp" element={<SignUp />}/>
-                            <Route path="/game" element={<Game />} />
-                            <Route path="/user/profile" element={<Profile />} />
-                            <Route path="/user/history" element={<History />} />
-                            <Route path="/user/friends" element={<Friends />} />
-                            <Route path="/user/request" element={<Request />} />
-                            <Route path="/user/edit" element={<Edit />} />
-                            <Route path="/chat" element={ <Chat/> } />
-                            <Route path="/login" element={<LoggedStatus />} />
-                            <Route path='*' element={<Error />}/>
-                        </Routes>
-                    </MainContentWrapper>
+                    <MainContent />
                     <Footer />
-                  </IsLoggedInContext.Provider>
-                  </SocketContext.Provider>
-                  </ChatStatusContext.Provider>
-                </AppWrapper>
-            </ThemeProvider>
-        </Router>
+                  </AppWrapper>
+                </IsLoggedInContext.Provider>
+              </SocketContext.Provider>
+            </ChatStatusContext.Provider>
+          </AuthProvider>
+        </ThemeProvider>
+      </Router>
     );
 }
 

@@ -54,19 +54,19 @@ export class AuthService {
       expiresIn: '24h',
       secret: secret
     });
-    return { access_token: token };
+    return { accessToken: token };
   }
 
   async validateUser(username: string, password: string) {
     const user = await this.userService.getUserByUsername(username).catch((error) => {
       if (error instanceof NotFoundException) {
-        throw new UnauthorizedException('Username or password is invalid');
+        throw new UnauthorizedException('Username is invalid');
       }
       throw error;
     });
 
     if (!(await this.passwordService.verifyPassword(user.password, password))) {
-      throw new UnauthorizedException('Username or password is invalid');
+      throw new UnauthorizedException('Password is invalid');
     }
 
     return this.signToken(user.id);

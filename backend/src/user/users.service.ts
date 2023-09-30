@@ -1,9 +1,6 @@
-import {
-  ForbiddenException,
-  Injectable,
-  Logger,
-  NotFoundException
-} from '@nestjs/common';
+import { ForbiddenException, ConflictException,
+  InternalServerErrorException, Injectable, Logger,
+  NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserDto, UserUpdateDto } from './dto';
@@ -86,7 +83,6 @@ export class UserService {
 
   async createUser(username: string, password: string, nickname?: string) {
     const hashPassword = await this.passwordService.hashPassword(password);
-
     return this.prisma.user
       .create({
         data: {
@@ -97,11 +93,16 @@ export class UserService {
       })
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
-          if (error.code === 'P2002') {
-            throw new ForbiddenException(`Username [${username}] is already taken`);
+          switch (error.code) {
+              case 'P2002': // Unique constraint violation
+                  throw new ConflictException(`Username [${username}] is already taken`);
+              default:
+                  throw new InternalServerErrorException('An unexpected error occurred while creating the user');
           }
         }
-        throw error;
+        else {
+          throw new InternalServerErrorException('An unexpected error occurred');
+        }
       });
   }
 
@@ -127,7 +128,6 @@ export class UserService {
             );
           }
         }
-        throw error;
       });
   }
 

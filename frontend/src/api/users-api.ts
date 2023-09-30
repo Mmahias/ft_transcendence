@@ -1,4 +1,4 @@
-import { api, BASE_URL } from './axios-config';
+import { axiosPrivate } from './axios-config';
 import { User } from './interfaces-api';
 
 const USERS_API = `/users`
@@ -13,11 +13,11 @@ const USERS_API = `/users`
 // ----- READ -----
 
 export async function getMe(): Promise<User> {
-  const response = await api.get<User>(`${USERS_API}/me`);
+  const response = await axiosPrivate.get<User>(`${USERS_API}/me`);
   return response.data;
 }
 
 export async function getUserByNickname(username: string): Promise<User> {
-  const response = await api.get<User>(`${USERS_API}/?nickname=${username}`);
+  const response = await axiosPrivate.get<User>(`${USERS_API}/?nickname=${username}`);
   return response.data;
 }

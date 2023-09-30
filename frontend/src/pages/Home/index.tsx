@@ -4,6 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
 import { testBackendEndpoint } from '../../api/test-api';
+import { getMe } from '../../api/users-api';
+import useAuth from '../../hooks/useAuth';
+import {AuthState} from '../../contexts/AuthContext';
 
 export const Log42: React.FC = () => {
   const log = {
@@ -35,12 +38,24 @@ const callTestEndpoint = async () => {
   }
 };
 
+
+const getToken = async (auth: AuthState) => {
+  try {
+    console.log('auth: ', auth);
+  } catch (error) {
+    console.error("Error calling test endpoint:", error);
+  }
+};
+
 const Home: React.FC = () => {
+  const { auth } = useAuth();
   return (
     <div className="home-container">
-        <h1>FT_TRANSCENDENCE</h1>
-        <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
-        <Log42 />
+      <h1>FT_TRANSCENDENCE</h1>
+      <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
+      <button onClick={getMe}>Test User Me</button>
+      <button onClick={() => getToken(auth)}>Test Token</button>
+      <Log42 />
     </div>
   );
 }

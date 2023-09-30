@@ -9,17 +9,18 @@ import {
 export class RegisterDto {
   @IsString()
   @IsNotEmpty()
-  @Length(5, 20)
+  @Length(4, 20)
   username: string;
 
+  // FIX IT: Uncomment policy
   @IsString()
   @IsNotEmpty()
   @IsStrongPassword({
-    minLength: 6,
-    minLowercase: 2,
-    minUppercase: 2,
-    minNumbers: 2,
-    minSymbols: 2
+    minLength: 2,
+    // minLowercase: 1,
+    // minUppercase: 1,
+    // minNumbers: 1,
+    // minSymbols: 1
   })
   password: string;
 

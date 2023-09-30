@@ -21,7 +21,7 @@ export function createSocketConnexion() {
  */
 export function sendNotificationToServer(socket: Socket, event: string, payload: string) {
   if (socket) {
-    socket.emit(event, payload);
+    // socket.emit(event, payload);
   }
 };
 

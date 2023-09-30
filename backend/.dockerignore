@@ -1,4 +1,5 @@
 .env.dev
+node_modules
 .dockerignore
 Dockerfile
 .gitignore
@@ -7,3 +8,4 @@ npm-debug.log
 dist
 *.map
 *.tsbuildinfo
+package-lock.json

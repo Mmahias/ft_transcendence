@@ -1,11 +1,11 @@
 import './Navbar.css';
 import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { IsLoggedInContext, SocketContext } from '../../context/contexts';
-import { logout, checkIfLoggedIn } from "../../api/auth-api";
+import { IsLoggedInContext, SocketContext } from '../../contexts';
+import AuthService from "../../api/auth-api";
 import { createSocketConnexion } from '../../sockets/sockets';
 import { Socket } from 'socket.io-client';
-
+import useAuth from '../../hooks/useAuth';
 import logo from '../../assets/school_42.jpeg';
 // import Avatar from './Avatar';
 // import LoginBtn from './LoginBtn';
@@ -23,22 +23,23 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const isLoggedIn = useContext(IsLoggedInContext);
   const socket = useContext(SocketContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const userStatus = await checkIfLoggedIn();
-      props.setLoggedIn(userStatus);
-      if (isLoggedIn && !socket) {
-        const newSocket = createSocketConnexion();
-        props.setSocket(newSocket);
-      }
-    };
+  const { auth } = useAuth();
 
+  useEffect(() => {
+      const fetchData = async () => {
+        const userStatus = !!auth?.accessToken; // Will be true if there's a user, false otherwise
+        props.setLoggedIn(userStatus);
+        if (userStatus && !socket) {
+          const newSocket = createSocketConnexion();
+          props.setSocket(newSocket);
+        }
+      };
     fetchData();
   }, [props, isLoggedIn, socket]);
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await AuthService.logout();
       props.setLoggedIn(false);
       console.log("Ok OUT");
       if (socket) {
