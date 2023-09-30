@@ -1,5 +1,5 @@
 import { useContext, useDebugValue } from "react";
-import AuthContext, { AuthContextType } from "../contexts/AuthProvider";
+import AuthContext, { AuthContextType } from "../contexts/AuthContext";
 
 const useAuth = (): AuthContextType => {
     const authContext = useContext(AuthContext);

@@ -6,7 +6,7 @@ import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
 import { testBackendEndpoint } from '../../api/test-api';
 import { getMe } from '../../api/users-api';
 import useAuth from '../../hooks/useAuth';
-import {AuthState} from '../../contexts/AuthProvider';
+import {AuthState} from '../../contexts/AuthContext';
 
 export const Log42: React.FC = () => {
   const log = {

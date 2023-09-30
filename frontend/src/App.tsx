@@ -20,7 +20,7 @@ import { Socket } from 'socket.io-client';
 import { IsLoggedInContext, SocketContext, ChatStatusContext } from './contexts';
 import { Channel } from './api/interfaces-api';
 import Footer from './components/Footer';
-import { AuthProvider } from './contexts/AuthProvider';
+import { AuthProvider } from './contexts/AuthContext';
 import useAxiosPrivate from './hooks/useAxiosPrivate';
 
 const MainContent: React.FC = () => {
