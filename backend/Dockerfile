@@ -1,35 +1,31 @@
 # Use an official Node.js runtime as the parent image
 FROM node:18
 
-# FIX IT:
-# On supprimera les commandes pour la prod
-
-# Update the package lists for upgrades and new packages
-RUN apt-get update
-
-# Install ping
-RUN apt-get install -y iputils-ping
-
-# Install PostgreSQL client
-RUN apt-get install -y postgresql-client
-
 # Set the working directory inside the container
 WORKDIR /app
 
-# Install Prisma globally
-RUN npm install -g prisma
+# Copy packages.json and packages-lock.json then install dependencies
+COPY package*.json ./
 
-# Copy the application to the container
+# Install global and local npm packages
+RUN npm install -g prisma && \
+    npm install
+
+# Update and install system packages in a single layer
+RUN apt-get update && apt-get install -y \
+    iputils-ping \
+    postgresql-client
+
+# Copy the rest of your application to the container
 COPY . .
 
-# Install application dependencies inside the container
-RUN npm install
-
-# Build the application
-RUN npm run build
+# Generate Prisma client and build the application
+RUN npx prisma generate && \
+    npm run build
 
 # Expose port 3030
 EXPOSE 3030
 
 # Start the application in development mode
-CMD [ "sh", "run.sh" ]
+# CMD [ "sh", "run.sh" ]
+CMD ["tail", "-f", "/dev/null"]

@@ -1,6 +1,6 @@
 .env.dev
 .dockerignore
-**/Dockerfile
+Dockerfile
 .gitignore
 README.md
 npm-debug.log
