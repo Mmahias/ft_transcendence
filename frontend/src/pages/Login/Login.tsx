@@ -33,28 +33,31 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
-      await AuthService.signUp(username, password, nickname);
-      onSetLoggedIn(true);
-      console.log("OK S");
-      setSuccessMsg("Successfully signed up! ")
-      setErrorMsg('');
-      // const newSocket = createSocketConnexion();
-      // setSocket(newSocket);
-      setTimeout(() => {
-        navigate('/settings');
-      }, 2000);
+      const response = await AuthService.signUp(username, password, nickname);
+      if (response) {
+        login(response);
+        onSetLoggedIn(true);
+        setSuccessMsg("Successfully signed up! ")
+        setErrorMsg('');
+        // const newSocket = createSocketConnexion();
+        // setSocket(newSocket);
+        setTimeout(() => {
+          navigate('/settings');
+        }, 2000);
+      }
     } catch (error) {
       console.log("KO S");
       setSuccessMsg('');
       setErrorMsg("A user with this nickname already exists");
     }
   }
-
+  
   const handleLogin = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
       const response = await AuthService.login(username, password);
       if (response) {
+        console.log("OK L");
         login(response);
         setSuccessMsg("Successfully logged in!");
         setErrorMsg('');

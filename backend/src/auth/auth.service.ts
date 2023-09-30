@@ -54,7 +54,7 @@ export class AuthService {
       expiresIn: '24h',
       secret: secret
     });
-    return { access_token: token };
+    return { accessToken: token };
   }
 
   async validateUser(username: string, password: string) {
