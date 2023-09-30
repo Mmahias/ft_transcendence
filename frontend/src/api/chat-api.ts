@@ -1,4 +1,4 @@
-import { api } from './axios-config';
+import { axiosPrivate } from './axios-config';
 import { getMe, getUserByNickname } from './users-api';
 import { Channel, Message, User } from './interfaces-api';
 
@@ -16,7 +16,7 @@ export async function createChannel(name: string, mode: string, password?: strin
   try {
     const user: User = await getMe();
     const userId: number = user.id;
-    const response = await api.post(`${CHAT_API}/channel`,
+    const response = await axiosPrivate.post(`${CHAT_API}/channel`,
       {
         name: name,
         ownerId: userId,
@@ -39,24 +39,24 @@ export async function createChannel(name: string, mode: string, password?: strin
 // ----- READ -----
 
 export async function getChannelById(id: number): Promise<Channel> {
-  const response = await api.get<Channel>(`${CHAT_API}/channel/${id}`);
+  const response = await axiosPrivate.get<Channel>(`${CHAT_API}/channel/${id}`);
   return response.data;
 }
 
 export async function getChannelByName(name: string): Promise<Channel> {
-  const response = await api.get<Channel>(`${CHAT_API}/channel/find/${name}`);
+  const response = await axiosPrivate.get<Channel>(`${CHAT_API}/channel/find/${name}`);
   return response.data;
 }
 
 export async function getAccessibleChannels(): Promise<Channel[]> {
   const user: User = await getMe();
-  const response = await api.get<Channel[]>(`${CHAT_API}/channel/access/${user.id}`);
+  const response = await axiosPrivate.get<Channel[]>(`${CHAT_API}/channel/access/${user.id}`);
   return response.data;
 }
 
 export async function verifyPasswords(channelId: number, userInput: string): Promise<boolean> {
   try {
-    const response = await api.get<boolean>(`${CHAT_API}/channel/${channelId}/password-check`,
+    const response = await axiosPrivate.get<boolean>(`${CHAT_API}/channel/${channelId}/password-check`,
     {
       params: {
         userInput: userInput,
@@ -68,11 +68,13 @@ export async function verifyPasswords(channelId: number, userInput: string): Pro
   }
 }
 
-export async function updateUserInChannel(userId: number, channelId: number, usergroup: string, action: string) {
+// ----- UPDATE -----
+
+export async function updateUserInChannel(name: string, channelId: number, usergroup: string, action: string) {
   try {
-    const response = await api.post(`${CHAT_API}/channel/${channelId}/users`,
+    const response = await axiosPrivate.post(`${CHAT_API}/channel/${channelId}/users`,
       {
-        userId,
+        name,
         usergroup,
         action,
       },
@@ -91,7 +93,7 @@ export async function updateUserInChannel(userId: number, channelId: number, use
 export async function updateMeInChannel(channelId: number, usergroup: string, action: string) {
   try {
     const user = await getMe();
-    const response = await api.post(`${CHAT_API}/channel/${channelId}/users`,
+    const response = await axiosPrivate.post(`${CHAT_API}/channel/${channelId}/users`,
       {
         userId: user.id,
         usergroup,
@@ -111,7 +113,7 @@ export async function updateMeInChannel(channelId: number, usergroup: string, ac
 
 export async function leaveChannel(userId: number, channelId: number) {
   try {
-    const response = await api.delete(`${CHAT_API}/channel/${channelId}/users`,
+    const response = await axiosPrivate.delete(`${CHAT_API}/channel/${channelId}/users`,
       {
         data: { userId },
       });
@@ -133,7 +135,7 @@ export async function newMessage(channel: Channel, content: string): Promise<Mes
   try {
     const { name, id } = channel;
     const user: User = await getMe();
-    const response = await api.post(`${CHAT_API}/message`,
+    const response = await axiosPrivate.post(`${CHAT_API}/message`,
       {
         fromId: user.id,
         to: name,
@@ -154,7 +156,7 @@ export async function newMessage(channel: Channel, content: string): Promise<Mes
 
 export async function getAllMessages(channelId: number): Promise<Message[]> {
   try {
-    const response = await api.get(`${CHAT_API}/messages/${channelId}`);
+    const response = await axiosPrivate.get(`${CHAT_API}/messages/${channelId}`);
     const messages: Message[] = response.data.map((message: Message) => ({
       ...message,
       date: new Date(message.date),
@@ -168,7 +170,7 @@ export async function getAllMessages(channelId: number): Promise<Message[]> {
 
 export async function deleteAllMessages(channelId: number) {
   try {
-    return api.delete(`${CHAT_API}/messages/${channelId}`);
+    return axiosPrivate.delete(`${CHAT_API}/messages/${channelId}`);
   } catch (error) {
     throw new Error("API error: messages not deleted");
   }

@@ -6,7 +6,7 @@ import theme from './theme';
 import { MainContentWrapper, AppWrapper } from './App.styles';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Chat from './components/chat/chat';
+import Chat from './components/chat/Chat';
 import Game from './pages/Game/Game';
 import  {LoggedStatus} from './pages/Login/Login';
 import Profile from './pages/User/profile';

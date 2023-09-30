@@ -172,7 +172,9 @@ export class ChatService {
     if (body.mode) {
       dataToUpdate.mode = body.mode;
     }
-
+    if (body.password) {
+      dataToUpdate.password = body.password;
+    }
     return await prisma.channel.update({
       where: { id: channelId },
       data: dataToUpdate
@@ -180,14 +182,18 @@ export class ChatService {
   }
 
   async updateChannelUserlist(channelId: number, body: UpdateChannelDto) {
-    const { userId, usergroup, action } = body;
+    const { name, usergroup, action } = body;
+    if (!name || !usergroup || !action) {
+      throw new BadRequestException('Missing parameters');
+    }
+    const user = await this.userService.getUserByUsername(name);
     if (usergroup === 'joinedUsers' && action === 'disconnect') {
-      throw new ForbiddenException('Invalid input from client');
+      throw new ForbiddenException('Invalid request from client');
     }
     return await prisma.channel.update({
       where: { id: channelId },
       data: {
-        [usergroup]: { [action]: { id: userId } }
+        [usergroup]: { [action]: { id: user.id } }
       }
     });
   }
@@ -220,7 +226,8 @@ export class ChatService {
   }
 
   async deleteUserFromChannel(channelId: number, body: UpdateChannelDto) {
-    const userId = body.userId;
+    const user = await this.userService.getUserByUsername(body.name);
+    const userId = user.id;
 
     // Remove the user from all userlists (could be refined if necessary)
     await prisma.channel.update({
