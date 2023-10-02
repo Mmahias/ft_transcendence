@@ -1,5 +1,5 @@
 import { IsOptional, IsIn } from "class-validator";
-import { ChanMode } from "@ft-transcendence/shared/types"
+import { ChanMode } from "../../shared/types"
 
 export class UpdateChannelDto {
 

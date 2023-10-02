@@ -6,7 +6,7 @@ import { PrismaClient, Prisma } from '@prisma/client';
 import { PasswordService } from '@app/password/password.service';
 import { UserService } from '@app/user/users.service';
 import { PrismaChanMode } from '@prisma/client';
-import { ChanMode } from '@ft-transcendence/shared/types';
+import { ChanMode } from '../shared/types';
 import { toPrismaEnum } from '@app/utils/typesConverter';
 
 const prisma = new PrismaClient();

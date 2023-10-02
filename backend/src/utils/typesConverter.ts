@@ -1,4 +1,4 @@
-import { ChanMode } from '@ft-transcendence/shared/types';
+import { ChanMode } from '../shared/types';
 import { PrismaChanMode } from '@prisma/client';
 
 // Convert TypeScript enum to its string representation for Prisma

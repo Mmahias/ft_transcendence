@@ -26,7 +26,6 @@ export default ({ mode }) => {
       alias: [
         { find: '@app', replacement: fileURLToPath(new URL('src', import.meta.url)) },
         { find: '@constants', replacement: fileURLToPath(new URL('src/constants', import.meta.url)) },
-        { find: '@ft-transcendence/shared', replacement: fileURLToPath(new URL('../shared', import.meta.url)) },
       ]
     },
   });

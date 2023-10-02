@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from '../../shared/Modal/Modal';
 import { createChannel } from '../../../api/chat-api';
 import { FormWrapper, InputWrapper, SubmitButton } from './CreateChannelModal.styles';
-import { ChanMode } from '@ft-transcendence/shared/types';
+import { ChanMode } from '../../../shared/types';
 
 interface Props {
     isOpen: boolean;

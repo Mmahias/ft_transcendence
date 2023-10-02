@@ -1,7 +1,7 @@
 import { axiosPrivate } from './axios-config';
 import { getMe, getUserByNickname } from './users-api';
 import { Channel, Message, User } from './interfaces-api';
-import { ChanMode } from '@ft-transcendence/shared';
+import { ChanMode } from '../shared/types';
 
 const CHAT_API = `/chat`
 

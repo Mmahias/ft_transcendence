@@ -4,7 +4,7 @@ import {
   User, 
   Message 
 } from '@prisma/client';
-import { ChanMode } from "@ft-transcendence/shared/types";
+import { ChanMode } from "../../shared/types";
 
 export class CreateChannelDto {
 
