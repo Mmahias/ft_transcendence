@@ -23,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const isLoggedIn = useContext(IsLoggedInContext);
   const socket = useContext(SocketContext);
 
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
 
   useEffect(() => {
       const fetchData = async () => {
@@ -40,6 +40,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const handleLogout = async () => {
     try {
       await AuthService.logout();
+
+      logout();
+
       props.setLoggedIn(false);
       console.log("Ok OUT");
       if (socket) {

@@ -66,7 +66,7 @@ export default function Login({ onSetLoggedIn, setSocket }: {
 
     event.preventDefault();
     try {
-      const response = await AuthService.login(username, password);
+      const response = await AuthService.login(username.toLowerCase(), password);
       if (response) {
         login(response);
         setSuccessMsg("Successfully logged in!");

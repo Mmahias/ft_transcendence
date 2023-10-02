@@ -42,7 +42,7 @@ export class ChatController {
   // GET /chat/channels/access/123
   @Get('channel/access/:userId')
   async getAccessibleChannels(@Param('userId') userId: string) {
-    return this.chatService.getDisplayableChans(+userId);
+    return this.chatService.getAccessibleChannels(+userId);
   }
 
   // channels in which user is a joinedUser

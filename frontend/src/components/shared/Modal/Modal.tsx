@@ -9,17 +9,18 @@ interface Props {
 }
 
 const Modal: React.FC<Props> = ({ isOpen, onClose, title, children }) => {
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    return (
-      <ModalOverlay>
-        <ModalContent>
-          <h2>{title}</h2>
-          {children}
-        <ModalCloseBtn>Close</ModalCloseBtn>
+  return (
+    <ModalOverlay>
+      <ModalContent>
+        <h2>{title}</h2>
+        {children}
+        <ModalCloseBtn onClick={onClose}>Close</ModalCloseBtn>
       </ModalContent>
     </ModalOverlay>
   );
 }
+
 
 export default Modal;

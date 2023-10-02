@@ -13,7 +13,6 @@ const Chat: React.FC = () => {
 
             <CreateChannelModal isOpen={showCreateChannel} onClose={() => setShowCreateChannel(false)} />
             <JoinChannelModal isOpen={showJoinChannel} onClose={() => setShowJoinChannel(false)} />
-            {/* ... rest of your Chat component */}
         </div>
     );
 }

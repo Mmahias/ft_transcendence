@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Modal from '../../shared/Modal/Modal';
-import { createChannel } from '../../../api/chat-api';
+import ChatService from '../../../api/chat-api';
 import { FormWrapper, InputWrapper, SubmitButton } from './CreateChannelModal.styles';
 import { ChanMode } from '../../../shared/types';
 
@@ -14,11 +14,11 @@ const CreateChannelModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [channelMode, setChannelMode] = useState<ChanMode>(ChanMode.PUBLIC);
   const [password, setPassword] = useState<string>('');
 
-  const isPasswordVisible = channelMode === ChanMode.PRIVATE;
+  const isPasswordDisabled = channelMode !== ChanMode.PROTECTED;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createChannel(channelName, channelMode, isPasswordVisible ? password : undefined);
+    ChatService.createChannel(channelName, channelMode, !isPasswordDisabled ? password : undefined);
     onClose();
   }
 
@@ -38,24 +38,24 @@ const CreateChannelModal: React.FC<Props> = ({ isOpen, onClose }) => {
           <label>Mode:</label>
           <select 
             value={channelMode} 
-            onChange={(e) => setChannelMode(ChanMode[e.target.value as keyof typeof ChanMode])}
+            onChange={(e) => setChannelMode(e.target.value as ChanMode)}
           >
             <option value={ChanMode.PUBLIC}>Public</option>
             <option value={ChanMode.PRIVATE}>Private</option>
             <option value={ChanMode.PROTECTED}>Protected</option>
           </select>
         </InputWrapper>
-        {isPasswordVisible && (
-          <InputWrapper>
-            <label>Password:</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
-          </InputWrapper>
-        )}
+        <InputWrapper>
+          <label>Password:</label>
+          <input 
+            type="password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isPasswordDisabled}
+            required={isPasswordDisabled ? false : true} // Only require the password if it's not disabled.
+            style={{ backgroundColor: isPasswordDisabled ? '#e0e0e0' : 'white' }} // Gray out if disabled.
+          />
+        </InputWrapper>
         <SubmitButton type="submit">Create</SubmitButton>
       </FormWrapper>
     </Modal>

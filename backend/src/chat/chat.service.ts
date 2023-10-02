@@ -30,12 +30,14 @@ export class ChatService {
     const { name, ownerId, password, mode } = body;
 
     let hashedPwd = null;
-    if (mode === ChanMode.PROTECTED && password !== undefined) {
-      hashedPwd = this.passwordService.hashPassword(password);
+    if (mode === ChanMode.PROTECTED && password) {
+      hashedPwd = await this.passwordService.hashPassword(password);
     }
     const newPassword = password ? hashedPwd : null;
     try {
       console.log('attempting to create channel');
+      console.log('pwd: ', password);
+      console.log('pwd: ', hashedPwd);
       
       const createdChannel = await prisma.channel.create({
         data: {
@@ -139,7 +141,7 @@ export class ChatService {
     });
   }
 
-  async getDisplayableChans(userId: number) {
+  async getAccessibleChannels(userId: number) {
     return await prisma.channel.findMany({
       where: {
         OR: [{ mode: PrismaChanMode.PROTECTED }, { mode: PrismaChanMode.PUBLIC }],

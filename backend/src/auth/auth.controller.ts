@@ -1,13 +1,5 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-  Post,
-  Body,
-  HttpCode,
-  UnauthorizedException,
-  Res
-} from '@nestjs/common';
+import { Controller, Get, Req, UseGuards,
+  Post, Body, HttpCode, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from '@app/auth/dto';
 import { UserService } from '@app/user/users.service';
@@ -99,5 +91,11 @@ export class AuthController {
     }
 
     return this.authService.login(user, true);
+  }
+
+  @Post('logout')
+  async logout(@Req() req) {
+    // Does nothing for now but will maybe clear states later
+    return req.user;
   }
 }
