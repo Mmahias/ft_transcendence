@@ -13,29 +13,32 @@ datasource db {
 
 model User {
   // general info
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  nickname  String   @unique
-  login_42  String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  avatar    String?
-  bio       String?
+  id                     Int             @id @default(autoincrement())
+  username               String          @unique
+  password               String
+  nickname               String          @unique
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @default(now())
+  avatar                 String?
+  bio                    String?
+  // 2FA
+  authenticationSecret   String?
+  authenticationEnabled  Boolean         @default(false)
   // friends relations
   friends                User[]          @relation("friendship")
   friendedBy             User[]          @relation("friendship")
   friendsRequestSent     FriendRequest[] @relation("sentRequests")
   friendsRequestReceived FriendRequest[] @relation("receivedRequests")
   // channels relations
-  ownerChans      Channel[] @relation("owner") // channels that the user owns
-  adminChans      Channel[] @relation("admins") // channels that the user can manage
-  bannedChans     Channel[] @relation("banned") // channels that the user is banned from
-  joinedChans     Channel[] @relation("joined") // channels that the user joined
-  kickedFromChans Channel[] @relation("kicked") // channels that the user is banned from
-  mutedFromChans  Channel[] @relation("muted") // channels that the user is muted in
+  ownerChans             Channel[]       @relation("owner") // channels that the user owns
+  adminChans             Channel[]       @relation("admins") // channels that the user can manage
+  bannedChans            Channel[]       @relation("banned") // channels that the user is banned from
+  joinedChans            Channel[]       @relation("joined") // channels that the user joined
+  kickedFromChans        Channel[]       @relation("kicked") // channels that the user is banned from
+  mutedFromChans         Channel[]       @relation("muted") // channels that the user is muted in
   // messages relations
-  sentMessages Message[] @relation("messages") // messages that the user sent
+  sentMessages           Message[]       @relation("messages") // messages that the user sent
+
   @@map("users")
 }
 
@@ -62,6 +65,7 @@ model Channel {
   kickedUsers User[]    @relation("kicked") // users that are kicked from the channel
   mutedUsers  User[]    @relation("muted") // users that are muted in the channel
   messages    Message[] @relation("messages")
+
   @@map("channels")
 }
 
@@ -74,6 +78,7 @@ model Message {
   content   String
   channel   Channel  @relation(fields: [channelId], references: [id], name: "messages")
   channelId Int
+
   @@map("messages")
 }
 

@@ -6,14 +6,19 @@ import { UserService } from '@app/user/users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor( config: ConfigService,
-    private userService: UserService ) {
+  constructor(
+    config: ConfigService,
+    private userService: UserService
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get('JWT_SECRET')
     });
   }
-  async validate(payload: { sub: number; login42: string }) {
-    return this.userService.getUserById(payload.sub);
+  async validate(payload: any) {
+    const user = await this.userService.getUserById(payload.sub);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPasswd } = user;
+    return userWithoutPasswd;
   }
 }

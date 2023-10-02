@@ -1,53 +1,21 @@
-import {
-  BadGatewayException,
-  Injectable,
-  Logger,
-  NotFoundException,
-  UnauthorizedException
-} from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { catchError, firstValueFrom } from 'rxjs';
-import { AxiosError } from 'axios';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { PasswordService } from '@app/password/password.service';
 import { UserService } from '@app/user/users.service';
+import { authenticator } from 'otplib';
+import { User } from '@prisma/client';
+import { toDataURL } from 'qrcode';
 
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
 
   constructor(
-    private readonly httpService: HttpService,
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
-    private readonly passwordService: PasswordService
+    private readonly userService: UserService
   ) {}
 
-  async get42Login(accessToken: string): Promise<string> {
-    const axiosResponse = await firstValueFrom(
-      this.httpService
-        .get('https://api.intra.42.fr/v2/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-        .pipe(
-          catchError((error: AxiosError) => {
-            this.logger.error(`Oauth authentication failed: ${error.message}`);
-            throw new BadGatewayException('Error while authentication');
-          })
-        )
-    );
-
-    const { login } = axiosResponse.data;
-    return login;
-  }
-
-  async signToken(userId: number) {
-    const payload = { sub: userId };
-
+  async signToken(payload: any) {
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwtService.signAsync(payload, {
@@ -57,18 +25,44 @@ export class AuthService {
     return { accessToken: token };
   }
 
-  async validateUser(username: string, password: string) {
-    const user = await this.userService.getUserByUsername(username).catch((error) => {
-      if (error instanceof NotFoundException) {
-        throw new UnauthorizedException('Username is invalid');
-      }
-      throw error;
+  isTwoFactorAuthenticationCodeValid(authenticationCode: string, user: Partial<User>) {
+    return authenticator.verify({
+      token: authenticationCode,
+      secret: user.authenticationSecret
     });
+  }
 
-    if (!(await this.passwordService.verifyPassword(user.password, password))) {
-      throw new UnauthorizedException('Password is invalid');
-    }
+  async generateTwoFactorAuthenticationSecret(user: User) {
+    const secret = authenticator.generateSecret();
 
-    return this.signToken(user.id);
+    const otpAuthUrl = authenticator.keyuri(user.username, 'AUTH_APP_NAME', secret);
+
+    await this.userService.setTwoFactorAuthenticationSecret(secret, user.id);
+
+    return {
+      secret,
+      otpAuthUrl
+    };
+  }
+
+  async generateQrCodeDataURL(otpAuthUrl: string) {
+    return toDataURL(otpAuthUrl);
+  }
+
+  async loginWith2fa(user: Partial<User>) {
+    const payload = {
+      sub: user.id,
+      isTwoFactorAuthenticationEnabled: !!user.authenticationEnabled,
+      isTwoFactorAuthenticated: true
+    };
+
+    return this.signToken(payload);
+  }
+
+  async login(user: Partial<User>) {
+    const payload = {
+      sub: user.id
+    };
+    return this.signToken(payload);
   }
 }

@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { HttpModule } from '@nestjs/axios';
-import { Oauth42Strategy } from './strategies';
 import { UserModule } from '@app/user/users.module';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from './strategies/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PasswordService } from '@app/password/password.service';
 import { PasswordModule } from '../password/password.module';
-import { LocalStrategy } from '@app/auth/strategies/local.strategy';
+import { LocalStrategy } from '@app/auth/strategies/local/local.strategy';
+import { Oauth42Strategy } from '@app/auth/strategies/oauth/oauth.42.strategy';
 
 @Module({
   imports: [HttpModule, UserModule, JwtModule, PasswordModule],
