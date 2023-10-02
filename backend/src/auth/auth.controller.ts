@@ -1,8 +1,21 @@
-import { Controller, Get, Req, UseGuards, Post, Body } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Post,
+  Body,
+  HttpCode,
+  UnauthorizedException,
+  Res
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from '@app/auth/dto';
 import { UserService } from '@app/user/users.service';
+import { Oauth42Guard } from '@app/auth/strategies/oauth/oauth.42.guard';
+import { TwoFaAuth } from '@app/auth/dto/two-fa-auth';
+import { User } from '@app/user/decorator';
+import { LocalAuthGuard } from '@app/auth/strategies/local/local-auth.guard';
+import { Jwt2faAuthGuard } from '@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard';
 
 @Controller('auth')
 export class AuthController {
@@ -11,29 +24,80 @@ export class AuthController {
     private userService: UserService
   ) {}
 
-  @UseGuards(AuthGuard('oauth_42'))
+  /*
+      Login with Oauth 42 intra
+   */
+  @UseGuards(Oauth42Guard)
   @Get('42')
   oauthLogin() {
     return;
   }
 
-  @UseGuards(AuthGuard('oauth_42'))
+  @UseGuards(Oauth42Guard)
   @Get('42/redirect')
-  oauthRedirect(@Req() req) {
-    // Return the jwt created
-    return req.user;
+  async oauthRedirect(@User() user) {
+    return this.authService.login(user, false);
   }
 
-  @UseGuards(AuthGuard('local'))
+  /*
+      Login with username password
+   */
+  @UseGuards(LocalAuthGuard)
+  @HttpCode(200)
   @Post('login')
-  async login(@Req() req) {
-    // Return the jwt created
-    return req.user;
+  async login(@User() user) {
+    return this.authService.login(user, false);
   }
 
+  /*
+      Create a new account
+   */
   @Post('signup')
   async signup(@Body() body: RegisterDto) {
     await this.userService.createUser(body.username, body.password, body.nickname);
     return;
+  }
+
+  /*
+      2FA authentication
+   */
+  @Post('2fa/generate')
+  @UseGuards(Jwt2faAuthGuard)
+  async register(@Res() response, @User() user) {
+    const { otpAuthUrl } =
+      await this.authService.generateTwoFactorAuthenticationSecret(user);
+
+    return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
+  }
+
+  @Post('2fa/turn-on')
+  @UseGuards(Jwt2faAuthGuard)
+  async turnOnTwoFactorAuthentication(@User() user, @Body() body: TwoFaAuth) {
+    const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
+      body.twoFactorAuthenticationCode,
+      user
+    );
+
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+
+    await this.userService.turnOnTwoFactorAuthentication(user.id);
+  }
+
+  @Post('2fa/authenticate')
+  @HttpCode(200)
+  @UseGuards(Jwt2faAuthGuard)
+  async authenticate(@User() user, @Body() body: TwoFaAuth) {
+    const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
+      body.twoFactorAuthenticationCode,
+      user
+    );
+
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+
+    return this.authService.login(user, true);
   }
 }

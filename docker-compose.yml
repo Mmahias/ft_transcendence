@@ -4,7 +4,7 @@ services:
   postgres:
     image: postgres:15.4
     container_name: postgres
-    restart: unless-stopped
+    #restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: my_password
@@ -14,9 +14,9 @@ services:
       - ./database:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
     ports:
-      - 5432:5432
-    networks:
-      - ft_network
+      - "5432:5432"
+    #networks:
+    #  - ft_network
 
   adminer:
     container_name: adminer

@@ -1,6 +1,11 @@
-import { ForbiddenException, ConflictException,
-  InternalServerErrorException, Injectable, Logger,
-  NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  ConflictException,
+  InternalServerErrorException,
+  Injectable,
+  Logger,
+  NotFoundException
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserDto, UserUpdateDto } from './dto';
@@ -24,13 +29,6 @@ export class UserService {
         where: {
           id
         }
-      })
-      .then((user) => {
-        const userDto: UserDto = {
-          id: user.id,
-          nickname: user.nickname
-        };
-        return userDto;
       })
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
@@ -94,13 +92,14 @@ export class UserService {
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
           switch (error.code) {
-              case 'P2002': // Unique constraint violation
-                  throw new ConflictException(`Username [${username}] is already taken`);
-              default:
-                  throw new InternalServerErrorException('An unexpected error occurred while creating the user');
+            case 'P2002': // Unique constraint violation
+              throw new ConflictException(`Username [${username}] is already taken`);
+            default:
+              throw new InternalServerErrorException(
+                'An unexpected error occurred while creating the user'
+              );
           }
-        }
-        else {
+        } else {
           throw new InternalServerErrorException('An unexpected error occurred');
         }
       });
@@ -173,6 +172,20 @@ export class UserService {
     return this.prisma.user.update({
       where: { id: userId },
       data: { avatar: filename }
+    });
+  }
+
+  async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { authenticationSecret: secret }
+    });
+  }
+
+  async turnOnTwoFactorAuthentication(userId: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { authenticationEnabled: true }
     });
   }
 }

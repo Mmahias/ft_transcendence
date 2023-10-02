@@ -1,14 +1,24 @@
 import { Response } from 'express';
 import { UserService } from './users.service';
-import { Controller, Get, UseGuards, Query, Post,
-  Res, Logger, UseInterceptors, UploadedFile,
-  Next, Param } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Query,
+  Post,
+  Res,
+  Logger,
+  UseInterceptors,
+  UploadedFile,
+  Next,
+  Param
+} from '@nestjs/common';
 import { User } from './decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '@app/user/validator';
+import { JwtAuthGuard } from '@app/auth/strategies/jwt/jwt-auth.guard';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
