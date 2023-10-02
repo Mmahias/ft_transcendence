@@ -15,7 +15,8 @@
 h1 {
   display: flex;
   align-items: center;
-  justify-content: center;}
+  justify-content: center;
+}
 
 p {
   margin: 0;
@@ -24,7 +25,7 @@ p {
 span {
   font-family: 'Bebas Neue', cursive;
   color: black;
-  font-size: 2em; /* Taille de police réduite pour les écrans plus petits */
+  font-size: 3em; /* Taille de police réduite pour les écrans plus petits */
   position: absolute;
   top: 40%;
   left: 50%;
@@ -46,14 +47,15 @@ span:hover {
 /* Média query pour les écrans plus petits */
 @media screen and (max-width: 768px) {
   span {
-      font-size: 1.5em; /* Ajustez la taille de la police pour les écrans plus petits */
+      font-size: 2em; /* Ajustez la taille de la police pour les écrans plus petits */
   }
 }
 
 
 /* CSS */
 
-.button-container {
+.button-home-container {
+  margin-top: 200px;
   display: flex;
   justify-content: center; /* Centrez les boutons horizontalement */
   gap: 20px; /* Ajoutez de l'espace entre les boutons (vous pouvez ajuster la valeur selon vos besoins) */
@@ -91,6 +93,10 @@ span:hover {
 .button-52:hover:after {
   top: 0px;
   left: 0px;
+}
+
+.button-test {
+  margin-top: 100px;
 }
 
 @media (min-width: 768px) {

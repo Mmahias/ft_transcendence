@@ -1,21 +1,16 @@
 import {
-  LoginWrapper,
-  Background,
-  LoginForm,
-  LoginLabel,
-  LoginInput,
   AlertSuccess,
   AlertError,
-  SocialWrapper,
-  SocialButton
 } from './Login.styles';
+import './Login.style.css';
 import "./../../App.styles";
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AuthService from "../../api/auth-api";
 // import { createSocketConnexion } from '../sockets/sockets';
 import { Socket } from 'socket.io-client';
 import useAuth from '../../hooks/useAuth';
+import { validateUsername, validatePassword, validateNickname, validateLoginUsername, validateLoginPassword } from './validation';
 
 
 export default function Login({ onSetLoggedIn, setSocket }: { 
@@ -29,104 +24,159 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   const [successMsg, setSuccessMsg] = useState<string>("");
   const navigate = useNavigate();
   const { auth, login } = useAuth();
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [nicknameError, setNicknameError] = useState<string | null>(null);
+
 
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
       const response = await AuthService.signUp(username, password, nickname);
-      if (response) {
+      //if (response) {
         login(response);
-        onSetLoggedIn(true);
-        setSuccessMsg("Successfully signed up! ")
+        setSuccessMsg("Successfully signed up!");
         setErrorMsg('');
-        // const newSocket = createSocketConnexion();
-        // setSocket(newSocket);
         setTimeout(() => {
           navigate('/settings');
         }, 2000);
-      }
+      //}
     } catch (error) {
-      console.log("KO S");
       setSuccessMsg('');
-      setErrorMsg("A user with this nickname already exists");
+      if (error instanceof Error) {
+        setErrorMsg(error.message);
+      } else {
+        setErrorMsg("A user with this nickname already exists");
+      }
     }
   }
+
   
   const handleLogin = async (event: React.MouseEvent<HTMLElement>) => {
+
+    const usernameValidationError = validateLoginUsername(username);
+    const passwordValidationError = validateLoginPassword(password);
+
+    setUsernameError(usernameValidationError);
+    setPasswordError(passwordValidationError);
+
+    if (usernameValidationError || passwordValidationError) {
+        return; // Ne continuez pas si des erreurs de validation sont présentes
+    }
+
     event.preventDefault();
     try {
       const response = await AuthService.login(username, password);
       if (response) {
-        console.log("OK L");
         login(response);
         setSuccessMsg("Successfully logged in!");
         setErrorMsg('');
-        // const newSocket = createSocketConnexion();
-        // setSocket(newSocket);
-        console.log("auth", auth);
         setTimeout(() => {
           navigate('/settings');
         }, 2000);
-      } else {
-        throw new Error('Invalid credentials');
       }
     } catch (error) {
-      console.log("KO L", error);
       setSuccessMsg('');
-      setErrorMsg("Wrong nickname or password");
+      if (error instanceof Error) {
+        setErrorMsg(error.message);
+      } else {
+        setErrorMsg("Wrong nickname or password");
+      }
     }
-    
   }
 
+
   return (
-    <>
-      <Background />
-      <LoginWrapper>
-        <LoginForm>
-          <LoginLabel htmlFor="username">Username</LoginLabel>
-          <LoginInput
-            onChange={(event) => { setUsername(event.target.value) }}
-            type="text"
-            placeholder="username"
-            id="username"
-          />
-          <LoginLabel htmlFor="password">Password</LoginLabel>
-          <LoginInput
-            onChange={(event) => { setPassword(event.target.value) }}
-            type="password"
-            placeholder="Password"
-            id="password"
-          />
-          <LoginInput
-            onChange={(event) => { setNickname(event.target.value) }}
-            type="text"
-            placeholder="nickname"
-            id="nickname"
-          />
-          {successMsg && 
-            <AlertSuccess>
-              <h6>{successMsg}</h6>
-            </AlertSuccess>
-          }
-          {errorMsg &&
-            <AlertError>
-              <h6>{errorMsg}</h6>
-            </AlertError>
-          }
-          <SocialWrapper>
-            <SocialButton className="go">
-              <a href={import.meta.env.VITE_URL_42}>Log with 42</a>
-            </SocialButton>
-            <SocialButton className="fb">
-              <button onClick={handleSignUp}>Sign up</button>
-            </SocialButton>
-            <SocialButton className="fb">
-              <button onClick={handleLogin}>Login</button>
-            </SocialButton>
-          </SocialWrapper>
-        </LoginForm>
-      </LoginWrapper>
-    </>
+    <div className='sign-log-container'>
+      <h1 style={{ justifyContent: "center", marginTop: "100px" }}><span className="profile-p">SignUp / LogIn</span></h1>
+      <div className="login-container">
+        <input type="checkbox" id="chk" />
+        <div className="signup">
+          <form>
+            <label htmlFor="chk">Sign up</label>
+            <input
+              onChange={(event) => {
+                setUsername(event.target.value);
+                setUsernameError(validateUsername(event.target.value));
+              }}
+              type="text"
+              placeholder="Username"
+              id="username"
+            />
+            {usernameError && <small className="error-message">{usernameError}</small>}
+            <input
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setPasswordError(validatePassword(event.target.value));
+              }}
+              type="password"
+              placeholder="Password"
+              id="password"
+            />
+            {passwordError && <small className="error-message">{passwordError}</small>}
+            <input
+              onChange={(event) => {
+                setNickname(event.target.value);
+                setNicknameError(validateNickname(event.target.value));
+              }}
+              type="text"
+              placeholder="nickname"
+              id="nickname"
+            />
+            {nicknameError && <small className="error-message">{nicknameError}</small>}
+            {successMsg &&
+              <AlertSuccess>
+                <h6>{successMsg}</h6>
+              </AlertSuccess>
+            }
+            <button
+              className='button-log'
+              onClick={handleSignUp}
+              disabled={!!(usernameError || passwordError || nicknameError)}>
+              Sign up
+            </button>
+          </form>
+        </div>
+        <div className="login">
+          <form>
+            <label htmlFor="chk">Login</label>
+            <input
+              onChange={(event) => {
+                setUsername(event.target.value);
+                setUsernameError(validateLoginUsername(event.target.value));
+              }}
+              type="text"
+              placeholder="Username"
+              id="username"
+            />
+            {usernameError && <small className="error-message">{usernameError}</small>}
+
+            <input
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setPasswordError(validateLoginPassword(event.target.value));
+              }}
+              type="password"
+              placeholder="Password"
+              id="password"
+            />
+            {passwordError && <small className="error-message">{passwordError}</small>}
+            {successMsg &&
+              <AlertSuccess>
+                <h6>{successMsg}</h6>
+              </AlertSuccess>
+            }
+            <button
+              className='button-log'
+              onClick={handleLogin}
+              disabled={!!(usernameError || passwordError)}>
+              Login
+            </button>
+          </form>
+          <button className='button-log'><a href={import.meta.env.VITE_URL_42}>Log with 42</a></button>
+        </div>
+      </div>
+    </div>
   );
 }
 

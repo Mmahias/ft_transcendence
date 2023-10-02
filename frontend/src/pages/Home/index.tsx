@@ -7,6 +7,7 @@ import { testBackendEndpoint } from '../../api/test-api';
 import { getMe } from '../../api/users-api';
 import useAuth from '../../hooks/useAuth';
 import {AuthState} from '../../contexts/AuthContext';
+import { Link as RouterLink } from "react-router-dom";
 
 export const Log42: React.FC = () => {
   const log = {
@@ -51,11 +52,15 @@ const Home: React.FC = () => {
   const { auth } = useAuth();
   return (
     <div className="home-container">
-      <h1>FT_TRANSCENDENCE</h1>
-      <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
-      <button onClick={getMe}>Test User Me</button>
-      <button onClick={() => getToken(auth)}>Test Token</button>
-      <Log42 />
+      <h1><span>FT_TRANSCENDENCE</span></h1>
+      <div className='button-home-container'>
+        <RouterLink to='/login'><button className="button-52">SignUp/Login</button></RouterLink>
+      </div>
+      <div className='button-test'>
+        <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
+        <button onClick={getMe}>Test User Me</button>
+        <button onClick={() => getToken(auth)}>Test Token</button>
+      </div>
     </div>
   );
 }

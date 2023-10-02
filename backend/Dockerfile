@@ -9,7 +9,7 @@ COPY package*.json ./
 
 # Install global and local npm packages
 RUN npm install -g prisma && \
-    npm ci
+    npm i
 
 # Update and install system packages in a single layer
 RUN apt-get update && apt-get install -y \
