@@ -15,7 +15,6 @@ import Friends from './pages/User/friends';
 import Request from './pages/User/Request';
 import Edit from './pages/User/edit';
 import Error from './pages/Error/Error';
-import SignUp from './pages/Signup/Signup';
 import { Socket } from 'socket.io-client';
 import { IsLoggedInContext, SocketContext, ChatStatusContext } from './contexts';
 import { Channel } from './api/interfaces-api';
@@ -31,7 +30,6 @@ const MainContent: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home/>} />
         {/* <Route path="/login" element={<Login />}/> */}
-        <Route path="/signUp" element={<SignUp />}/>
         <Route path="/game" element={<Game />} />
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/user/history" element={<History />} />

@@ -3,11 +3,11 @@ FROM node:18
 # Set working directory
 WORKDIR /app
 
-COPY package*.json .
+COPY package*.json ./
 
 # Install global and local npm packages
 RUN npm install -g vite && \
-    npm ci
+    npm i
 
 # Install esbuild for Linux (for cross-platforms runs)
 RUN if [ "$(uname -m)" = "aarch64" ]; then npm install @esbuild/linux-arm64; else npm install @esbuild/linux-x64; fi
