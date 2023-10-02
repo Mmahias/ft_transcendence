@@ -17,6 +17,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
   async validate(payload: any) {
     const user = await this.userService.getUserById(payload.sub);
+
+    if (user.authenticationEnabled && !payload.isTwoFactorAuthenticated) return null;
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPasswd } = user;
     return userWithoutPasswd;
