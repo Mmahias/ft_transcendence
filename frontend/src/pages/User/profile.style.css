@@ -250,7 +250,13 @@ textarea {
     margin-right: 10px;
   }
   
+  .lab-fa {
+    justify-content: center;
+    margin-left: 40%;
+    font-size: 15px;
+  }
   .toggle-container input[type="checkbox"] {
+    margin-left: 10px;
     appearance: none;
     background-color: #e6e6e6;
     border-radius: 50px;
