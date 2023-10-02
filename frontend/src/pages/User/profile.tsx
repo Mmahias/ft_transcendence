@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
             </div>
           </div>
           <div className="toggle-container">
-            <label>2FA Authentication:</label>
+          <label className="lab-fa">2FA Authentication:</label>
             <input
               type="checkbox"
               checked={is2FAEnabled}
