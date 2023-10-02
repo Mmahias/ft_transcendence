@@ -11,10 +11,6 @@ COPY package*.json ./
 RUN npm install -g prisma && \
     npm i
 
-# Update and install system packages in a single layer
-RUN apt-get update && apt-get install -y \
-    iputils-ping \
-    postgresql-client
 
 # Copy the rest of your application to the container
 COPY . .
@@ -23,9 +19,15 @@ COPY . .
 RUN npx prisma generate && \
     npm run build
 
+# Update and install system packages in a single layer
+RUN apt-get update && apt-get install -y \
+    iputils-ping \
+    postgresql-client \
+    apt-get install -y tree
+
 # Expose port 3030
 EXPOSE 3030
 
 # Start the application in development mode
-CMD [ "sh", "run.sh" ]
-# CMD ["tail", "-f", "/dev/null"]
+# CMD [ "sh", "run.sh" ]
+CMD ["tail", "-f", "/dev/null"]

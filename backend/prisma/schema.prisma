@@ -54,7 +54,7 @@ model Channel {
   id          Int       @id @default(autoincrement())
   date        DateTime  @default(now())
   lastUpdate  DateTime  @default(now()) @updatedAt
-  mode        ChanMode  @default(PUBLIC)
+  mode        PrismaChanMode  @default(PUBLIC)
   password    String?
   name        String    @unique
   ownerId     Int
@@ -82,7 +82,7 @@ model Message {
   @@map("messages")
 }
 
-enum ChanMode {
+enum PrismaChanMode {
   PUBLIC // everyone can join
   PRIVATE // need to be invited to join
   PROTECTED // need password join

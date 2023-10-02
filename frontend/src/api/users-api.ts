@@ -14,6 +14,7 @@ const USERS_API = `/users`
 
 export async function getMe(): Promise<User> {
   const response = await axiosPrivate.get<User>(`${USERS_API}/me`);
+  console.log("get me", response.data);
   return response.data;
 }
 

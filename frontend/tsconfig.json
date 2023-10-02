@@ -12,6 +12,7 @@
       "paths": {
         "@app/*": ["src/*"],
         "@constants/*": ["src/constants/*"],
+        "@ft-transcendence/shared": ["../shared"]
       },
       // "resolveJsonModule": true, // Enables importing .json files. You may not need this right now, but it's a good option to have enabled.
       // "typeRoots": ["./node_modules/@types", "./src/types"], // Add this if you're keeping type declarations in a 'types' folder under 'src'. Otherwise, adjust the path accordingly.
@@ -19,7 +20,6 @@
     "include": [
       "src/**/*.ts",
       "src/**/*.tsx",
-      "src/pages/Game/canvas/Canvas.styles.ts",
       "src/vite-env.d.ts"
     ], // Ensures TypeScript processes all .ts and .tsx files in your src directory.
     "exclude": ["node_modules"]

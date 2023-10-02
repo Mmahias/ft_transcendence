@@ -1,6 +1,7 @@
 import { axiosPrivate } from './axios-config';
 import { getMe, getUserByNickname } from './users-api';
 import { Channel, Message, User } from './interfaces-api';
+import { ChanMode } from '@ft-transcendence/shared';
 
 const CHAT_API = `/chat`
 
@@ -11,7 +12,7 @@ const CHAT_API = `/chat`
 
 // ----- CREATE -----
 
-export async function createChannel(name: string, mode: string, password?: string)
+export async function createChannel(name: string, mode: ChanMode, password?: string)
   : Promise<Channel> {
   try {
     const user: User = await getMe();
@@ -29,6 +30,7 @@ export async function createChannel(name: string, mode: string, password?: strin
         },
       },
     );
+    console.log("create chan", response.data);
     return response.data;
 
   } catch (error) {
@@ -70,11 +72,11 @@ export async function verifyPasswords(channelId: number, userInput: string): Pro
 
 // ----- UPDATE -----
 
-export async function updateUserInChannel(name: string, channelId: number, usergroup: string, action: string) {
+export async function updateUserInChannel(id: number, channelId: number, usergroup: string, action: string) {
   try {
     const response = await axiosPrivate.post(`${CHAT_API}/channel/${channelId}/users`,
       {
-        name,
+        id,
         usergroup,
         action,
       },
@@ -201,7 +203,7 @@ export async function getDMs(senderUsername: string, receiverUsername: string): 
       .join('@');                      // Separate the names with an '@' symbol
     let conv: Channel = await getChannelByName(roomName);
     if (!conv) {
-      conv = await createChannel(roomName, 'DM');
+      conv = await createChannel(roomName, ChanMode.DM);
     }
     await updateUserInChannel(sender.id, conv.id, 'joinedUsers', 'connect');
     return conv;

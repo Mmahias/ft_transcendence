@@ -5,7 +5,9 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { PrismaClient, Prisma } from '@prisma/client';
 import { PasswordService } from '@app/password/password.service';
 import { UserService } from '@app/user/users.service';
-import { ChanMode } from '@prisma/client';
+import { PrismaChanMode } from '@prisma/client';
+import { ChanMode } from '@ft-transcendence/shared/types';
+import { toPrismaEnum } from '@app/utils/typesConverter';
 
 const prisma = new PrismaClient();
 
@@ -33,33 +35,41 @@ export class ChatService {
     }
     const newPassword = password ? hashedPwd : null;
     try {
+      console.log('attempting to create channel');
+      
       const createdChannel = await prisma.channel.create({
         data: {
           name,
-          mode,
+          mode: toPrismaEnum(mode),
           password: newPassword,
           owner: { connect: { id: ownerId } },
           adminUsers: { connect: { id: ownerId } }
         }
       });
+      await prisma.$transaction([
+        prisma.user.update({
+          where: { id: ownerId },
+          data: {
+            ownerChans: { connect: { id: createdChannel.id } },
+            adminChans: { connect: { id: createdChannel.id } },
+            joinedChans: { connect: { id: createdChannel.id } }
+          }
+        })
+      ]);
 
-      await prisma.user.update({
-        where: { id: ownerId },
-        data: {
-          ownerChans: { connect: { id: createdChannel.id } },
-          adminChans: { connect: { id: createdChannel.id } },
-          joinedChans: { connect: { id: createdChannel.id } }
-        }
-      });
+      console.log('created channel', createdChannel);
       return createdChannel;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new BadRequestException('A channel with this name already exists');
+          }
         }
-      }
+      throw error; // If the error is not the known error, rethrow it.
     }
   }
+
+
 
   // ------------------
   // ----- READ -------
@@ -123,7 +133,7 @@ export class ChatService {
     const user = await this.userService.getUserById(userId);
     return await prisma.channel.findMany({
       where: {
-        mode: mode,
+        mode: toPrismaEnum(mode),
         joinedUsers: { some: { id: user.id } }
       }
     });
@@ -132,7 +142,7 @@ export class ChatService {
   async getDisplayableChans(userId: number) {
     return await prisma.channel.findMany({
       where: {
-        OR: [{ mode: ChanMode.PROTECTED }, { mode: ChanMode.PUBLIC }],
+        OR: [{ mode: PrismaChanMode.PROTECTED }, { mode: PrismaChanMode.PUBLIC }],
         NOT: {
           joinedUsers: {
             some: { id: userId }
@@ -170,7 +180,7 @@ export class ChatService {
       dataToUpdate.name = body.name;
     }
     if (body.mode) {
-      dataToUpdate.mode = body.mode;
+      dataToUpdate.mode = toPrismaEnum(body.mode);
     }
     if (body.password) {
       dataToUpdate.password = body.password;

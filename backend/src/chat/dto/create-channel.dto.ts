@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString, Length, IsOptional, IsNumber } from "class-validator";
 import { 
-  ChanMode, 
   User, 
   Message 
 } from '@prisma/client';
+import { ChanMode } from "@ft-transcendence/shared/types";
 
 export class CreateChannelDto {
 

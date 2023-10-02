@@ -14,18 +14,10 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:restart": "docker compose down && docker compose up -d && sleep 1",
-    "preset:int": "npm run db:restart && dotenv -e .env.test -- prisma migrate reset dev",
-    "test:it": "dotenv -e .env.test -- jest --runInBand --no-cache --watch --config jest-int.json"
+    "start:prod": "node dist/backend/src/main"
   },
   "dependencies": {
+    "@ft-transcendence/shared": "file:../shared",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.0",

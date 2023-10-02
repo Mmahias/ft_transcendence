@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
     "declaration": true,
+    "declarationMap": true,
+    "rootDir": ".",
+    "composite": true,
+    "module": "CommonJS",
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -10,10 +13,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "paths": {
-      "@app/*": ["src/*"],
-      "@ft-transcendence/shared/*": ["../../shared/dist/*"]
-    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -21,6 +20,13 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015.promise"
+    ]
+  },
+  "references": []
 }

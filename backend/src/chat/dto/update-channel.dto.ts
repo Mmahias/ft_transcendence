@@ -1,9 +1,5 @@
 import { IsOptional, IsIn } from "class-validator";
-import { 
-  ChanMode, 
-  User, 
-  Message 
-} from '@prisma/client';
+import { ChanMode } from "@ft-transcendence/shared/types"
 
 export class UpdateChannelDto {
 

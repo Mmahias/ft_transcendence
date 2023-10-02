@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
-import path from 'path';
+import { fileURLToPath, URL } from "url";
 
 
 export default ({ mode }) => {
@@ -23,10 +23,11 @@ export default ({ mode }) => {
       },
     },
     resolve: {
-      alias: {
-        '@app': path.resolve(__dirname, './src'),
-        '@constants': path.resolve(__dirname, './src/constants'),
-      }
+      alias: [
+        { find: '@app', replacement: fileURLToPath(new URL('src', import.meta.url)) },
+        { find: '@constants', replacement: fileURLToPath(new URL('src/constants', import.meta.url)) },
+        { find: '@ft-transcendence/shared', replacement: fileURLToPath(new URL('../shared', import.meta.url)) },
+      ]
     },
   });
 };

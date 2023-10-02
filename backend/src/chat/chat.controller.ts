@@ -4,7 +4,8 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { ChanMode } from '@prisma/client';
+import { ChanMode } from '@ft-transcendence/shared/types';
+
 
 @ApiTags('Chat')
 @Controller('chat')
