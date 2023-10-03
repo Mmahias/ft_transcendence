@@ -72,7 +72,7 @@ export default function Login({ onSetLoggedIn, setSocket }: {
         setSuccessMsg("Successfully logged in!");
         setErrorMsg('');
         setTimeout(() => {
-          navigate('/settings');
+          navigate('/user/profile');
         }, 2000);
       }
     } catch (error) {
