@@ -1,5 +1,5 @@
 import { axiosPrivate } from './axios-config';
-import { User } from './interfaces-api';
+import { User } from './types';
 
 const USERS_API = `/users`
 

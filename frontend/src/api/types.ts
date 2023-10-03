@@ -23,7 +23,7 @@ export interface Channel {
   id:          number;
   ownerId:     number;
   date:        Date;
-  updatedAt:  Date;
+  updatedAt:   Date;
   mode:        string;
   password:    string;
   name:        string;
@@ -33,6 +33,7 @@ export interface Channel {
   bannedUsers: User[];
   kickedUsers: User[];
   mutedUsers:  User[];
+  messages:    Message[];
 }
 
 export interface Message {

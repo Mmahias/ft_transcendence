@@ -1,6 +1,6 @@
 import { axiosPrivate } from './axios-config';
 import UserService from './users-api';
-import { Channel, Message, User } from './interfaces-api';
+import { Channel, Message, User } from './types';
 import { ChanMode } from '../shared/types';
 
 const CHAT_API = `/chat`

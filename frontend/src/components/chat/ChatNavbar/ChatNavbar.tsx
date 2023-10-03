@@ -10,6 +10,8 @@ import {
 import CreateChannelModal from '../CreateChannelModal/CreateChannelModal';
 import JoinChannelModal from '../JoinChannelModal/JoinChannelModal';
 import ChatService from '../../../api/chat-api';
+import { Channel } from '../../../api/types';
+
 
 interface ChannelProps {
   name: string;
@@ -22,17 +24,20 @@ const Channel: React.FC<ChannelProps> = ({ name, onClick }) => (
   </li>
 );
 
-const ChatNavbar: React.FC = () => {
+interface ChatNavbarProps {
+  onChannelSelect: (channel: Channel) => void;
+}
+
+const ChatNavbar: React.FC<ChatNavbarProps> = ({onChannelSelect}) => {
   const [showCreateChannel, setShowCreateChannel] = useState(false);
   const [showJoinChannel, setShowJoinChannel] = useState(false);
-  const [channels, setChannels] = useState<string[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
   const [activeChannel, setActiveChannel] = useState<string | null>(null);
 
   const fetchMyChannels = async () => {
-    const data = await ChatService.getMyChannels();
+    const data: Channel[] = await ChatService.getMyChannels();
     console.log(data);
-    const channelNames = data.map((channel: any) => channel.name);
-    setChannels(channelNames);
+    setChannels(data);
   };
 
   useEffect(() => {
@@ -49,9 +54,12 @@ const ChatNavbar: React.FC = () => {
         <GlobalStyles>My Channels</GlobalStyles>
         {channels.map(channel => (
           <Channel
-            key={channel}
-            name={channel}
-            onClick={() => setActiveChannel(channel)}
+            key={channel.name}
+            name={channel.name}
+            onClick={() => {
+              setActiveChannel(channel.name);
+              onChannelSelect(channel); // <-- Pass the entire channel object
+            }}
           />
         ))}
       </ChannelList>

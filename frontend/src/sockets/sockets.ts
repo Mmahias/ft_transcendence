@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import { Socket } from 'socket.io-client';
-import { Channel } from '../api/interfaces-api';
+import { Channel } from '../api/types';
 
 export function createSocketConnexion() {
   const APP_URL = import.meta.env.VITE_BACKEND_URL;

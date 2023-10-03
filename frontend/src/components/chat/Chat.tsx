@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import ChatNavbar from './ChatNavbar/ChatNavbar';
+import ChannelComponent from './ChannelComponent/ChannelComponent';
+import { Channel } from '../../api/types';
 
 const Chat: React.FC = () => {
-    const [showCreateChannel, setShowCreateChannel] = useState(false);
-    const [showJoinChannel, setShowJoinChannel] = useState(false);
+    const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
 
     return (
         <div>
-            <ChatNavbar />
+            <ChatNavbar onChannelSelect={setSelectedChannel} />
+            {selectedChannel && <ChannelComponent channel={selectedChannel} />}
         </div>
     );
 }

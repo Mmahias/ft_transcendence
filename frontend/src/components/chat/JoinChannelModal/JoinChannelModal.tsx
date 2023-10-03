@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../shared/Modal/Modal';
 import ChatService from '../../../api/chat-api';
-import { Channel } from '../../../api/interfaces-api';
+import { Channel } from '../../../api/types';
 import {
   ChannelBoxStyled,
   ChannelHeader,

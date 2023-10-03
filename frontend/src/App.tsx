@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { MainContentWrapper, AppWrapper } from './App.styles';
 import { Socket } from 'socket.io-client';
 import { IsLoggedInContext, SocketContext, ChatStatusContext } from './contexts';
-import { Channel } from './api/interfaces-api';
+import { Channel } from './api/types';
 import { AuthProvider } from './contexts/AuthContext';
 
 const MainContent: React.FC = () => {

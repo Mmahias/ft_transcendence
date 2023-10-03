@@ -1,6 +1,6 @@
 
 import React, { createContext} from 'react';
-import { Channel } from '../api/interfaces-api';
+import { Channel } from '../api/types';
 
 export interface ChatStatusType {
 	activeTab: number;
