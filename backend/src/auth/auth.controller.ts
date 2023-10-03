@@ -1,5 +1,5 @@
 import { Controller, Get, Req, UseGuards,
-  Post, Body, HttpCode, Res, UnauthorizedException } from '@nestjs/common';
+  Post, Body, HttpCode, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from '@app/auth/dto';
 import { UserService } from '@app/user/users.service';
@@ -27,8 +27,9 @@ export class AuthController {
 
   @UseGuards(Oauth42Guard)
   @Get('42/redirect')
-  async oauthRedirect(@User() user) {
-    return this.authService.login(user, false);
+  oauthRedirect(@Req() req) {
+    // Return the jwt created
+    return req.user;
   }
 
   /*
@@ -37,17 +38,15 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   @Post('login')
-  async login(@User() user) {
-    return this.authService.login(user, false);
+  async login(@Req() req) {
+    // Return the jwt created
+    return req.user;
   }
-
-  /*
-      Create a new account
-   */
+  
   @Post('signup')
   async signup(@Body() body: RegisterDto) {
     await this.userService.createUser(body.username, body.password, body.nickname);
-    return;
+    return await this.authService.validateUser(body.username, body.password);
   }
 
   /*
@@ -69,7 +68,7 @@ export class AuthController {
       body.twoFactorAuthenticationCode,
       user
     );
-
+    
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
@@ -85,7 +84,7 @@ export class AuthController {
       body.twoFactorAuthenticationCode,
       user
     );
-
+    
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }

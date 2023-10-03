@@ -53,7 +53,7 @@ model FriendRequest {
 model Channel {
   id          Int       @id @default(autoincrement())
   date        DateTime  @default(now())
-  lastUpdate  DateTime  @default(now()) @updatedAt
+  updatedAt  DateTime  @default(now()) @updatedAt
   mode        PrismaChanMode  @default(PUBLIC)
   password    String?
   name        String    @unique

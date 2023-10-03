@@ -1,5 +1,5 @@
 import { axiosPrivate } from './axios-config';
-import { getMe, getUserByNickname } from './users-api';
+import UserService from './users-api';
 import { Channel, Message, User } from './interfaces-api';
 import { ChanMode } from '../shared/types';
 
@@ -15,7 +15,7 @@ class ChatService {
   static async createChannel(name: string, mode: ChanMode, password?: string)
     : Promise<Channel> {
     try {
-      const user: User = await getMe();
+      const user: User = await UserService.getMe();
       const userId: number = user.id;
       const response = await axiosPrivate.post(`${CHAT_API}/channel`,
         {
@@ -50,8 +50,14 @@ class ChatService {
     return response.data;
   }
 
+  static async getMyChannels(): Promise<Channel[]> {
+    const user: User = await UserService.getMe();
+    const response = await axiosPrivate.get<Channel[]>(`${CHAT_API}/users/${user.id}/channels`);
+    return response.data;
+  }
+
   static async getAccessibleChannels(): Promise<Channel[]> {
-    const user: User = await getMe();
+    const user: User = await UserService.getMe();
     const response = await axiosPrivate.get<Channel[]>(`${CHAT_API}/channel/access/${user.id}`);
     console.log("getAccessibleChannels", response.data);
     return response.data;
@@ -95,7 +101,7 @@ class ChatService {
 
   static async updateMeInChannel(channelId: number, usergroup: string, action: string) {
     try {
-      const user = await getMe();
+      const user = await UserService.getMe();
       const response = await axiosPrivate.post(`${CHAT_API}/channel/${channelId}/users`,
         {
           userId: user.id,
@@ -137,7 +143,7 @@ class ChatService {
 
     try {
       const { name, id } = channel;
-      const user: User = await getMe();
+      const user: User = await UserService.getMe();
       const response = await axiosPrivate.post(`${CHAT_API}/message`,
         {
           fromId: user.id,
@@ -183,11 +189,11 @@ class ChatService {
   static async getDMs(senderUsername: string, receiverUsername: string): Promise<Channel> {
     try {
       // gets the users and check if they can communicate
-      let sender: User = await getUserByNickname(senderUsername);
+      let sender: User = await UserService.getUserByNickname(senderUsername);
       if (!sender) {
         throw new Error('Error: sender does not exist');
       }
-      let receiver: User = await getUserByNickname(receiverUsername);
+      let receiver: User = await UserService.getUserByNickname(receiverUsername);
       if (!receiver) {
         throw new Error('Error: receiver does not exist');
       }

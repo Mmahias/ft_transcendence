@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import CreateChannelModal from './CreateChannelModal/CreateChannelModal';
-import JoinChannelModal from './JoinChannelModal/JoinChannelModal';
+import ChatNavbar from './ChatNavbar/ChatNavbar';
 
 const Chat: React.FC = () => {
     const [showCreateChannel, setShowCreateChannel] = useState(false);
@@ -8,11 +7,7 @@ const Chat: React.FC = () => {
 
     return (
         <div>
-            <button onClick={() => setShowCreateChannel(true)}>Create Channel</button>
-            <button onClick={() => setShowJoinChannel(true)}>Join Channel</button>
-
-            <CreateChannelModal isOpen={showCreateChannel} onClose={() => setShowCreateChannel(false)} />
-            <JoinChannelModal isOpen={showJoinChannel} onClose={() => setShowJoinChannel(false)} />
+            <ChatNavbar />
         </div>
     );
 }

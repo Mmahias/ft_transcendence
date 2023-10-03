@@ -12,6 +12,7 @@ class AuthService {
                 password: password,
                 nickname: newNickname
             });
+            console.log('signup: ', response.data);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -30,6 +31,7 @@ class AuthService {
                 username: username,
                 password: password
             });
+            console.log('login: ', response.data);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

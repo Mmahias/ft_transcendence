@@ -7,9 +7,10 @@ export function createSocketConnexion() {
   const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT;
   const BASE_URL = `${APP_URL}:${BACKEND_PORT}`;
 
-  const newSocket = io(BASE_URL, {
-    withCredentials: true,
-  });
+  // const newSocket = io(BASE_URL, {
+  //   withCredentials: true,
+  // });
+  const newSocket = null;
   return (newSocket);
 }
 

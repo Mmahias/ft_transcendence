@@ -71,8 +71,6 @@ export class ChatService {
     }
   }
 
-
-
   // ------------------
   // ----- READ -------
   // ------------------
@@ -127,7 +125,7 @@ export class ChatService {
         kickedUsers: true,
         mutedUsers: true
       },
-      orderBy: [{ lastUpdate: 'desc' }]
+      orderBy: [{ updatedAt: 'desc' }]
     });
   }
 
@@ -150,6 +148,11 @@ export class ChatService {
             some: { id: userId }
           }
         }
+      },
+      include: {
+        owner: true,
+        adminUsers: true,
+        joinedUsers: true,
       }
     });
   }
@@ -301,7 +304,7 @@ export class ChatService {
 
     await prisma.channel.update({
       where: { id: channelId },
-      data: { lastUpdate: new Date() }
+      data: { updatedAt: new Date() }
     });
 
     return await prisma.message.create({

@@ -7,8 +7,6 @@ import { createSocketConnexion } from '../../sockets/sockets';
 import { Socket } from 'socket.io-client';
 import useAuth from '../../hooks/useAuth';
 import logo from '../../assets/school_42.jpeg';
-// import Avatar from './Avatar';
-// import LoginBtn from './LoginBtn';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
