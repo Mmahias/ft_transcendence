@@ -14,9 +14,9 @@ services:
       - ./database:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
-    #networks:
-    #  - ft_network
+      - 5432:5432
+    networks:
+     - ft_network
 
   adminer:
     container_name: adminer

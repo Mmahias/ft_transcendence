@@ -53,6 +53,59 @@ class AuthService {
             }
         }
     }
+
+
+    // 2FA
+    // static async enable2FA() {
+    //     try {
+    //       const response = await axiosPrivate.post(`${AUTH_API}/2fa/turn-on`);
+    //       return response.data;
+    //     } catch (error) {
+    //       if (axios.isAxiosError(error)) {
+    //         if (error.response && error.response.data && error.response.data.message) {
+    //           // Utilisez le message d'erreur du backend
+    //           throw new Error(error.response.data.message);
+    //         }
+    //       }
+    //       throw new Error('Failed to enable 2FA');
+    //     }
+    //   }
+
+    static async enable2FA(code: string) {
+      try {
+          const response = await axiosPrivate.post(`${AUTH_API}/2fa/turn-on`, { twoFactorAuthenticationCode: code });
+          return response.data;
+      } catch (error) {
+          if (axios.isAxiosError(error)) {
+              if (error.response && error.response.data && error.response.data.message) {
+                  throw new Error(error.response.data.message);
+              }
+          }
+          throw new Error('Failed to enable 2FA');
+      }
+  }
+
+      // 2FA QRCODE
+
+      static async request2FAQrCode() {
+        try {
+          const response = await axiosPrivate.post(`${AUTH_API}/2fa/generate`);
+          return response.data; // Cela devrait être l'URL otpauth ou les données du QR code
+        } catch (error) {
+          console.error('Error in request2FAQrCode:', error);
+          throw new Error('Failed to request 2FA QRCode');
+        }
+      }
+      
+      
+      static async verify2FACode(code: string) {
+        try {
+          const response = await axiosPrivate.post(`${AUTH_API}/2fa/authenticate`, { twoFactorAuthenticationCode: code });
+          return response.data;
+        } catch (error) {
+          throw new Error('Failed verify 2FA QRCode');
+        }
+      }
 }
 
 export default AuthService;

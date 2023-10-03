@@ -7,6 +7,9 @@ export interface User {
   email: string;
   bio: string;
 
+  authenticationSecret?: string;
+  authenticationEnabled: boolean;
+
   ownerChans: User[];
   adminChans: User[];
 
