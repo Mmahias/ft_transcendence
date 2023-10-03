@@ -7,9 +7,10 @@ import { ChanMode } from '../../../shared/types';
 interface Props {
     isOpen: boolean;
     onClose: () => void;
+    onChannelCreated?: () => void;
 }
 
-const CreateChannelModal: React.FC<Props> = ({ isOpen, onClose }) => {
+const CreateChannelModal: React.FC<Props> = ({ isOpen, onClose, onChannelCreated }) => {
   const [channelName, setChannelName] = useState<string>('');
   const [channelMode, setChannelMode] = useState<ChanMode>(ChanMode.PUBLIC);
   const [password, setPassword] = useState<string>('');
@@ -18,9 +19,18 @@ const CreateChannelModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    ChatService.createChannel(channelName, channelMode, !isPasswordDisabled ? password : undefined);
-    onClose();
-  }
+
+    const createAndClose = async () => {
+        const success = await ChatService.createChannel(channelName, channelMode, !isPasswordDisabled ? password : undefined);
+
+        if (success) {
+            if (onChannelCreated) onChannelCreated(); // Notify the parent component of the change
+        }
+
+        onClose();
+    }
+    createAndClose();
+}
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Create Channel">

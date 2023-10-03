@@ -104,7 +104,7 @@ class ChatService {
       const user = await UserService.getMe();
       const response = await axiosPrivate.post(`${CHAT_API}/channel/${channelId}/users`,
         {
-          userId: user.id,
+          id: user.id,
           usergroup,
           action,
         },

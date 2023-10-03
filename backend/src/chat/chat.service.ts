@@ -197,11 +197,11 @@ export class ChatService {
   }
 
   async updateChannelUserlist(channelId: number, body: UpdateChannelDto) {
-    const { name, usergroup, action } = body;
-    if (!name || !usergroup || !action) {
+    const { id, usergroup, action } = body;
+    if (!id || !usergroup || !action) {
       throw new BadRequestException('Missing parameters');
     }
-    const user = await this.userService.getUserByUsername(name);
+    const user = await this.userService.getUserById(id);
     if (usergroup === 'joinedUsers' && action === 'disconnect') {
       throw new ForbiddenException('Invalid request from client');
     }

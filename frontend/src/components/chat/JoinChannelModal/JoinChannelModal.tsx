@@ -2,43 +2,59 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../shared/Modal/Modal';
 import ChatService from '../../../api/chat-api';
 import { Channel } from '../../../api/interfaces-api';
+import {
+  ChannelBoxStyled,
+  ChannelHeader,
+  ChannelDetails,
+  ChannelActions,
+  JoinButton,
+  ChannelsContainerStyled,
+  DetailItem
+} from './JoinChannelModal.styles';
 
 // ChannelBox component
 interface ChannelBoxProps {
   channel: Channel;
-  onJoin: (channelId: number) => void;
+  onChannelJoined: (channelId: number) => void;
+  onClose: () => void; 
 }
 
-const ChannelBox: React.FC<ChannelBoxProps> = ({ channel, onJoin }) => {
+const ChannelBox: React.FC<ChannelBoxProps> = ({ channel, onChannelJoined, onClose }) =>  {
+  const handleJoinClick = (channelId: number) => {
+    onChannelJoined(channelId);
+    onClose();  // Close the modal
+  };
+
   return (
-    <div className="channel-box">
-      <div className="channel-header">
+    <ChannelBoxStyled>
+      <ChannelHeader>
         <strong>{channel.name}</strong>
         {channel.mode === "private" && <span>(Private)</span>}
-      </div>
-      <div className="channel-details">
-        <p>Owned by: {channel.owner.username}</p>
-        <p>Last Updated: {new Date(channel.updatedAt).toLocaleDateString()}</p>
-        <p>Members: {channel.joinedUsers.length}</p>
-      </div>
-      <div className="channel-actions">
-        <button onClick={() => onJoin(channel.id)}>Join</button>
-      </div>
-    </div>
+      </ChannelHeader>
+      <ChannelDetails>
+        <DetailItem>Owned by: {channel.owner.username}</DetailItem>
+        <DetailItem>Last Updated: {new Date(channel.updatedAt).toLocaleDateString()}</DetailItem>
+        <DetailItem>Members: {channel.joinedUsers.length}</DetailItem>
+      </ChannelDetails>
+      <ChannelActions>
+        <JoinButton onClick={() => handleJoinClick(channel.id)}>Join</JoinButton>
+      </ChannelActions>
+    </ChannelBoxStyled>
   );
 }
 
 // ChannelsContainer component
 interface ChannelsContainerProps {
   channels: Channel[];
-  onJoin: (channelId: number) => void;
+  onChannelJoined: (channelId: number) => void;
+  onClose: () => void;
 }
 
-const ChannelsContainer: React.FC<ChannelsContainerProps> = ({ channels, onJoin }) => {
+const ChannelsContainer: React.FC<ChannelsContainerProps> = ({ channels, onChannelJoined, onClose }) => {
   return (
-    <div className="channels-container">
-      {channels.map(channel => <ChannelBox key={channel.id} channel={channel} onJoin={onJoin} />)}
-    </div>
+    <ChannelsContainerStyled>
+      {channels.map(channel => <ChannelBox key={channel.id} channel={channel} onChannelJoined={onChannelJoined} onClose={onClose} />)}
+    </ChannelsContainerStyled>
   );
 }
 
@@ -46,9 +62,10 @@ const ChannelsContainer: React.FC<ChannelsContainerProps> = ({ channels, onJoin 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  onChannelJoined?: () => void; // Add this line
 }
 
-const JoinChannelModal: React.FC<Props> = ({ isOpen, onClose }) => {
+const JoinChannelModal: React.FC<Props> = ({ isOpen, onClose, onChannelJoined }) => {
   const [channels, setChannels] = useState<Channel[]>([]);
 
   useEffect(() => {
@@ -71,11 +88,14 @@ const JoinChannelModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const handleJoin = (channelId: number) => {
     console.log(`Joining channel with ID: ${channelId}`);
     ChatService.updateMeInChannel(channelId, 'joinedUsers', 'connect');
+    
+    if (onChannelJoined) {
+      onChannelJoined();
+    }
   }
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Join Channel">
-      <ChannelsContainer channels={channels} onJoin={handleJoin} />
+      <ChannelsContainer channels={channels} onChannelJoined={handleJoin} onClose={onClose} />
     </Modal>
   );
 }

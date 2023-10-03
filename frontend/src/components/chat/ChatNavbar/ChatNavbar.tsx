@@ -28,16 +28,16 @@ const ChatNavbar: React.FC = () => {
   const [channels, setChannels] = useState<string[]>([]);
   const [activeChannel, setActiveChannel] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchMyChannels = async () => {
-      const data = await ChatService.getMyChannels();
-      console.log(data);
-      const channelNames = data.map((channel: any) => channel.name);
-      setChannels(channelNames);
-    };
+  const fetchMyChannels = async () => {
+    const data = await ChatService.getMyChannels();
+    console.log(data);
+    const channelNames = data.map((channel: any) => channel.name);
+    setChannels(channelNames);
+  };
 
+  useEffect(() => {
     fetchMyChannels();
-  }, [showCreateChannel, showJoinChannel]);
+  }, []);
 
   return (
     <Sidebar>
@@ -55,10 +55,19 @@ const ChatNavbar: React.FC = () => {
           />
         ))}
       </ChannelList>
-      <CreateChannelModal isOpen={showCreateChannel} onClose={() => setShowCreateChannel(false)} />
-      <JoinChannelModal isOpen={showJoinChannel} onClose={() => setShowJoinChannel(false)} />
+      <CreateChannelModal 
+        isOpen={showCreateChannel} 
+        onClose={() => setShowCreateChannel(false)} 
+        onChannelCreated={fetchMyChannels}  // Refresh channels after creation
+      />
+      <JoinChannelModal 
+        isOpen={showJoinChannel} 
+        onClose={() => setShowJoinChannel(false)} 
+        onChannelJoined={fetchMyChannels}   // Refresh channels after joining
+      />
     </Sidebar>
   );
 }
+
 
 export default ChatNavbar;

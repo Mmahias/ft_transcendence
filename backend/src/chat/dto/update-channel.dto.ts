@@ -4,6 +4,9 @@ import { ChanMode } from "../../shared/types"
 export class UpdateChannelDto {
 
   @IsOptional()
+  id: number;
+
+  @IsOptional()
   name: string;
 
   @IsOptional()
