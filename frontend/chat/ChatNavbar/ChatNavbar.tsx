@@ -9,8 +9,8 @@ import {
 } from './ChatNavbar.styles';
 import CreateChannelModal from '../CreateChannelModal/CreateChannelModal';
 import JoinChannelModal from '../JoinChannelModal/JoinChannelModal';
-import ChatService from '../../../api/chat-api';
-import { Channel } from '../../../api/types';
+import ChatService from '../Message/api/chat-api';
+import { Channel } from '../Message/api/types';
 
 
 interface ChannelProps {

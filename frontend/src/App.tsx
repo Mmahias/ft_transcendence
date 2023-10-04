@@ -2,7 +2,7 @@ import React from 'react';
 import theme from './theme';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Chat from './components/chat/Chat';
+import Chat from './components/Chat';
 import Game from './pages/Game/Game';
 import Profile from './pages/User/profile';
 import History from './pages/User/history';

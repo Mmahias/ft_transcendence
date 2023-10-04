@@ -1,5 +1,5 @@
 import React from 'react';
-import { Channel } from '../../../api/types';
+import { Channel } from '../Message/api/types';
 import { ChannelContainer, ChannelHeader,
   MessagesContainer, MessageItem } from './ChannelComponent.styles';
 

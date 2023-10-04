@@ -1,6 +1,6 @@
 import React, {  useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Channel } from "../../api/types";
+import { Channel } from "../..//api/types";
 import '../../styles/Tab_channels.css';
 import ChatService from '../../api/chat-api';
 import UserService from '../../api/users-api';
@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { SocketContext } from '../../contexts';
-import { sendInviteToUser, sendNotificationToServer } from "../../sockets/sockets";
+import { sendInviteToUser, sendNotificationToServer } from "../..//sockets/sockets";
 import { toast } from 'react-hot-toast';
 import { ChanMode } from '../../shared/types';
 
@@ -157,7 +157,7 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
         openInvitePrompt === true &&
         <div className='channel-link-invite-card' onClick={(event) => event.stopPropagation()}>
           Invite someone:
-          <input	type="text" 
+          <input  type="text" 
               placeholder="User's nickname"
               onChange={handleOnChangeInvite}
           />

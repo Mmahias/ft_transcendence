@@ -1,8 +1,6 @@
 import React, { useContext, 
-  // useEffect, 
   useState } from 'react';
 import { 
-  // useQuery, 
   useQueryClient, 
   useMutation } from "@tanstack/react-query";
 import '../../styles/Tab_channels.css';
@@ -10,7 +8,7 @@ import toast from 'react-hot-toast';
 import ChatService from '../../api/chat-api';
 import { SocketContext } from '../../contexts';
 import { sendNotificationToServer } from '../../sockets/sockets';
-import { ChanMode } from 'shared/types';
+import { ChanMode } from '../../shared/types';
 
 export default function ChanCreationForm() {
   const [channelMode, setChannelMode] = useState<ChanMode>(ChanMode.PUBLIC);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ChatNavbar from './ChatNavbar/ChatNavbar';
 import ChannelComponent from './ChannelComponent/ChannelComponent';
-import { Channel } from '../../api/types';
+import { Channel } from '../src/api/types';
 
 const Chat: React.FC = () => {
     const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);

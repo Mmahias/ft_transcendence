@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Modal from '../../shared/Modal/Modal';
-import ChatService from '../../../api/chat-api';
+import Modal from '../../src/components/shared/Modal/Modal';
+import ChatService from '../../src/api/chat-api';
 import { FormWrapper, InputWrapper, SubmitButton } from './CreateChannelModal.styles';
-import { ChanMode } from '../../../shared/types';
+import { ChanMode } from '../../src/shared/types';
 
 interface Props {
     isOpen: boolean;

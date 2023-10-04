@@ -63,6 +63,7 @@ class ChatService {
     return response.data;
   }
 
+
   static async verifyPasswords(channelId: number, userInput: string): Promise<boolean> {
     try {
       const response = await axiosPrivate.get<boolean>(`${CHAT_API}/channel/${channelId}/password-check`,
@@ -79,11 +80,29 @@ class ChatService {
 
   // ----- UPDATE -----
 
-  static async updateUserInChannel(id: number, channelId: number, usergroup: string, action: string) {
+  static async updateChannel(channelId: number,  property: keyof Channel, newValue: string) {
+    try {
+      const response = await axiosPrivate.patch(`${CHAT_API}/channel/${channelId}`,
+      {
+        [property]: newValue
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error('Error: cannot join this channel');
+    }
+  }
+
+  static async updateUserInChannel(userId: number, channelId: number, usergroup: string, action: string) {
     try {
       const response = await axiosPrivate.post(`${CHAT_API}/channel/${channelId}/users`,
         {
-          id,
+          userId,
           usergroup,
           action,
         },
