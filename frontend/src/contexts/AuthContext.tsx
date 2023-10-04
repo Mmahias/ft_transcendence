@@ -8,6 +8,7 @@ export interface AuthState {
 
 export interface AuthContextType {
   auth: AuthState;
+  isAuthAvailable: (auth: AuthState) => boolean;
   login: (data: AuthState) => void;
   logout: () => void;
   refreshToken: () => Promise<string>;
@@ -20,15 +21,23 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+export const isAuthAvailable = (auth: AuthState) => {
+  return !!auth.accessToken;
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [auth, setAuth] = useState<AuthState>({});
+
+  const initialAuth = JSON.parse(localStorage.getItem("auth") || "{}");
+  const [auth, setAuth] = useState<AuthState>(initialAuth);
 
   const login = useCallback((data: AuthState) => {
     console.log("login", data);
+    localStorage.setItem("auth", JSON.stringify(data));
     setAuth(data);
   }, []);
 
   const logout = useCallback(() => {
+    localStorage.removeItem("auth");
     setAuth({});
   }, []);
 
@@ -40,11 +49,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         ...prev,
         accessToken: response.data.accessToken
     }));
-    return response.data.accessToken;
-}, []);
-  
+      return response.data.accessToken;
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ auth, login, logout, refreshToken }}>
+    <AuthContext.Provider value={{ auth, isAuthAvailable: () => isAuthAvailable(auth), login, logout, refreshToken }}>
       {children}
     </AuthContext.Provider>
   );

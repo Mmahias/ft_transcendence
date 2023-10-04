@@ -42,6 +42,7 @@ services:
       - postgres
     volumes:
       - ./backend:/app
+      # - ./shared:/shared
     networks:
       - ft_network
   
@@ -62,6 +63,7 @@ services:
       - back
     volumes:
       - ./frontend:/app
+      # - ./shared:/shared
     networks:
       - ft_network
 

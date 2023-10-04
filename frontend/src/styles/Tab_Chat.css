@@ -1,0 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Licorice&family=Open+Sans&family=Share+Tech&display=swap');
+
+/* ********************************/
+/* ***       TabChat PAGE       ***/
+/* ********************************/
+/* 
+.convo__card {
+  background-color: white;
+} */
+
+.convo__card * {
+  text-align: left;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  max-height: 80vh;
+}
+
+.convo__header {
+  background-color: rgb(63, 89, 118);
+  padding: 1em 0.4em;
+}
+
+.convo__header > p {
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.8em;
+}
+
+.convo__header_title {
+  display: flex;
+  justify-content: space-between;
+}
+
+#convo__header_leave-btn {
+  cursor: pointer;
+  font-family: var(--font-type);
+  font-size: 0.65em;
+  padding: 1em;
+  border: 2px solid rgb(35, 71, 103);
+  background-color: transparent;
+  color: #e3eef1;
+  box-shadow:
+    0 0 7px #efefef,
+    0 0 10px #efefef,
+    0 0 20px rgb(60, 116, 166),
+    0 0 42px rgb(60, 116, 166),
+    0 0 77px rgb(60, 116, 166);
+  text-shadow:
+    0 0 5px #efefef,
+    0 0 10px #90d0f0,
+    0 0 42px rgb(60, 116, 166),
+    0 0 77px rgb(60, 116, 166),
+    0 0 100px rgb(24, 46, 65);
+}
+
+#convo__name {
+  font-family: 'Bruno Ace SC', cursive;
+    font-weight: 400;
+    font-size: 1.5em;
+    text-shadow: 0 0 7px #efefef, 0 0 10px #90d0f0, 0 0 42px rgb(60, 116, 166), 0 0 77px rgb(60, 116, 166), 0 0 100px rgb(24, 46, 65);
+    color: white;
+}
+
+.convo__bottom {
+  position: absolute;
+  width: 100%;
+  /* bottom: 0; */
+  background-color: rgb(63, 89, 118);
+  padding: 1em;
+  height: 10vh;
+}
+
+#convo_send-btn {
+  cursor: pointer;
+
+  margin: 1.1vh 0;
+  font-family: var(--font-type);
+  font-size: 0.65em;
+
+  border: 2px solid rgb(35, 71, 103);
+
+  background-color: transparent;
+  color: #e3eef1;
+  box-shadow:
+    0 0 7px #efefef,
+    0 0 10px #efefef,
+    0 0 20px rgb(60, 116, 166),
+    0 0 42px rgb(60, 116, 166),
+    0 0 77px rgb(60, 116, 166);
+}
+
+#convo__form {
+  text-align: center;
+  display: flex;
+  gap: 4px;
+}
+
+#convo__messages {
+  position: relative;
+  overflow: scroll;
+  overflow-x:hidden;
+  overflow-anchor: none;
+  height: 55vh;
+}
+
+#convo__messages * {
+  overflow-anchor: none;
+}
+
+#convo__messages_anchor {
+  overflow-anchor: auto;
+  height: 1px;
+}
+
+#chat_no-chat {
+  padding-top: 30vh;
+  height: 78vh;
+  border-radius: 8px;
+  
+  font-family: 'Bruno Ace SC', cursive;
+    font-size: large;
+  text-align: center;
+  color: white;
+  text-shadow: 0 0 15px #efefef, 0 0 10px #90d0f0, 0 0 42px rgb(60, 116, 166), 0 0 77px rgb(60, 116, 166), 0 0 100px rgb(24, 46, 65);
+  background-color: rgba(255,255,255,0.13);
+    backdrop-filter: blur(10px);
+    box-shadow:
+    0 0 7px #efefef,
+    0 0 10px #efefef,
+    0 0 20px rgb(60, 116, 166),
+    0 0 42px rgb(60, 116, 166),
+    0 0 50px rgb(60, 116, 166);
+}
+
+/* ********************************/
+/* ***   OneMessage COMPONENT   ***/
+/* ********************************/
+
+.one__msg {
+  margin: 1em;
+  display: flex;
+  gap: 5px;
+}
+
+.one__msg_me {
+  margin: 1em;
+  display: flex;
+  gap: 5px;
+  flex-direction: row-reverse;
+  justify-content: right;
+  align-items: right;
+}
+
+.one__msg_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.one__msg_header {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color: white;
+}
+
+.one__msg_avatar {
+  height: 2em;
+  width: 2em;
+  border-radius: 50%;
+}
+
+.one__msg_content {
+  background-color: rgb(126, 147, 167);
+  padding: 5px;
+  border-radius: 10px;
+  margin-top: 1px;
+}
+
+.one__msg_content_me {
+  background-color: rgb(210, 224, 224);
+  padding: 5px;
+  border-radius: 10px;
+  margin-top: 1px;
+  
+}
+
+.options__icon {
+  color: white;
+  height: 23px;
+  width: auto;
+}
+
+.options__icon:hover {
+  color: rgb(118, 167, 197);
+  height: 28px;
+  width: auto;
+}
+
+/* Variante OneMessage pour infos sur rôle */
+.one__msg_role {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 15px 0;
+}
+
+.one__msg_header_info {
+  font-size: 1.2rem;
+  color: rgb(105, 105, 105);
+}
+
+.one_msg_announcement {
+  font-style: italic;
+  background-color: rgb(53, 61, 131);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 1px;
+}
+
+.one_msg_invitation {
+  display: flex;
+  gap: 2.5vw;
+  font-size: 1.5em;
+  font-weight: 800;
+}
+.one_msg_check {
+  color: green;
+}
+
+.one_msg_xmark {
+  color: rgb(128, 0, 0);
+
+}
+
+.one_msg_check:hover, .one_msg_xmark:hover {
+  font-size: 1.55em;
+  cursor: pointer;
+}
+
+/* ********************************/
+/* ***  ChannelType COMPONENT   ***/
+/* ********************************/
+
+.chantype {
+  display: flex;
+  gap: 0.5em;
+}
+
+#fa_see_more {
+  cursor: pointer;
+  color: white;
+}
+
+#chan_header_changetype {
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.8em;
+}
+
+#chantype_select {
+  cursor: pointer;
+  background: none;
+  text-align: center;
+  color: rgb(39, 38, 38);
+  text-shadow: 0 0 15px #efefef, 0 0 10px #90d0f0, 0 0 42px rgb(60, 116, 166), 0 0 77px rgb(60, 116, 166), 0 0 100px rgb(24, 46, 65);
+  border: solid  1px rgba(30, 30, 58, 0.383);
+}
+
+
+#chantype_addpwd[type=password] {
+  padding:10px;
+  border:0;
+  border-radius:5px;
+  box-shadow:0 0 15px 4px rgba(0,0,0,0.06);
+  font-family: 'Bruno Ace SC', cursive;
+  color: white;
+  resize: vertical;
+}
+
+#chantype_addpwd[type=password]:hover {
+  border:0;
+  border-bottom:0.5px solid #eee;
+}
+
+#chantype_confirmbtn {
+  cursor: pointer;
+
+  font-family: var(--font-type);
+  font-size: 0.65em;
+
+  border: 2px solid rgb(35, 71, 103);
+
+  background-color: transparent;
+  color: #e3eef1;
+  box-shadow:
+    0 0 7px #efefef,
+    0 0 10px #efefef,
+    0 0 20px rgb(60, 116, 166),
+    0 0 42px rgb(60, 116, 166),
+    0 0 77px rgb(60, 116, 166);
+}

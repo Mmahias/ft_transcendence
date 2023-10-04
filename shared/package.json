@@ -1,0 +1,9 @@
+{
+  "name": "@ft-transcendence/shared",
+  "version": "1.0.1",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "typescript": "^5.2.2"
+  }
+}

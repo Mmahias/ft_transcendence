@@ -7,8 +7,6 @@ import { createSocketConnexion } from '../../sockets/sockets';
 import { Socket } from 'socket.io-client';
 import useAuth from '../../hooks/useAuth';
 import logo from '../../assets/school_42.jpeg';
-// import Avatar from './Avatar';
-// import LoginBtn from './LoginBtn';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
@@ -23,7 +21,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const isLoggedIn = useContext(IsLoggedInContext);
   const socket = useContext(SocketContext);
 
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
 
   useEffect(() => {
       const fetchData = async () => {
@@ -40,6 +38,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const handleLogout = async () => {
     try {
       await AuthService.logout();
+
+      logout();
+
       props.setLoggedIn(false);
       console.log("Ok OUT");
       if (socket) {

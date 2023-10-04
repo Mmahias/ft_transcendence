@@ -1,15 +1,16 @@
 import io from 'socket.io-client';
 import { Socket } from 'socket.io-client';
-import { Channel } from '../api/interfaces-api';
+import { Channel } from '../api/types';
 
 export function createSocketConnexion() {
   const APP_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT;
   const BASE_URL = `${APP_URL}:${BACKEND_PORT}`;
 
-  const newSocket = io(BASE_URL, {
-    withCredentials: true,
-  });
+  // const newSocket = io(BASE_URL, {
+  //   withCredentials: true,
+  // });
+  const newSocket = null;
   return (newSocket);
 }
 

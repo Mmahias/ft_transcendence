@@ -1,11 +1,10 @@
 import { IsOptional, IsIn } from "class-validator";
-import { 
-  ChanMode, 
-  User, 
-  Message 
-} from '@prisma/client';
+import { ChanMode } from "../../shared/types"
 
 export class UpdateChannelDto {
+
+  @IsOptional()
+  id: number;
 
   @IsOptional()
   name: string;
@@ -15,21 +14,6 @@ export class UpdateChannelDto {
 
   @IsOptional()
   password: string;
-
-  @IsOptional()
-  adminUsers : User[];
-
-  @IsOptional()
-  joinedUsers: User[];
-
-  @IsOptional()
-  bannedUsers: User[];
-
-  @IsOptional()
-  kickedUsers: User[];
-
-  @IsOptional()
-  mutedUsers : User[];
   
   @IsOptional()
   @IsIn(['adminUsers', 'joinedUsers', 'bannedUsers', 'kickedUsers', 'mutedUsers'])
@@ -38,10 +22,4 @@ export class UpdateChannelDto {
   @IsOptional()
   @IsIn(['connect', 'disconnect'])
   action: string;
-  
-  @IsOptional()
-  userId: number;
-
-  @IsOptional()
-  messages: Message[];
 }

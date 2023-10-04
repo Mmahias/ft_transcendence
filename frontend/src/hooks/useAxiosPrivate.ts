@@ -11,7 +11,6 @@ const useAxiosPrivate = (): AxiosInstance => {
       const requestIntercept = axiosPrivate.interceptors.request.use(
         config => {
             config.headers['Authorization'] = `Bearer ${auth?.accessToken}`;
-            console.log("inter", config.headers.Authorization);
             return config;
         }, (error) => Promise.reject(error)
     );

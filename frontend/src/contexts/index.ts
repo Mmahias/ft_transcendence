@@ -1,5 +1,5 @@
 // constants/index.ts
 export * from './AuthContext';
-export * from './ChatStatus';
+export * from './ChatContext';
 export * from './LoggedInContext';
 export * from './SocketContext';

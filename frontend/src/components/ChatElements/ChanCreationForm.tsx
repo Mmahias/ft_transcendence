@@ -1,16 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, 
+  useState } from 'react';
 import { 
-  // useQuery, 
   useQueryClient, 
   useMutation } from "@tanstack/react-query";
 import '../../styles/Tab_channels.css';
 import toast from 'react-hot-toast';
-import { createChannel } from '../../api/chat-api';
+import ChatService from '../../api/chat-api';
 import { SocketContext } from '../../contexts';
 import { sendNotificationToServer } from '../../sockets/sockets';
+import { ChanMode } from '../../shared/types';
 
 export default function ChanCreationForm() {
-  const [channelType, setChannelType] = useState<string>('PUBLIC');
+  const [channelMode, setChannelMode] = useState<ChanMode>(ChanMode.PUBLIC);
   const [channelPassword, setChannelPassword] = useState<string>('');
   const [channelName, setChannelName] = useState<string>('');
   const socket = useContext(SocketContext);
@@ -27,7 +28,7 @@ export default function ChanCreationForm() {
 
   // La requête de création de Chan et ses aboutissants (success ou error)
   const createChannelRequest = useMutation({
-    mutationFn: () => createChannel(channelName, channelPassword, channelType),
+    mutationFn: () => ChatService.createChannel(channelName, channelMode, channelPassword),
     onSuccess: () => { 
       queryClient.invalidateQueries(['channels']);
       toast.success(`Your channel ${channelName} was successfully created!`) },
@@ -53,13 +54,13 @@ export default function ChanCreationForm() {
         onChange={handleInputChange}
         placeholder="Choose your channel name! (max 10 characters)"
       />
-      <label htmlFor="select-type-label">Choose your channel type!</label>
-      <select name="type" id="select-chan-type" onChange={(event) => setChannelType(event.target.value)}>
-        <option value="PUBLIC">Public</option>
-        <option value="PRIVATE">Private</option>
-        <option value="PROTECTED">Protected</option>
+      <label htmlFor="select-mode-label">Choose your channel mode!</label>
+      <select name="mode" id="select-chan-mode" onChange={(event) => setChannelMode(event.target.value as ChanMode)}>
+        <option value={ChanMode.PUBLIC}>Public</option>
+        <option value={ChanMode.PRIVATE}>Private</option>
+        <option value={ChanMode.PROTECTED}>Protected</option>
       </select>
-      {channelType === 'PROTECTED' && (
+      {channelMode === ChanMode.PROTECTED && (
       <input
         type="password"
         value={channelPassword}

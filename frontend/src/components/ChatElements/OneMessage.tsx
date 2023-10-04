@@ -1,29 +1,31 @@
-// import '../../styles/Tab_Chat.css';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from 'react';
+import '../../styles/Tab_Chat.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGamepad, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { updateUserInChannel } from "../../api/chat-api";
-import { getMe } from "../../api/users-api";
-import { Channel, Message } from "../../api/interfaces-api";
+import ChatService from "../..//api/chat-api";
+import UserService from "../..//api/users-api";
+import { Channel, Message } from "../..//api/types";
+import {AdminOptions} from './AdminOptions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { SocketContext } from '../../contexts';
+import { ChanMode } from '../../shared/types';
 
 const getDate = (message: Message) => {
   const options: Intl.DateTimeFormatOptions = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit' } as const;
-  const date = message.date;
-  const formattedDate = date.toLocaleDateString('fr-FR', options);
+  const date = (typeof message.date === 'string') ? new Date(message.date) : message.date;
+  const formattedDate = date.toLocaleDateString('en-US', options);
   return formattedDate;
 }
 
-export function OneMessage({ chan, message, index, myNickname } : 
-{ chan: Channel, message: Message, index: number, myNickname: string}) {
+export function OneMessage({ conv, message, index, myNickname } : 
+{ conv:Channel, message: Message, index: number, myNickname: string}) {
 
   const [isMe, setIsMe] = useState<boolean>(myNickname === message.from.nickname);
   const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
-  const {data: userMe, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: getMe});
+  const {data: userMe, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
   const queryClient = useQueryClient();
   const socket = useContext(SocketContext);
 
@@ -31,17 +33,16 @@ export function OneMessage({ chan, message, index, myNickname } :
     if (userMe?.nickname === message.from.nickname) {
       setIsMe(true)
     }
-  }, [userMe, message.from, setIsMe, chan])
+  }, [userMe, message.from, setIsMe, conv])
   
   const makeUserJoinChan = useMutation({
-    mutationFn: ([myId, group, action, channelId]: [number, string, string, string]) => updateUserInChannel(myId, Number(channelId), group, action),
+    mutationFn: ([myId, group, action, channelId]: [number, string, string, string]) => ChatService.updateUserInChannel(myId, Number(channelId), group, action),
     onSuccess: () => { 
       queryClient.invalidateQueries(['channels']);
       toast.success('You joined the channel!')
     },
     onError: () => { toast.error(`An error occured`) }
   });
-
   if (error) {
     return <div>Error while sending your message. Please retry.</div>
   }
@@ -66,8 +67,8 @@ export function OneMessage({ chan, message, index, myNickname } :
     }
   }
 
-  // if it is a message from someone I blocked:
   if (userMe?.blockedList && userMe.blockedList.some((user) => user.nickname === message.from.nickname) === true) {
+    
     return (
       <div key={index + 2} className='one__msg_role'>
         <div key={index + 1} className='one__msg_header_info'>
@@ -75,9 +76,10 @@ export function OneMessage({ chan, message, index, myNickname } :
         </div>
         <p className='one_msg_announcement' key={index}>You blocked {message.from.nickname} so this message is censored.</p>
       </div>
-    );}
-  
+    );
+  }
   if (message.content.startsWith('#INFO# ') === true) {
+
     const content = message.content.replace('#INFO# ', '');
     const channelId: string = content.slice(content.lastIndexOf(' ') + 1, content.indexOf('.'));
     const censoredContent = content.replace(channelId, '');
@@ -127,9 +129,9 @@ export function OneMessage({ chan, message, index, myNickname } :
       <FontAwesomeIcon className='options__icon' title="Invite to game" icon={faGamepad} onClick={handleInvitation}/>
     }
     {
-      chan.type !== 'DM' && isMe === false && 
-      chan.admin.filter((admin) => admin.nickname === userMe?.nickname).length === 1
-      // && <AdminOptions channelName={chan.name}  userTalking={message.from}/>
+      conv.mode !== ChanMode.DM && isMe === false && 
+      conv.adminsUsers.filter((admin) => admin.nickname === userMe?.nickname).length === 1 && 
+      <AdminOptions channelName={conv.name}  userTalking={message.from}/>
     }
   </div>
   );

@@ -4,7 +4,8 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { ChanMode } from '@prisma/client';
+import { ChanMode } from '../shared/types';
+
 
 @ApiTags('Chat')
 @Controller('chat')
@@ -41,7 +42,7 @@ export class ChatController {
   // GET /chat/channels/access/123
   @Get('channel/access/:userId')
   async getAccessibleChannels(@Param('userId') userId: string) {
-    return this.chatService.getDisplayableChans(+userId);
+    return this.chatService.getAccessibleChannels(+userId);
   }
 
   // channels in which user is a joinedUser

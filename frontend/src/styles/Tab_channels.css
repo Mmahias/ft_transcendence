@@ -5,18 +5,18 @@
 /* ********************************/
 
 .channels_page {
-	border: none;
+  border: none;
     border-radius:10px;
     height: 78vh;
 
     background-color: rgba(255,255,255,0.13);
     backdrop-filter: blur(10px);
     box-shadow:
-		0 0 7px #efefef,
-		0 0 10px #efefef,
-		0 0 20px rgb(60, 116, 166),
-		0 0 42px rgb(60, 116, 166),
-		0 0 50px rgb(60, 116, 166);
+    0 0 7px #efefef,
+    0 0 10px #efefef,
+    0 0 20px rgb(60, 116, 166),
+    0 0 42px rgb(60, 116, 166),
+    0 0 50px rgb(60, 116, 166);
 }
 
 #channels_page_title {
@@ -55,7 +55,7 @@
 
 #channels_page_joinedscroll {
     overflow: auto;
-	overflow-x:hidden;
+  overflow-x:hidden;
 }
 
 /* ********************************/

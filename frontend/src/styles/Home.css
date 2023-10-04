@@ -1,0 +1,100 @@
+/* #play-screen > button {
+display: flex;
+height: 5vh;
+align-items: center;
+justify-content: center;
+background-color: transparent;
+color: #e3eef1;
+text-shadow:
+0 0 42px rgb(60, 116, 166),
+0 0 77px rgb(60, 116, 166),
+0 0 100px rgb(24, 46, 65); */
+/* animation: lumiere 1s infinite linear; */
+/* border: 3px solid rgb(35, 71, 103);
+box-shadow:
+  0 0 7px #efefef,
+  0 0 42px rgb(60, 116, 166),
+  0 0 77px rgb(60, 116, 166);
+border-radius:15px;
+padding: 15px 25px;
+letter-spacing:5px;
+cursor: pointer;
+font-weight: bold;
+transition: .5s;
+}
+
+.link-login2{
+  font-weight: bold;
+  color: #e3eef1;
+  text-decoration: none;
+}
+
+#play-screen > button:hover {
+  color: rgb(243, 249, 255);
+  filter: drop-shadow(0 0 20px #90d0f09e) contrast(2) brightness(1);
+  background: linear-gradient(rgba(5, 5, 5, 0.6), rgba(0, 0, 0, 0)), repeating-linear-gradient(0, transparent, transparent 2px, black 3px, black 3px);
+}
+
+#play-screen {
+  padding-top: 40%;
+  padding-bottom: 40%;
+  display: flex;
+  justify-content: center;
+} */
+
+#play-screen {
+  height: 92vh;
+  display: flex;
+  justify-content: center;
+}
+
+.glitch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 40vh;
+  padding: 15px 25px;
+
+  height: 5vh;
+  background-color: transparent;
+  color: #e3eef1;
+  text-shadow:
+  0 0 7px #efefef,
+  0 0 10px #90d0f0,
+  0 0 42px rgb(60, 116, 166),
+  0 0 77px rgb(60, 116, 166),
+  0 0 100px rgb(24, 46, 65);
+  border: 3px solid rgb(35, 71, 103);
+  box-shadow:
+    0 0 7px #efefef,
+    0 0 10px #efefef,
+    0 0 20px #3c74a6,
+    0 0 42px rgb(60, 116, 166),
+    0 0 77px rgb(60, 116, 166);
+  border-radius:15px;
+  letter-spacing:5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: .5s;
+}
+
+.glitch:hover {
+  color: rgb(243, 249, 255);
+  filter: drop-shadow(0 0 20px #90d0f09e) contrast(2) brightness(1);
+  background: linear-gradient(rgba(5, 5, 5, 0.6), rgba(0, 0, 0, 0)), repeating-linear-gradient(0, transparent, transparent 2px, black 3px, black 3px);
+}
+
+.link-login2{
+  font-weight: bold;
+  color: #e3eef1;
+  font-size: 30px;
+  font-family: var(--font-type);
+  text-decoration: none;
+
+}
+
+#play-screen > .goto {
+  text-decoration: none;
+}
+

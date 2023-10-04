@@ -33,9 +33,11 @@ export default function Login({ onSetLoggedIn, setSocket }: {
     event.preventDefault();
     try {
       const response = await AuthService.signUp(username, password, nickname);
-      //if (response) {
+      if (response) {
+        console.log("OK S");
         login(response);
-        setSuccessMsg("Successfully signed up!");
+        onSetLoggedIn(true);
+        setSuccessMsg("Successfully signed up! ");
         setErrorMsg('');
         setTimeout(() => {
           navigate('/settings');
@@ -66,7 +68,7 @@ export default function Login({ onSetLoggedIn, setSocket }: {
 
     event.preventDefault();
     try {
-      const response = await AuthService.login(username, password);
+      const response = await AuthService.login(username.toLowerCase(), password);
       if (response) {
         login(response);
         setSuccessMsg("Successfully logged in!");

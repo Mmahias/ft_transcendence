@@ -1,0 +1,76 @@
+.container_aboutus{
+  height: 92vh;
+  padding-top: 9vh;
+}
+
+.intro_aboutus{
+  margin-left: 10vw;
+  margin-right: 10vw;
+  font-size: 20px;
+  color: #e3eef1;
+  text-shadow:
+  0 0 7px #efefef,
+  0 0 10px #90d0f0,
+  0 0 42px rgb(60, 116, 166),
+  0 0 77px rgb(60, 116, 166),
+  0 0 100px rgb(24, 46, 65);
+
+} 
+
+.intro_aboutus h1{
+  text-align: center;
+  font-size: 45px;
+  
+} 
+
+.intro_aboutus > p:first-of-type{
+  text-align: center;
+  font-size: 25px;
+  padding : 20px;
+}
+
+.div_staff{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+
+  margin: 2vh 15vw;
+  position : relative;
+
+  border: 2px solid rgb(35, 71, 103);
+  border-radius: 30px;
+
+  background-color: rgba(255,255,255,0.13);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 7px #efefef,
+    0 0 10px #efefef,
+    0 0 20px rgb(60, 116, 166),
+    0 0 42px rgb(60, 116, 166),
+    0 0 50px rgb(60, 116, 166);
+}
+
+.container_staff {
+  text-align: center;
+  width: 40%;
+  padding: 1em;
+  box-sizing: content-box;
+} 
+
+.image{
+  border-radius: 10px;
+  width: 30%;  
+}
+
+.text {
+  color: #e3eef1;
+  text-shadow:
+  0 0 7px #efefef,
+  0 0 10px #90d0f0,
+  0 0 42px rgb(60, 116, 166),
+  0 0 77px rgb(60, 116, 166),
+  0 0 100px rgb(24, 46, 65);
+  font-size: 1em;
+}
+

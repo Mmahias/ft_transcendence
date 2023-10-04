@@ -1,10 +1,8 @@
 import React from 'react';
 import './styles.css';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
 import { testBackendEndpoint } from '../../api/test-api';
-import { getMe } from '../../api/users-api';
+import ChatService from '../../api/users-api';
 import useAuth from '../../hooks/useAuth';
 import {AuthState} from '../../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";

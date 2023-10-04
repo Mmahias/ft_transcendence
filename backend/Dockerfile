@@ -11,10 +11,6 @@ COPY package*.json ./
 RUN npm install -g prisma && \
     npm i
 
-# Update and install system packages in a single layer
-RUN apt-get update && apt-get install -y \
-    iputils-ping \
-    postgresql-client
 
 # Copy the rest of your application to the container
 COPY . .
@@ -22,6 +18,11 @@ COPY . .
 # Generate Prisma client and build the application
 RUN npx prisma generate && \
     npm run build
+
+# Update and install system packages in a single layer
+RUN apt-get update && apt-get install -y \
+    iputils-ping \
+    postgresql-client
 
 # Expose port 3030
 EXPOSE 3030
