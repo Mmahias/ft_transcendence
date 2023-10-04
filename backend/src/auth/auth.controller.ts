@@ -1,5 +1,5 @@
 import { Controller, Get, Req, UseGuards,
-  Post, Body, HttpCode, UnauthorizedException } from '@nestjs/common';
+  Post, Body, HttpCode, UnauthorizedException, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from '@app/auth/dto';
 import { UserService } from '@app/user/users.service';
