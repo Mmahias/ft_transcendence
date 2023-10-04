@@ -1,18 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '@app/user/users.service';
 import { authenticator } from 'otplib';
 import { User } from '@prisma/client';
 import { toDataURL } from 'qrcode';
-import {JwtPayload} from "@app/auth/entities/jwt-payload";
-
+import { JwtPayload } from "@app/auth/entities/jwt-payload";
+import { PasswordService } from "@app/password/password.service";
 @Injectable()
 export class AuthService {
   constructor(
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly passwordService: PasswordService
   ) {}
 
   async signToken(payload: JwtPayload) {
@@ -23,6 +24,21 @@ export class AuthService {
       secret: secret
     });
     return { accessToken: token };
+  }
+
+  async validateUser(username: string, password: string) {
+    const user = await this.userService.getUserByUsername(username).catch((error) => {
+      if (error instanceof NotFoundException) {
+        throw new UnauthorizedException('Username or password is invalid');
+      }
+      throw error;
+    });
+
+    if (!(await this.passwordService.verifyPassword(user.password, password))) {
+      throw new UnauthorizedException('Username or password is invalid');
+    }
+
+    return this.signToken(user.id);
   }
 
   isTwoFactorAuthenticationCodeValid(authenticationCode: string, user: Partial<User>) {
