@@ -1,3 +1,4 @@
+import React from 'react';
 import '../../styles/Tab_Chat.css';
 import /*React,*/ { useEffect, useState, useContext } from 'react';
 // import { SocketContext } from '../../context/contexts';
@@ -25,16 +26,16 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
 	
 	useEffect(() => {
 		if (channel) {
-			const isAdmin = channel.admin.filter((admin) => admin.nickname === userQuery.data?.nickname);
+			const isAdmin = channel.adminsUsers.filter((admin) => admin.nickname === userQuery.data?.nickname);
 			const isTargetStillInChan = channel.joinedUsers.some((member) => member.nickname === userTalking.nickname);
 			if (isAdmin.length > 0 && isTargetStillInChan === true) {
 				setEnableOptions(true);
 			}
 		}
-	}, [channel, channel?.admin, userQuery.data, channel?.bannedUsers, channel?.kickedUsers, channel?.mutedUsers, channel?.joinedUsers, userTalking.nickname]);
+	}, [channel, channel?.adminsUsers, userQuery.data, channel?.bannedUsers, channel?.kickedUsers, channel?.mutedUsers, channel?.joinedUsers, userTalking.nickname]);
 	
 	const addToGroup = useMutation({
-		mutationFn: ([group, action, channelId]: string[]) => updateUserInChannel(userTalking.id, Number(channelId), group, action),
+		mutationFn: ([group, action, channelId]: string[]) => ChatService.updateUserInChannel(userTalking.id, Number(channelId), group, action),
 		onSuccess: () => { 
 			queryClient.invalidateQueries(['channels']);
 		},
@@ -45,7 +46,7 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
 		setToggleDisplay(!toggleDisplay);
 	}
 	const createInfoMessage = useMutation({
-		mutationFn: ([channel, message]: [Channel, string]) => createMessage(channel, message),
+		mutationFn: ([channel, message]: string[]) => ChatService.newMessage(channel, message),
 		onSuccess: () => {
 			queryClient.invalidateQueries(['channels']);
 		},
@@ -56,7 +57,7 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
 		if (socket) {
 			const msg: string = handleRequestFromUser(socket, group, action, channelName, userTalking.nickname);
 			if (channel)
-				createInfoMessage.mutate([channel, msg]);
+				createInfoMessage.mutate([channel.name, msg]);
 		}
 	};
 
@@ -100,7 +101,7 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
 			{
 				toggleDisplay === true && 
 				<>
-					<FontAwesomeIcon className='options__icon' title="Make admin" icon={faUserShield} onClick={() => handleRole("admin")} />
+					<FontAwesomeIcon className='options__icon' title="Make admin" icon={faUserShield} onClick={() => handleRole("adminsUsers")} />
 					<FontAwesomeIcon className='options__icon' title="Ban" icon={faBan} onClick={() => handleRole("bannedUsers")}/>
 					<FontAwesomeIcon className='options__icon' title="Kick" icon={faPersonWalkingArrowRight} onClick={() => handleRole("kickedUsers")}/>
 					<FontAwesomeIcon className='options__icon' title="Mute" icon={faCommentSlash} onClick={() => handleRole("mutedUsers")}/>

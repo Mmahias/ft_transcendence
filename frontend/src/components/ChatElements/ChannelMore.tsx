@@ -2,7 +2,8 @@ import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Channel } from "../../api/types";
 import '../../styles/Tab_channels.css';
-import { fetchMe, updateMeInChannel, verifyPasswords } from "../../api/APIHandler";
+import ChatService from "../../api/chat-api";
+import UserService from "../../api/users-api";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
@@ -10,15 +11,15 @@ import { toast } from 'react-hot-toast';
 
 export default function ChannelMore({ channel }: { channel: Channel }) {
 
-	const [convName, setConvName] = useState<string>(channel.roomName);
+	const [convName, setConvName] = useState<string>(channel.name);
 	const [askForPassword, setAskForPassword] = useState<boolean>(false);
 	const [password, setPassword] = useState<string>('');
 	const queryClient = useQueryClient();
 
-	const {data, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: fetchMe});
+	const {data, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
 	
 	const joinChannelRequest = useMutation({
-		mutationFn: (channel: Channel) => updateMeInChannel(channel.id, "joinedUsers", "connect"),
+		mutationFn: (channel: Channel) => ChatService.updateMeInChannel(channel.id, "joinedUsers", "connect"),
 		onSuccess: () => { 
 			queryClient.invalidateQueries(['channels']);
 			toast.success(`You joined the channel!`) 
@@ -27,7 +28,7 @@ export default function ChannelMore({ channel }: { channel: Channel }) {
 	})
 
 	const { mutate: verifyPassword} = useMutation({
-		mutationFn: (pwd: string) => verifyPasswords(channel.id, pwd),
+		mutationFn: (pwd: string) => ChatService.verifyPasswords(channel.id, pwd),
 		onSuccess: () => { 
 			toast.success("Correct password!");
 			joinChannelRequest.mutate(channel); },
@@ -35,10 +36,10 @@ export default function ChannelMore({ channel }: { channel: Channel }) {
 	})
 
 	useEffect(() => {
-		if (channel.type === 'DM' && data) {
-			setConvName(channel.roomName.replace(data?.nickname, '').trim());
+		if (channel.mode === 'DM' && data) {
+			setConvName(channel.name.replace(data?.nickname, '').trim());
 		}
-	}, [data, channel.type, channel.roomName]);
+	}, [data, channel.mode, channel.name]);
 
 	if (error) {
 		return <div>Error</div>;
@@ -49,7 +50,7 @@ export default function ChannelMore({ channel }: { channel: Channel }) {
 
 	const handleClick = (event: React.FormEvent<HTMLDivElement>, channel: Channel) => {
 		event.preventDefault();
-		if (channel.type === 'PROTECTED') {
+		if (channel.mode === 'PROTECTED') {
 			setAskForPassword(true);
 		}  else {
 			joinChannelRequest.mutate(channel);
@@ -70,9 +71,9 @@ export default function ChannelMore({ channel }: { channel: Channel }) {
 				<div className="channel-link-header">
 					<div>
 						<span className='channel-link-name'>{convName} </span>
-						<span className="channel-link-span">{channel.type}</span>
+						<span className="channel-link-span">{channel.mode}</span>
 						{
-							channel.type !== 'DM' && channel.joinedUsers &&
+							channel.mode !== 'DM' && channel.joinedUsers &&
 							<span>{channel.joinedUsers.length} member(s)</span>
 						}
 					</div>

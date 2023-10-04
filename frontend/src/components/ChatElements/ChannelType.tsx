@@ -96,7 +96,7 @@ export function ChannelType({ channelId, loggedUser } : { channelId: number, log
 						<button id="chantype_confirmbtn" onClick={handleInputKeyPress}>Confirm change</button>
 						</>
 					) : (
-						<p id="chan_header_changetype" >Mode: {(chanType) ? chanType : channel.type} <FontAwesomeIcon onClick={() => setIsEditing(true)} icon={faPencil} id="fa_see_more"/></p>
+						<p id="chan_header_changetype" >Mode: {(chanType) ? chanType : channel.mode} <FontAwesomeIcon onClick={() => setIsEditing(true)} icon={faPencil} id="fa_see_more"/></p>
 					)
 				}
 					

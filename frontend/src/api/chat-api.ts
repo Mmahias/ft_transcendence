@@ -139,15 +139,15 @@ class ChatService {
    * @param channelId channel id
    * @returns message object
    */
-  static async newMessage(channel: Channel, content: string): Promise<Message> {
+  static async newMessage(channelName: string, content: string): Promise<Message> {
 
     try {
-      const { name, id } = channel;
+      const id: number = await ChatService.getChannelByName(channelName).then((chan) => chan.id);
       const user: User = await UserService.getMe();
       const response = await axiosPrivate.post(`${CHAT_API}/message`,
         {
           fromId: user.id,
-          to: name,
+          to: channelName,
           content: content,
           channelId: id
         },
@@ -189,6 +189,7 @@ class ChatService {
   static async getDMs(senderUsername: string, receiverUsername: string): Promise<Channel> {
     try {
       // gets the users and check if they can communicate
+      if (!senderUsername || !receiverUsername) throw new Error('Error: missing username');
       let sender: User = await UserService.getUserByNickname(senderUsername);
       if (!sender) {
         throw new Error('Error: sender does not exist');
@@ -204,13 +205,13 @@ class ChatService {
         throw new Error('You blocked this user');
       }
 
-      const roomName = [senderUsername, receiverUsername]
+      const name = [senderUsername, receiverUsername]
         .map(name => name.toLowerCase()) // Convert to lowercase to ensure case-insensitivity
         .sort()                          // Sort the names alphabetically
         .join('@');                      // Separate the names with an '@' symbol
-      let conv: Channel = await ChatService.getChannelByName(roomName);
+      let conv: Channel = await ChatService.getChannelByName(name);
       if (!conv) {
-        conv = await ChatService.createChannel(roomName, ChanMode.DM);
+        conv = await ChatService.createChannel(name, ChanMode.DM);
       }
       await ChatService.updateUserInChannel(sender.id, conv.id, 'joinedUsers', 'connect');
       return conv;

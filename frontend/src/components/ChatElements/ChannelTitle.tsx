@@ -1,19 +1,20 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
-import { fetchMe, updateChannelProperties } from "../../api/APIHandler";
+import ChatService from "../../api/chat-api";
+import UserService from "../../api/users-api";
 import { Channel } from "../../api/types";
 
 export function ChannelTitle({ conv, initialName } : { conv: Channel, initialName: string}) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [newTitle, setNewTitle] = useState(initialName);
-	const {data: user, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: fetchMe});
+	const {data: user, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
 	const queryClient = useQueryClient();
 
 	const updateChannel = useMutation({
-		mutationFn: (newValue: string) => updateChannelProperties(conv.id, "roomName" ,newValue),
+		mutationFn: (newValue: string) => ChatService.updateChannelProperties(conv.id, "name" ,newValue),
 		onSuccess: () => { 
 			queryClient.invalidateQueries(['channels']);
 			toast.success(`You updated the name of the channel!`) 

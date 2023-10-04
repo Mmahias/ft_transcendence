@@ -19,7 +19,7 @@ const getDate = (channel : Channel) => {
 export function TabChatHeader({ conv }: { conv: Channel}) {
 
 	const { setActiveTab, setActiveConv } = useContext(ChatStatusContext);
-	const convName: string = (conv.type === 'DM') ? conv.roomName.replace(' ', ' , ').trim() : conv.roomName;
+	const convName: string = (conv.type === 'DM') ? conv.name.replace(' ', ' , ').trim() : conv.name;
 	const queryClient = useQueryClient();
 
 	const {data: user, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: fetchMe});

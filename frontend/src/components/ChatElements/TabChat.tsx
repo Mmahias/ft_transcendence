@@ -20,8 +20,8 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 
 	// obligée de requery le chan pour avoir ses MàJs....
 	const { data: channel } = useQuery({ 
-		queryKey: ['channels', conv.roomName], 
-		queryFn: () => getOneChannelByName(conv.roomName) 
+		queryKey: ['channels', conv.name], 
+		queryFn: () => getOneChannelByName(conv.name) 
 	});
 
 	// Queries pour récupérer les messages du channel, ou pour créer un message
@@ -71,7 +71,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 		if (channel) {
 			if (loggedUser && channel.kickedUsers.some((member) => member.id === loggedUser.id)) {
 				leaveChannelRequest.mutate([loggedUser, channel.id]);
-				toast(`You have been kicked from this channel (${channel.roomName})!`, {
+				toast(`You have been kicked from this channel (${channel.name})!`, {
 					icon: '👏',
 				}); 
 				setActiveTab(0);
@@ -79,7 +79,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 			}
 			if (loggedUser && channel.bannedUsers.some((member) => member.id === loggedUser.id)) {
 				leaveChannelRequest.mutate([loggedUser, channel.id]);
-				toast(`You have been banned from this channel (${channel.roomName})!`, {
+				toast(`You have been banned from this channel (${channel.name})!`, {
 					icon: '👏',
 				}); 
 				setActiveTab(0);
@@ -97,7 +97,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 	
 	// Fonction pour envoyer son msg au serveur, pour être transféré aux destinataires
 	const sendMessage = (message: string) => {
-		const payload: string = "/msg  " + conv?.roomName + "  " + message;
+		const payload: string = "/msg  " + conv?.name + "  " + message;
 		
 		if (socket) {
 			socket.emit('Chat', payload);

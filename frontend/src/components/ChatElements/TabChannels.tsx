@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllUserChannels } from '../../api/APIHandler';
 
 function isBlockedInDM(channel: Channel): boolean {
-	if (channel.type !== 'DM') {
+	if (channel.mode !== 'DM') {
 		return false;
 	}
 	const [userA, userB] = channel.joinedUsers;
@@ -33,8 +33,8 @@ export default function TabChannels() {
 	
 	const handleClick = (event: React.FormEvent<HTMLDivElement>, channel: Channel) => {
 		event.preventDefault();
-		if (socket && channel.roomName) {
-			sendNotificationToServer(socket, 'Create Lobby', channel.roomName);
+		if (socket && channel.name) {
+			sendNotificationToServer(socket, 'Create Lobby', channel.name);
 		}
 		setActiveConv(channel);
 		setActiveTab(1);

@@ -128,7 +128,7 @@ export function OneMessage({ conv, message, index, myNickname } :
 		{
 			conv.type !== 'DM' && isMe === false && 
 			conv.admin.filter((admin) => admin.nickname === userMe?.nickname).length === 1 && 
-			<AdminOptions channelName={conv.roomName}  userTalking={message.from}/>
+			<AdminOptions channelName={conv.name}  userTalking={message.from}/>
 		}
 	</div>
 	);
