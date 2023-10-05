@@ -26,6 +26,18 @@ export class AuthService {
     return { accessToken: token };
   }
 
+  async signTokenWithUserId(userId: number) {
+    const payload = { sub: userId };
+
+    const secret = this.config.get('JWT_SECRET');
+
+    const token = await this.jwtService.signAsync(payload, {
+      expiresIn: '24h',
+      secret: secret
+    });
+    return { accessToken: token };
+  }
+
   async validateUser(username: string, password: string) {
     const user = await this.userService.getUserByUsername(username).catch((error) => {
       if (error instanceof NotFoundException) {
@@ -38,7 +50,7 @@ export class AuthService {
       throw new UnauthorizedException('Username or password is invalid');
     }
 
-    return this.signToken(user.id);
+    return this.signTokenWithUserId(user.id);
   }
 
   isTwoFactorAuthenticationCodeValid(authenticationCode: string, user: Partial<User>) {
