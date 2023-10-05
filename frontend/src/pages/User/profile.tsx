@@ -3,7 +3,7 @@ import './profile.style.css';
 import { useEffect } from "react";
 import userImage from '../../assets/user2.png'
 import { Link as RouterLink } from "react-router-dom";
-import { getMe } from "../../api/users-api";
+import UserService from "../../api/users-api";
 import AuthService from "../../api/auth-api";
 import QRCode from 'react-qr-code';
 import useAuth from "../../hooks/useAuth";
@@ -19,7 +19,7 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const user = await getMe();
+        const user = await UserService.getMe();
         set2FA(user.authenticationEnabled);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -154,7 +154,7 @@ const Profile: React.FC = () => {
               </div>
             )}
           </div>
-          <button onClick={getMe}>Test User Me</button>
+          <button onClick={UserService.getMe}>Test User Me</button>
         </div>
       </div>
     </div>

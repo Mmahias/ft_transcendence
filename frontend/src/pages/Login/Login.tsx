@@ -42,7 +42,7 @@ export default function Login({ onSetLoggedIn, setSocket }: {
         setTimeout(() => {
           navigate('/settings');
         }, 2000);
-      //}
+      }
     } catch (error) {
       setSuccessMsg('');
       if (error instanceof Error) {

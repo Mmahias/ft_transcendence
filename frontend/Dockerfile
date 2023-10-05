@@ -6,8 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install global and local npm packages
-RUN npm install -g vite && \
-    npm i
+RUN npm i
 
 # Install esbuild for Linux (for cross-platforms runs)
 RUN if [ "$(uname -m)" = "aarch64" ]; then npm install @esbuild/linux-arm64; else npm install @esbuild/linux-x64; fi
@@ -16,6 +15,8 @@ RUN if [ "$(uname -m)" = "aarch64" ]; then npm install @esbuild/linux-arm64; els
 RUN apt-get update && \
   apt-get install -y iputils-ping curl
 
+RUN npm install -g vite
+
 # Copy the rest of your app to the container
 COPY . .
 
@@ -23,7 +24,7 @@ COPY . .
 EXPOSE 3001
 
 # Start the application
-CMD ["npm", "start"]
+# CMD ["npm", "start"]
 
-# CMD ["tail", "-f", "/dev/null"]
+CMD ["tail", "-f", "/dev/null"]
 
