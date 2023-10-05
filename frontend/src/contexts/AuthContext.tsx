@@ -14,7 +14,6 @@ export interface AuthContextType {
   refreshToken: () => Promise<string>;
 }
 
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {

@@ -6,6 +6,7 @@ import ChatService from '../../api/users-api';
 import useAuth from '../../hooks/useAuth';
 import {AuthState} from '../../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";
+import UserService from '../../api/users-api'
 
 export const Log42: React.FC = () => {
   const log = {
@@ -46,6 +47,14 @@ const getToken = async (auth: AuthState) => {
   }
 };
 
+const connected = async (auth: AuthState) => {
+  try {
+    console.log('isLoggedIn', !!auth?.accessToken);
+  } catch (error) {
+    console.error("Error calling test endpoint:", error);
+  }
+};
+
 const Home: React.FC = () => {
   const { auth } = useAuth();
   return (
@@ -56,8 +65,9 @@ const Home: React.FC = () => {
       </div>
       <div className='button-test'>
         <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
-        <button onClick={getMe}>Test User Me</button>
+        <button onClick={UserService.getMe}>Test User Me</button>
         <button onClick={() => getToken(auth)}>Test Token</button>
+        <button onClick={() => connected(auth)}>Am i connected ?</button>
       </div>
     </div>
   );

@@ -30,7 +30,6 @@ class ChatService {
           },
         },
       );
-      console.log("create chan", response.data);
       return response.data;
 
     } catch (error) {
@@ -46,7 +45,7 @@ class ChatService {
   }
 
   static async getChannelByName(name: string): Promise<Channel> {
-    const response = await axiosPrivate.get<Channel>(`${CHAT_API}/channel/find/${name}`);
+    const response = await axiosPrivate.get<Channel>(`${CHAT_API}/channel?name=${name}`);
     return response.data;
   }
 
@@ -141,9 +140,10 @@ class ChatService {
 
   static async leaveChannel(userId: number, channelId: number) {
     try {
+      console.log("leave: ", userId, channelId);
       const response = await axiosPrivate.delete(`${CHAT_API}/channel/${channelId}/users`,
         {
-          data: { userId },
+          data: { id: userId },
         });
       return response.data;
     } catch (error) {

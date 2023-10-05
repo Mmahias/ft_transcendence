@@ -32,15 +32,15 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
-      const response = await AuthService.signUp(username, password, nickname);
+      const response = await AuthService.signUp(username.toLowerCase(), password, nickname.toLowerCase());
       if (response) {
-        console.log("OK S");
+        console.log("OK S: ", response);
         login(response);
         onSetLoggedIn(true);
         setSuccessMsg("Successfully signed up! ");
         setErrorMsg('');
         setTimeout(() => {
-          navigate('/settings');
+          navigate('/user/profile');
         }, 2000);
       }
     } catch (error) {
@@ -70,7 +70,9 @@ export default function Login({ onSetLoggedIn, setSocket }: {
     try {
       const response = await AuthService.login(username.toLowerCase(), password);
       if (response) {
+        console.log("OK L: ", response);
         login(response);
+        onSetLoggedIn(true);
         setSuccessMsg("Successfully logged in!");
         setErrorMsg('');
         setTimeout(() => {

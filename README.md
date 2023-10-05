@@ -39,3 +39,4 @@ To use it, just add some types or shared data you may need.
 * To reference it in front or back, you import thet type with  ```import { type } from @ft-transcendence/my_file```
 
 * The package.json in it makes it a package and i actually installed it in front and back like any other package with ```npm install ../shared```. It created a symbolic link to the shared folder, so any change youll make in it will be reflected in front and back without having to re-install it.
+

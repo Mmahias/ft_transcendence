@@ -18,9 +18,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import { MainContentWrapper, AppWrapper } from './App.styles';
 import { Socket } from 'socket.io-client';
-import { IsLoggedInContext, SocketContext, ChatStatusContext } from './contexts';
+import { AuthProvider, SocketProvider, ChatStatusContext } from './contexts';
 import { Channel } from './api/types';
-import { AuthProvider } from './contexts/AuthContext';
 
 const MainContent: React.FC = () => {
   useAxiosPrivate();
@@ -47,23 +46,19 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [activeChan, setActiveChan] = useState<Channel | null>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
-  const [socket, setSocket] = useState<Socket | null>(null);
     return (
       <Router>
         <ThemeProvider theme={theme}>
           <AuthProvider>
-            <ChatStatusContext.Provider value={ {activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded}}>
-              <SocketContext.Provider value={socket}>
-                <IsLoggedInContext.Provider value={isLoggedIn}>
-                  <AppWrapper>
-                    <Navbar theme={'dark'} setLoggedIn={setLoggedIn} setSocket={setSocket} />
-                    <MainContent />
-                    <Footer />
-                  </AppWrapper>
-                </IsLoggedInContext.Provider>
-              </SocketContext.Provider>
-            </ChatStatusContext.Provider>
+            <SocketProvider>
+              <ChatStatusContext.Provider value={ {activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded}}>
+                <AppWrapper>
+                  <Navbar theme={'dark'} />
+                  <MainContent />
+                  <Footer />
+                </AppWrapper>
+              </ChatStatusContext.Provider>
+            </SocketProvider>
           </AuthProvider>
         </ThemeProvider>
       </Router>

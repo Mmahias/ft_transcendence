@@ -241,9 +241,11 @@ export class ChatService {
   }
 
   async deleteUserFromChannel(channelId: number, body: UpdateChannelDto) {
-    const user = await this.userService.getUserByUsername(body.name);
-    const userId = user.id;
-
+    console.log("leave ", body.id, body.name, body);
+    if (!body.id && !body.name) {
+      throw new BadRequestException('username or user id required');
+    }
+    const userId = body.id ? body.id : (await this.userService.getUserByUsername(body.name)).id;
     // Remove the user from all userlists (could be refined if necessary)
     await prisma.channel.update({
       where: {
@@ -257,6 +259,8 @@ export class ChatService {
         mutedUsers: { disconnect: { id: userId } }
       }
     });
+
+    console.log("leave 1  ", userId);
 
     // if the user is the owner of the channel
     const channel = await prisma.channel.findUnique({

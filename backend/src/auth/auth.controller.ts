@@ -38,9 +38,8 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   @Post('login')
-  async login(@Req() req) {
-    // Return the jwt created
-    return req.user;
+  async login(@Body() body: RegisterDto) {
+    return await this.authService.validateUser(body.username, body.password);
   }
   
   @Post('signup')

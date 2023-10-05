@@ -23,6 +23,7 @@ export class AuthService {
       expiresIn: '24h',
       secret: secret
     });
+    console.log('token: ', token);
     return { accessToken: token };
   }
 
@@ -79,6 +80,7 @@ export class AuthService {
       sub: user.id,
       isTwoFactorAuthenticated: twoFAActivated
     };
+    console.log('test');
     return this.signToken(payload);
   }
 }
