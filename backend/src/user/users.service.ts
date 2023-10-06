@@ -169,23 +169,62 @@ export class UserService {
   }
 
   async updateUserAvatarFilename(userId: number, filename: string) {
-    return this.prisma.user.update({
-      where: { id: userId },
-      data: { avatar: filename }
-    });
+    return this.prisma.user
+      .update({
+        where: { id: userId },
+        data: { avatar: filename }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`User id [${userId}] is not found`);
+          throw new NotFoundException(`User id [${userId}] is not found`);
+        }
+        throw error;
+      });
   }
 
   async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
-    return this.prisma.user.update({
-      where: { id: userId },
-      data: { authenticationSecret: secret }
-    });
+    return this.prisma.user
+      .update({
+        where: { id: userId },
+        data: { authenticationSecret: secret }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`User id [${userId}] is not found`);
+          throw new NotFoundException(`User id [${userId}] is not found`);
+        }
+        throw error;
+      });
   }
 
   async turnOnTwoFactorAuthentication(userId: number) {
-    return this.prisma.user.update({
-      where: { id: userId },
-      data: { authenticationEnabled: true }
-    });
+    return this.prisma.user
+      .update({
+        where: { id: userId },
+        data: { authenticationEnabled: true }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`User id [${userId}] is not found`);
+          throw new NotFoundException(`User id [${userId}] is not found`);
+        }
+        throw error;
+      });
+  }
+
+  async turnOffTwoFactorAuthentication(userId: number) {
+    return this.prisma.user
+      .update({
+        where: { id: userId },
+        data: { authenticationEnabled: false, authenticationSecret: '' }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`User id [${userId}] is not found`);
+          throw new NotFoundException(`User id [${userId}] is not found`);
+        }
+        throw error;
+      });
   }
 }

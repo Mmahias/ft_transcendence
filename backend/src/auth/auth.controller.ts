@@ -1,5 +1,14 @@
-import { Controller, Get, Req, UseGuards,
-  Post, Body, HttpCode, UnauthorizedException, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  UseGuards,
+  Post,
+  Body,
+  HttpCode,
+  UnauthorizedException,
+  Res
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from '@app/auth/dto';
 import { UserService } from '@app/user/users.service';
@@ -41,7 +50,7 @@ export class AuthController {
   async login(@Body() body: RegisterDto) {
     return await this.authService.validateUser(body.username, body.password);
   }
-  
+
   @Post('signup')
   async signup(@Body() body: RegisterDto) {
     await this.userService.createUser(body.username, body.password, body.nickname);
@@ -67,12 +76,18 @@ export class AuthController {
       body.twoFactorAuthenticationCode,
       user
     );
-    
+
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
 
     await this.userService.turnOnTwoFactorAuthentication(user.id);
+  }
+
+  @Post('2fa/turn-off')
+  @UseGuards(Jwt2faAuthGuard)
+  async turnOffTwoFactorAuthentication(@User() user) {
+    await this.userService.turnOffTwoFactorAuthentication(user.id);
   }
 
   @Post('2fa/authenticate')
@@ -83,7 +98,7 @@ export class AuthController {
       body.twoFactorAuthenticationCode,
       user
     );
-    
+
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
