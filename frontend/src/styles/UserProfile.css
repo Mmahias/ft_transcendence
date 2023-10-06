@@ -34,14 +34,14 @@
 
 #main-dashboard {
   background-color: rgba(255,255,255,0.13);
-    backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px); */
   border: 2px solid rgb(35, 71, 103);
-  box-shadow:
+  /* box-shadow:
     0 0 7px #efefef,
     0 0 10px #efefef,
     0 0 20px rgb(60, 116, 166),
     0 0 42px rgb(60, 116, 166),
-    0 0 50px rgb(60, 116, 166);
+    0 0 50px rgb(60, 116, 166); */
   padding : 1vw;
   border-radius: 20px;
   margin : 0 2vw 2vh 2vw;
@@ -85,12 +85,12 @@
 .titles > h2:first-child {
   font-family: var(--font-type);
   color: #e3eef1;
-  text-shadow:
+  /* text-shadow:
   0 0 7px #efefef,
   0 0 10px #90d0f0,
   0 0 42px rgb(60, 116, 166),
   0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
+  0 0 100px rgb(24, 46, 65); */
   /* animation: lumiere 1s infinite linear; */
   font-size: 1.4em;
   margin-right: 0.7vw;
@@ -132,12 +132,12 @@
   font-family: var(--font-type);
   font-size: small;
   color: #e3eef1;
-  text-shadow:
+  /* text-shadow:
   0 0 7px #efefef,
   0 0 10px #90d0f0,
   0 0 42px rgb(60, 116, 166),
   0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
+  0 0 100px rgb(24, 46, 65); */
   
 }
 
@@ -217,12 +217,12 @@
 #achievements > h1 {
   font-family: var(--font-type);
   color: #e3eef1;
-  text-shadow:
+  /* text-shadow:
   0 0 7px #efefef,
   0 0 10px #90d0f0,
   0 0 42px rgb(60, 116, 166),
   0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
+  0 0 100px rgb(24, 46, 65); */
   /* animation: lumiere 1s infinite linear; */
   margin-bottom: 1vh;
   margin-left : 1rem;
@@ -306,12 +306,12 @@
 
 #stats > h1, #stats > h5 {
   font-family: var(--font-type);
-  text-shadow:
+  /* text-shadow:
   0 0 7px #efefef,
   0 0 10px #90d0f0,
   0 0 42px rgb(60, 116, 166),
   0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
+  0 0 100px rgb(24, 46, 65); */
   /* animation: lumiere 1s infinite linear; */
   color : black;
   text-align: center;
@@ -413,12 +413,12 @@ aside {
 aside > h1:first-child {
   font-family: var(--font-type);  
   color: #ffffff;
-  text-shadow:
+  /* text-shadow:
   0 0 7px #efefef,
   0 0 10px #90d0f0,
   0 0 42px rgb(60, 116, 166),
   0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
+  0 0 100px rgb(24, 46, 65); */
   color : white;
   margin-top : 1vh;
   margin-bottom: 20px;
@@ -429,12 +429,12 @@ aside > h1:first-child {
   background-color: rgba(255,255,255,0.13);
     backdrop-filter: blur(10px);
   border: 3px solid rgb(35, 71, 103);
-  box-shadow:
+  /* box-shadow:
     0 0 7px #efefef,
     0 0 10px #efefef,
     0 0 20px rgb(60, 116, 166),
     0 0 42px rgb(60, 116, 166),
-    0 0 77px rgb(60, 116, 166);
+    0 0 77px rgb(60, 116, 166); */
 
   border-radius: 20px;
   width : 100%;
