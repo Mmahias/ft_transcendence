@@ -56,12 +56,19 @@ const connected = async (auth: AuthState) => {
 
 const Home: React.FC = () => {
   const { auth } = useAuth();
+  const isLoggedIn = !!auth?.accessToken;
   return (
     <div className="home-container">
       <h1><span>FT_TRANSCENDENCE</span></h1>
-      <div className='button-home-container'>
+      {isLoggedIn ? (
+        <>
+        <p className='welcome-home'>Welcome to our transcendence</p>
+        </>
+      ) : (
+        <div className='button-home-container'>
         <RouterLink to='/login'><button className="button-52">SignUp/Login</button></RouterLink>
       </div>
+      )}
       <div className='button-test'>
         <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
         <button onClick={UserService.getMe}>Test User Me</button>
