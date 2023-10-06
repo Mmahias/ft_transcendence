@@ -9,7 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AuthService from "../../api/auth-api";
 // import { createSocketConnexion } from '../sockets/sockets';
 import { Socket } from 'socket.io-client';
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import { validateUsername, validatePassword, validateNickname, validateLoginUsername, validateLoginPassword } from './validation';
 
 

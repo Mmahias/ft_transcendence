@@ -1,18 +1,5 @@
-import io from 'socket.io-client';
 import { Socket } from 'socket.io-client';
 import { Channel } from '../api/types';
-
-export function createSocketConnexion() {
-  const APP_URL = import.meta.env.VITE_BACKEND_URL;
-  const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT;
-  const BASE_URL = `${APP_URL}:${BACKEND_PORT}`;
-
-  // const newSocket = io(BASE_URL, {
-  //   withCredentials: true,
-  // });
-  const newSocket = null;
-  return (newSocket);
-}
 
 /**
  * 
@@ -20,9 +7,9 @@ export function createSocketConnexion() {
  * @param event  for example 'chat' 'create lobby' 'game'
  * @param payload for example 'player move', 'sent message', etc
  */
-export function sendNotificationToServer(socket: Socket, event: string, payload: string) {
+export function sendNotificationToServer(socket: Socket | null, event: string, payload: string) {
   if (socket) {
-    // socket.emit(event, payload);
+    socket.emit(event, payload);
   }
 };
 
@@ -31,7 +18,7 @@ export function sendNotificationToServer(socket: Socket, event: string, payload:
  * @param socket connexion du client avec notre serveur
  * @param payload <Action <Concerned user's nickname>. Ex: '/mute  Joe'
  */
-export function handleRequestFromUser(socket: Socket, group: string, action: string, channelName: string, userTalking: string) {
+export function handleRequestFromUser(socket: Socket | null, group: string, action: string, channelName: string, userTalking: string) {
   var role: string;
   var info: string;
   switch (group) {

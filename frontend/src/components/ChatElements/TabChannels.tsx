@@ -2,8 +2,9 @@ import React, {  useContext } from 'react';
 import ChannelLink from './ChannelLink';
 import { Channel, User } from '../../api/types';
 import '../../styles/Tab_channels.css'
-import { SocketContext, ChatStatusContext } from '../../contexts';
-import { sendNotificationToServer } from "../..//sockets/sockets";
+import { useSocket } from '../../hooks';
+import { ChatStatusContext } from '../../contexts';
+import { sendNotificationToServer } from "../../sockets/sockets";
 import { useQuery } from '@tanstack/react-query';
 import ChatService from '../../api/chat-api';
 import { ChanMode } from "../..//shared/types";
@@ -28,7 +29,7 @@ function isBlockedByUser(targetUser: User, user: User): boolean {
 
 export default function TabChannels() {
   const { setActiveTab, setActiveChan } = useContext(ChatStatusContext);
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
 
   const { data: joinedChannels, error, isLoading, isSuccess } = useQuery({queryKey: ['channels'], queryFn: ChatService.getMyChannels,});
   

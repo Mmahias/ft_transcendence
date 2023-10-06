@@ -7,7 +7,7 @@ import UserService from '../../api/users-api';
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
-import { SocketContext } from '../../contexts';
+import { useSocket } from '../../hooks';
 import { sendInviteToUser, sendNotificationToServer } from "../..//sockets/sockets";
 import { toast } from 'react-hot-toast';
 import { ChanMode } from '../../shared/types';
@@ -39,7 +39,7 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
   const [openInvitePrompt, setOpenInvitePrompt] = useState<boolean>(false);
   const [inviteName, setInviteName] = useState<string>("");
 
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
   const queryClient = useQueryClient();
 
   const {data, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});

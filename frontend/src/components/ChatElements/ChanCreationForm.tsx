@@ -6,7 +6,7 @@ import {
 import '../../styles/Tab_channels.css';
 import toast from 'react-hot-toast';
 import ChatService from '../../api/chat-api';
-import { SocketContext } from '../../contexts';
+import { useSocket } from '../../hooks';
 import { sendNotificationToServer } from '../../sockets/sockets';
 import { ChanMode } from '../../shared/types';
 
@@ -14,7 +14,7 @@ export default function ChanCreationForm() {
   const [channelMode, setChannelMode] = useState<ChanMode>(ChanMode.PUBLIC);
   const [channelPassword, setChannelPassword] = useState<string>('');
   const [channelName, setChannelName] = useState<string>('');
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
   const queryClient = useQueryClient();
 
   // Pour récupérer le nom du Channel

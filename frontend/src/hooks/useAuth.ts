@@ -1,7 +1,7 @@
 import { useContext, useDebugValue } from "react";
 import AuthContext, { AuthContextType } from "../contexts/AuthContext";
 
-const useAuth = (): AuthContextType => {
+export const useAuth = (): AuthContextType => {
     const authContext = useContext(AuthContext);
 
     if (!authContext) {
@@ -13,5 +13,3 @@ const useAuth = (): AuthContextType => {
 
     return authContext;
 };
-
-export default useAuth;

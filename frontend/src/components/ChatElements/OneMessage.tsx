@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { SocketContext } from '../../contexts';
+import { useSocket } from '../../hooks';
 import { ChanMode } from '../../shared/types';
 
 const getDate = (message: Message) => {
@@ -27,7 +27,7 @@ export function OneMessage({ conv, message, index, myNickname } :
   const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
   const {data: userMe, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
   const queryClient = useQueryClient();
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
 
   useEffect(() => {
     if (userMe?.nickname === message.from.nickname) {

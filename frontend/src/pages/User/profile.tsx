@@ -5,8 +5,7 @@ import userImage from '../../assets/user2.png'
 import { Link as RouterLink } from "react-router-dom";
 import UserService from "../../api/users-api";
 import AuthService from "../../api/auth-api";
-import QRCode from 'react-qr-code';
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../hooks";
 
 const Profile: React.FC = () => {
   const { auth } = useAuth();

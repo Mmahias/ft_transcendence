@@ -1,13 +1,13 @@
 import React, { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState, useDebugValue } from 'react';
 import { io, Socket } from 'socket.io-client';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from '../hooks';
 
-interface SocketContextType {
+export interface SocketContextType {
   socket: Socket | null;
 }
 
-const SocketContext = createContext<SocketContextType | undefined>(undefined);
+export const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 interface SocketProviderProps {
   children: ReactNode;
@@ -43,14 +43,3 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   );
 }
 
-export const useSocket = (): SocketContextType => {
-  const socketContext = useContext(SocketContext);
-  if (!socketContext) {
-    throw new Error('useSocket must be used within a SocketProvider');
-  }
-  const { socket } = socketContext;
-
-  useDebugValue(socket, s => s?.connected ? "Connected" : "Disconnected");
-  
-  return socketContext;
-}

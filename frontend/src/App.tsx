@@ -11,7 +11,7 @@ import Request from './pages/User/Request';
 import Edit from './pages/User/edit';
 import Error from './pages/Error/Error';
 import Footer from './components/Footer';
-import useAxiosPrivate from './hooks/useAxiosPrivate';
+import { useAxiosPrivate } from './hooks';
 import { LoggedStatus } from './pages/Login/Login';
 import { ThemeProvider } from 'styled-components';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';

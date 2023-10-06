@@ -2,8 +2,7 @@ import React from 'react';
 import './styles.css';
 import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
 import { testBackendEndpoint } from '../../api/test-api';
-import ChatService from '../../api/users-api';
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../hooks';
 import {AuthState} from '../../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";
 import UserService from '../../api/users-api'

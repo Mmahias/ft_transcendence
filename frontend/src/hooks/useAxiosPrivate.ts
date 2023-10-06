@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { AxiosInstance } from 'axios';
-import useAuth from "./useAuth";
+import { useAuth } from "./useAuth";
 import { axiosPrivate } from "../api/axios-config";
 
-const useAxiosPrivate = (): AxiosInstance => {
+export const useAxiosPrivate = (): AxiosInstance => {
     const { auth, refreshToken } = useAuth();
 
     useEffect(() => {
@@ -37,5 +37,3 @@ const useAxiosPrivate = (): AxiosInstance => {
 
     return axiosPrivate;
 };
-
-export default useAxiosPrivate;

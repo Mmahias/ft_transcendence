@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import '../../styles/Tab_Chat.css';
-import { ChatStatusContext, SocketContext } from '../../contexts';
+import { ChatStatusContext } from '../../contexts';
+import { useSocket } from '../../hooks';
 import { Channel, Message, User } from '../../api/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ChatService from '../../api/chat-api';
@@ -15,7 +16,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const { setActiveTab, setActiveChan } = useContext(ChatStatusContext);
   // const { isMuted, setIsMuted, muteExpiration, setMuteExpiration } = useContext(MuteContext);
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
   const queryClient = useQueryClient();
 
   // obligée de requery le chan pour avoir ses MàJs....

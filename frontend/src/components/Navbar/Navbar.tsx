@@ -6,7 +6,7 @@ import AuthService from "../../api/auth-api";
 import logo from '../../assets/school_42.jpeg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../hooks';
 
 interface NavbarProps {
   theme: string;

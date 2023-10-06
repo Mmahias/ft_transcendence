@@ -8,13 +8,13 @@ import UserService from '../../api/users-api';
 import { Channel, User } from '../../api/types';
 import toast from 'react-hot-toast';
 import { handleRequestFromUser } from '../../sockets/sockets';
-import { SocketContext } from '../../contexts';
+import { useSocket } from '../../hooks';
 
 export function AdminOptions({ channelName, userTalking }: { channelName: string, userTalking: User}) {
   const [enableOptions, setEnableOptions] = useState<boolean>(false);
   const [toggleDisplay, setToggleDisplay] = useState<boolean>(false);
   const userQuery = useQuery({ queryKey: ['user'], queryFn: UserService.getMe });
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
   const { data: channel }= useQuery({ 
     queryKey: ['channels', channelName], 
     queryFn: () => ChatService.getChannelByName(channelName) 
