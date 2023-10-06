@@ -92,12 +92,12 @@ export default function Login({ onSetLoggedIn, setSocket }: {
 
   return (
     <div className='sign-log-container'>
-      <h1 style={{ justifyContent: "center", marginTop: "100px" }}><span className="profile-p">SignUp / LogIn</span></h1>
+      <h1 style={{ justifyContent: "center", marginTop: "100px" }}><span className="profile-p">LogIn / SignUp</span></h1>
       <div className="login-container">
         <input type="checkbox" id="chk" />
         <div className="signup">
           <form>
-            <label htmlFor="chk">Sign up</label>
+            <label htmlFor="chk">LogIn</label>
             <input
               onChange={(event) => {
                 setUsername(event.target.value);
@@ -112,6 +112,44 @@ export default function Login({ onSetLoggedIn, setSocket }: {
               onChange={(event) => {
                 setPassword(event.target.value);
                 setPasswordError(validatePassword(event.target.value));
+              }}
+              type="password"
+              placeholder="Password"
+              id="password"
+            />
+            {passwordError && <small className="error-message">{passwordError}</small>}
+            {successMsg &&
+              <AlertSuccess>
+                <h6>{successMsg}</h6>
+              </AlertSuccess>
+            }
+            <button
+              className='button-log'
+              onClick={handleLogin}
+              disabled={!!(usernameError || passwordError)}>
+              Login
+            </button>
+          </form>
+          <button className='button-log'><a href={import.meta.env.VITE_URL_42}>Log with 42</a></button>
+        </div>
+        <div className="login">
+          <form>
+            <label htmlFor="chk">SignUp</label>
+            <input
+              onChange={(event) => {
+                setUsername(event.target.value);
+                setUsernameError(validateLoginUsername(event.target.value));
+              }}
+              type="text"
+              placeholder="Username"
+              id="username"
+            />
+            {usernameError && <small className="error-message">{usernameError}</small>}
+
+            <input
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setPasswordError(validateLoginPassword(event.target.value));
               }}
               type="password"
               placeholder="Password"
@@ -140,44 +178,6 @@ export default function Login({ onSetLoggedIn, setSocket }: {
               Sign up
             </button>
           </form>
-        </div>
-        <div className="login">
-          <form>
-            <label htmlFor="chk">Login</label>
-            <input
-              onChange={(event) => {
-                setUsername(event.target.value);
-                setUsernameError(validateLoginUsername(event.target.value));
-              }}
-              type="text"
-              placeholder="Username"
-              id="username"
-            />
-            {usernameError && <small className="error-message">{usernameError}</small>}
-
-            <input
-              onChange={(event) => {
-                setPassword(event.target.value);
-                setPasswordError(validateLoginPassword(event.target.value));
-              }}
-              type="password"
-              placeholder="Password"
-              id="password"
-            />
-            {passwordError && <small className="error-message">{passwordError}</small>}
-            {successMsg &&
-              <AlertSuccess>
-                <h6>{successMsg}</h6>
-              </AlertSuccess>
-            }
-            <button
-              className='button-log'
-              onClick={handleLogin}
-              disabled={!!(usernameError || passwordError)}>
-              Login
-            </button>
-          </form>
-          <button className='button-log'><a href={import.meta.env.VITE_URL_42}>Log with 42</a></button>
         </div>
       </div>
     </div>
