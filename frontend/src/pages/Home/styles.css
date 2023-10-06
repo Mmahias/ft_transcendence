@@ -44,12 +44,42 @@ span:hover {
 }
 
 
+.welcome-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+  font-size: 25px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #000, rgb(245, 210, 13), #000);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-repeat: no-repeat;
+  background-size: 80%;
+  animation: shine 5s linear infinite;
+  position: relative;
+}
+
+@keyframes shine {
+  0% {
+    background-position-x: -500%;
+  }
+
+  100% {
+    background-position-x: 500%;
+  }
+}
+
 /* Média query pour les écrans plus petits */
 @media screen and (max-width: 768px) {
   span {
       font-size: 2em; /* Ajustez la taille de la police pour les écrans plus petits */
   }
 }
+
 
 
 /* CSS */
@@ -61,6 +91,7 @@ span:hover {
   gap: 20px; /* Ajoutez de l'espace entre les boutons (vous pouvez ajuster la valeur selon vos besoins) */
   flex-wrap: wrap; /* Permet aux boutons de passer à la ligne lorsque l'espace est insuffisant */
 }
+
 
 .button-52 {
   font-size: 16px;
@@ -75,7 +106,6 @@ span:hover {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  /*margin-top: 200px;*/
 }
 
 .button-52:after {
