@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '@app/auth/strategies/jwt/jwt-auth.guard';
 import { TwoFaAuth } from '@app/auth/dto/two-fa-auth';
 import { User } from '@app/user/decorator';
 import { LocalAuthGuard } from '@app/auth/strategies/local/local-auth.guard';
+import {Jwt2faAuthGuard} from "@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard";
 
 @Controller('auth')
 export class AuthController {
@@ -66,7 +67,7 @@ export class AuthController {
       2FA authentication
    */
   @Post('2fa/generate')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2faAuthGuard)
   async register(@Res() response, @User() user) {
     const { otpAuthUrl } =
       await this.authService.generateTwoFactorAuthenticationSecret(user);
@@ -75,7 +76,7 @@ export class AuthController {
   }
 
   @Post('2fa/turn-on')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2faAuthGuard)
   async turnOnTwoFactorAuthentication(@User() user, @Body() body: TwoFaAuth) {
     const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
       body.twoFactorAuthenticationCode,
@@ -89,9 +90,15 @@ export class AuthController {
     await this.userService.turnOnTwoFactorAuthentication(user.id);
   }
 
+  @Post('2fa/turn-off')
+  @UseGuards(Jwt2faAuthGuard)
+  async turnOffTwoFactorAuthentication(@User() user) {
+    await this.userService.turnOffTwoFactorAuthentication(user.id);
+  }
+
   @Post('2fa/authenticate')
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2faAuthGuard)
   async authenticate(@User() user, @Body() body: TwoFaAuth) {
     const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
       body.twoFactorAuthenticationCode,
