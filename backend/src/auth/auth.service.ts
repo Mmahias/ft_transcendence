@@ -55,4 +55,9 @@ export class AuthService {
     };
     return this.signToken(payload);
   }
+
+  async logout(user: Partial<User>) {
+    // FIX IT
+    // Fix the user status to offline in the database
+  }
 }

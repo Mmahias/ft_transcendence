@@ -35,7 +35,7 @@ export class SocketsGateway
   afterInit(server: Server) {
     server.use(usernameMiddleware(this.jwtService));
     console.log('WS Initialized');
-  }
+  } 
 
   /* Indique dans le User scheme qu'il est actif */
   async handleConnection(client: Socket, ...args: any[]) {
@@ -97,7 +97,24 @@ export class SocketsGateway
     client.disconnect(true);
   }
 
-    /* ######################### */
+  /* ######################### */
+  /* ######### TEST ########## */
+  /* ######################### */
+
+  @SubscribeMessage('test-event')
+  handleTestEvent(client: Socket, data: any): Promise<any> {
+    console.log('Received test event with data:', data);
+    
+    // Responding to the client, you can remove this if not required
+    return new Promise((resolve) => {
+      // Simulating asynchronous work
+      setTimeout(() => {
+        resolve({ event: 'test-response', data: 'Hello from server!' });
+      }, 1000);
+    });
+  }
+
+  /* ######################### */
   /* ######### CHAT ########## */
   /* ######################### */
 

@@ -111,4 +111,9 @@ export class AuthController {
 
     return this.authService.login(user, true);
   }
+
+  @Post('logout')
+  async logout(@User() user) {
+    return this.authService.logout(user);
+  }
 }

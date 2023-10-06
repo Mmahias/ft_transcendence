@@ -62,23 +62,8 @@ const testSocketConnection = (socket: Socket | null) => {
     console.log('Socket is null or not connected');
     return;
   }
-
-  socket.on('connect', () => {
-    console.log('Socket connected:', socket.id);
-  });
-
-  socket.on('disconnect', (reason) => {
-    console.log('Socket disconnected:', reason);
-  });
-
   // Emitting a test event, you can remove this if not required
   socket.emit('test-event', { message: 'Hello from client!' });
-
-  // Remember to disconnect when you're done testing
-  // You can also move this to a separate "disconnect" button if needed
-  setTimeout(() => {
-    socket.disconnect();
-  }, 5000);  // disconnecting after 5 seconds
 };
 
 
