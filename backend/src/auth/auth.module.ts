@@ -10,9 +10,9 @@ import { PasswordModule } from '../password/password.module';
 import { LocalStrategy } from '@app/auth/strategies/local/local.strategy';
 import { Oauth42Strategy } from '@app/auth/strategies/oauth/oauth.42.strategy';
 import { Jwt2faStrategy } from '@app/auth/strategies/jwt-2fa/jwt-2fa.strategy';
+import { SocketService } from '@app/sockets/sockets.service';
 
 @Module({
-  imports: [HttpModule, UserModule, JwtModule, PasswordModule],
   controllers: [AuthController],
   providers: [
     AuthService,
@@ -20,7 +20,9 @@ import { Jwt2faStrategy } from '@app/auth/strategies/jwt-2fa/jwt-2fa.strategy';
     JwtStrategy,
     PasswordService,
     LocalStrategy,
-    Jwt2faStrategy
-  ]
+    Jwt2faStrategy,
+    SocketService
+  ],
+  imports: [HttpModule, UserModule, JwtModule, PasswordModule],
 })
 export class AuthModule {}

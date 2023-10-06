@@ -6,7 +6,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { GameGateway } from './game/game.gateway';
 import { TestModule } from './test/test.module';
+import { SocketModule } from './sockets/sockets.module';
 import { LoggerMiddleware } from './middlewares/logger-middleware';
+
 
 @Module({
   imports: [
@@ -15,7 +17,8 @@ import { LoggerMiddleware } from './middlewares/logger-middleware';
     UserModule,
     ChatModule,
     AuthModule,
-    TestModule
+    TestModule,
+    SocketModule
   ],
   providers: [GameGateway]
 })

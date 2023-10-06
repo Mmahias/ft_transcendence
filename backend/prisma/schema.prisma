@@ -21,7 +21,7 @@ model User {
   updatedAt              DateTime        @default(now())
   avatar                 String?
   bio                    String?
-  status                 UserStatus      @default(OFFLINE)
+  status                 UserStatus      @default(ONLINE)
   // 2FA
   authenticationSecret   String?
   authenticationEnabled  Boolean         @default(false)

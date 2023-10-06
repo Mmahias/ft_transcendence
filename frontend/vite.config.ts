@@ -20,6 +20,12 @@ export default ({ mode }) => {
           secure: false,
           ws: true,
         },
+        '/socket.io': {  // Proxy socket.io requests
+          target: env.VITE_BACKEND_FULL_URL,
+          changeOrigin: true,
+          secure: false,
+          ws: true,  // websocket support for this route
+        },
       },
     },
     resolve: {

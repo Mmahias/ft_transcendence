@@ -7,11 +7,11 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   // FIX IT
-  // app.enableCors({
-  //   origin: 'http://localhost:3001', // replace with your front-end domain/port
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  //   credentials: true,
-  // });
+  app.enableCors({
+    origin: '*', // replace with your front-end domain/port
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3030);
   console.log('Server running on http://localhost:3030');

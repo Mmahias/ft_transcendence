@@ -2,10 +2,12 @@ import React from 'react';
 import './styles.css';
 import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
 import { testBackendEndpoint } from '../../api/test-api';
-import { useAuth } from '../../hooks';
-import {AuthState} from '../../contexts/AuthContext';
+import { useAuth, useSocket } from '../../hooks';
+import { Socket } from 'socket.io-client';
+import { AuthState } from '../../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";
 import UserService from '../../api/users-api'
+import { SocketContextType } from 'contexts';
 
 export const Log42: React.FC = () => {
   const log = {
@@ -54,8 +56,35 @@ const connected = async (auth: AuthState) => {
   }
 };
 
+const testSocketConnection = (socket: Socket | null) => {
+  console.log('socket: ', socket);
+  if (!socket || socket?.connected === null) {
+    console.log('Socket is null or not connected');
+    return;
+  }
+
+  socket.on('connect', () => {
+    console.log('Socket connected:', socket.id);
+  });
+
+  socket.on('disconnect', (reason) => {
+    console.log('Socket disconnected:', reason);
+  });
+
+  // Emitting a test event, you can remove this if not required
+  socket.emit('test-event', { message: 'Hello from client!' });
+
+  // Remember to disconnect when you're done testing
+  // You can also move this to a separate "disconnect" button if needed
+  setTimeout(() => {
+    socket.disconnect();
+  }, 5000);  // disconnecting after 5 seconds
+};
+
+
 const Home: React.FC = () => {
   const { auth } = useAuth();
+  const socket = useSocket();
   return (
     <div className="home-container">
       <h1><span>FT_TRANSCENDENCE</span></h1>
@@ -67,6 +96,7 @@ const Home: React.FC = () => {
         <button onClick={UserService.getMe}>Test User Me</button>
         <button onClick={() => getToken(auth)}>Test Token</button>
         <button onClick={() => connected(auth)}>Am i connected ?</button>
+        <button onClick={() => testSocketConnection(socket)}>Test Socket Connection</button>
       </div>
     </div>
   );

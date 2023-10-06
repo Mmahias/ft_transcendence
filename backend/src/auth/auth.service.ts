@@ -6,13 +6,15 @@ import { authenticator } from 'otplib';
 import { User } from '@prisma/client';
 import { toDataURL } from 'qrcode';
 import { JwtPayload } from '@app/auth/entities/jwt-payload';
+import { SocketService } from '@app/sockets/sockets.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly socketService: SocketService
   ) {}
 
   async signToken(payload: JwtPayload) {

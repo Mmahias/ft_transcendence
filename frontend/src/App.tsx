@@ -17,7 +17,6 @@ import { ThemeProvider } from 'styled-components';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import { MainContentWrapper, AppWrapper } from './App.styles';
-import { Socket } from 'socket.io-client';
 import { AuthProvider, SocketProvider, ChatStatusContext } from './contexts';
 import { Channel } from './api/types';
 
