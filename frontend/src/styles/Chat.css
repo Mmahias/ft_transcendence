@@ -3,8 +3,7 @@
   top: 80px;
   right: 0%;
   height: 85vh;
-  background-color: rgba(24, 46, 65, 0.781);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: black;
   transition: transform 0.3s ease-in-out;
   }
   
@@ -14,7 +13,7 @@
   }
   
   .chat.expanded {
-  width: 400px;
+  width: 80%;
   height: 85vh;
   transform: translateX(0);
   }
@@ -29,7 +28,7 @@
   top:30px;
   width: 70px;
   height: 70px;
-  color: rgb(216, 237, 239);
+  color: black;
   background-color: transparent;
   cursor: pointer;
   display: flex;
@@ -53,20 +52,9 @@
   padding-right: 41px;
   
   font-family: var(--font-type);
-  border: 3px solid rgb(35, 71, 103);
+  font-size: 20px;
+  border: 3px solid gold;
   background-color: transparent;
   color: #e3eef1;
-  box-shadow:
-    0 0 7px #efefef,
-    0 0 10px #efefef,
-    0 0 20px rgb(60, 116, 166),
-    0 0 42px rgb(60, 116, 166),
-    0 0 77px rgb(60, 116, 166);
-  text-shadow:
-    0 0 7px #efefef,
-    0 0 10px #90d0f0,
-    0 0 42px rgb(60, 116, 166),
-    0 0 77px rgb(60, 116, 166),
-    0 0 100px rgb(24, 46, 65);
   }
   

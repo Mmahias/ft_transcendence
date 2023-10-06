@@ -5,29 +5,22 @@
 /* ********************************/
 
 .channels_page {
-  border: none;
+  border: black solid;
     border-radius:10px;
     height: 78vh;
-
-    background-color: rgba(255,255,255,0.13);
-    backdrop-filter: blur(10px);
-    box-shadow:
-    0 0 7px #efefef,
-    0 0 10px #efefef,
-    0 0 20px rgb(60, 116, 166),
-    0 0 42px rgb(60, 116, 166),
-    0 0 50px rgb(60, 116, 166);
+    overflow-y: auto;  /* <-- Ajoutez cette ligne */
+    background-color: rgb(255, 255, 255);
 }
 
 #channels_page_title {
-    font-family: 'Bruno Ace SC', cursive;
+    /* font-family: 'Courier New', Courier, monospace ; */
     font-weight: 600;
-    font-size: larger;
-    text-shadow: 0 0 15px #efefef, 0 0 10px #90d0f0, 0 0 42px rgb(60, 116, 166), 0 0 77px rgb(60, 116, 166), 0 0 100px rgb(24, 46, 65);
+    font-size: x-large;
+    background-color: gold;
     color: rgb(10, 10, 10);
-    
     padding: 1rem;
 }
+
 
 .channels_page-noconv {
     height: 60vh;
@@ -38,13 +31,14 @@
     justify-content: center;
     gap: 1rem;
 
-    color: white;
+    color: rgb(10, 10, 10);
+    text-decoration-line: underline;
 }
 
 .channels_page-noconv > h3{
-    font-family: 'Bruno Ace SC', cursive;
+    font-family: 'Courier New', Courier, monospace;
     font-size: large;
-    text-shadow: 0 0 15px #efefef, 0 0 10px #90d0f0, 0 0 42px rgb(60, 116, 166), 0 0 77px rgb(60, 116, 166), 0 0 100px rgb(24, 46, 65);
+    color: rgba(128, 128, 128, 0.486);
 
 }
 
@@ -54,6 +48,7 @@
 }
 
 #channels_page_joinedscroll {
+    border: black solid;
     overflow: auto;
   overflow-x:hidden;
 }
@@ -73,7 +68,7 @@
 }
 
 .channel-link-card:hover {
-    background-color: rgb(79, 97, 110);
+    background-color: gold;
 }
 
 .channel-link-header {
@@ -83,12 +78,12 @@
 }
 
 .channel-link-name {
-    font-family: 'Bruno Ace SC', cursive;
     font-weight: 400;
-    font-size: large;
-    text-shadow: 0 0 7px #efefef, 0 0 10px #90d0f0, 0 0 42px rgb(60, 116, 166), 0 0 77px rgb(60, 116, 166), 0 0 100px rgb(24, 46, 65);
-    color: white;
+    font-size: x-large;
+    text-decoration-line: underline;
+    color: rgb(7, 7, 7);
 }
+
 .channel-link-span {
     font-family: 'Open Sans', sans-serif;
     font-size: small;
@@ -97,8 +92,14 @@
     margin: 0.5rem;
     border-radius: 10%;
 
-    background-color: rgb(41, 55, 70);
+    background-color: rgb(241, 175, 32);
     color: white;
+}
+
+.channel-link-member {
+    font-size: medium;
+    margin-top: 10%;
+    margin-left: 10px;
 }
 
 .channel-link-invite {
@@ -115,26 +116,50 @@
     color: white;
     font-family: 'Open Sans', sans-serif;
     padding: 0 1vw;
-    background-color: rgb(70, 85, 99);
+    background-color: rgb(241, 175, 32);
     width: 100%;
 }
 
 .channel-link-preview {
+    border-style: dashed solid;
+    padding: 10px;
+
     font-family: 'Open Sans', sans-serif;
+    color: black;
     display: flex;
-    align-items: left;
-    justify-content: space-between;
-    color: white;
+    justify-content: space-between; /* cela garantira que link-messenger est à gauche et link-date est à droite */
+    align-items: center;
 }
 
 .channel-link-messenger {
+    color: black;
     font-weight: 600;
+    margin-right: auto;
 }
 
 .channel-link-lastmsg {
+    font-family: 'Courier New', Courier, monospace;
     font-style: italic;
+    margin-left: 20px;
+    position: relative; /* Si vous avez besoin de le positionner par rapport à .messenger-container */
+    
+    /* Pour le style de bulle de message : */
+    padding: 5px 10px; /* Espace intérieur pour le message */
+    background-color: #e0e0e0; /* Couleur de fond de la bulle. Ajustez selon vos préférences */
+    border-radius: 15px; /* Pour les coins arrondis de la bulle */
+    max-width: 200px; /* Ajustez selon vos préférences */
+    word-wrap: break-word; /* Pour casser les longs mots et les garder à l'intérieur de la bulle */
 }
 
-.channel-link-date { 
-    font-size: small; 
+.channel-link-date {
+    font-size: small;
+    margin-left: auto;
+    margin-bottom: 42px;
+}
+
+.channel-link-password-card {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: rgb(241, 175, 32);
 }

@@ -124,11 +124,11 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
       <div  className="channel-link-card" >
         <div className="channel-link-header">
           <div>
-            <span className='channel-link-name'>{convName} </span>
-            <span className="channel-link-span">{channel.mode}</span>
+            <h5 className='channel-link-name'>{convName} </h5>
+            <h5 className="channel-link-span">{channel.mode}</h5>
             {
               channel.mode !== 'DM' && channel.joinedUsers &&
-              <span>{channel.joinedUsers.length} member(s)</span>
+              <h5 className='channel-link-member'>{channel.joinedUsers.length} member(s)</h5>
             }
           </div>
           {
@@ -141,8 +141,8 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
           <>
             <div className='channel-link-preview'>
               <p > 
-                <span className="channel-link-messenger">{messages[messages.length - 1].from.nickname} : </span> 
-                <span className='channel-link-lastmsg'>{msgPreview}</span>
+                <h5 className="channel-link-messenger">{messages[messages.length - 1].from.nickname} : </h5> 
+                <h5 className='channel-link-lastmsg'>{msgPreview}</h5>
               </p>
               <p className='channel-link-date'>{getTimeSinceLastMsg(messages[messages?.length - 1].date)}</p>
             </div>

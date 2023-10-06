@@ -70,11 +70,11 @@ export default function ChannelMore({ channel }: { channel: Channel }) {
       <div  className="channel-link-card" onClick={(event) => handleClick(event, channel)}>
         <div className="channel-link-header">
           <div>
-            <span className='channel-link-name'>{convName} </span>
-            <span className="channel-link-span">{channel.mode}</span>
+            <h5 className='channel-link-name'>{convName} </h5>
+            <h5 className="channel-link-span">{channel.mode}</h5>
             {
               channel.mode !== 'DM' && channel.joinedUsers &&
-              <span>{channel.joinedUsers.length} member(s)</span>
+              <h5>{channel.joinedUsers.length} member(s)</h5>
             }
           </div>
         </div>
