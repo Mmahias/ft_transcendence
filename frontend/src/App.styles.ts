@@ -33,5 +33,5 @@ export const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: white;
+  background-color: rgb(110, 110, 110);
 `;

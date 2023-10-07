@@ -1,5 +1,5 @@
 import './Navbar.css';
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../contexts/AuthContext';
 import AuthService from "../../api/auth-api";
@@ -14,8 +14,20 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { auth, logout } = useAuth();
-  const isLoggedIn = !!auth?.accessToken;
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && searchTerm) {
+      // Submit the search term
+      console.log(`Searching for: ${searchTerm}`);
+      // Here you can call any search-related functions or API requests
+    }
+  };
   const handleLogout = async () => {
     try {
       await AuthService.logout();
@@ -35,8 +47,18 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           <Link to="/" className="router-link">HOME</Link>
           <Link to="/game" className="router-link">GAME</Link>
           <Link to="/chat" className="router-link">CHAT</Link>
+          {isLoggedIn && (
+            <div className="searchBar">
+              <input
+                type="text"
+                placeholder="Search user..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchSubmit}
+              />
+            </div>
+          )}
         </div>
-
         <div className="dropdown">
           <div className="dropbtn">
             <FontAwesomeIcon icon={faBars} />

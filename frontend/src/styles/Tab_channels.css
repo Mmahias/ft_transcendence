@@ -97,9 +97,7 @@ body {
   background-color: rgb(150, 150, 150);
   cursor: pointer;
   transition: filter 0.1s ease-in-out, background-color 0.1s ease-in-out; /* This adds a smooth transition effect */
-
 }
-
 
 .channel-link-name {
   width: 18%;  /* Example width */

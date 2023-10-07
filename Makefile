@@ -46,7 +46,6 @@ fresh: ## Reset the Docker environment to a completely fresh state
 	@docker builder prune -af
 	@echo "Docker environment is now fresh!"
 
-
 tail: ## Display logs for running containers in "follow" mode
 	@$(DC) logs -f
 

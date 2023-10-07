@@ -35,7 +35,7 @@ export class SocketsGateway
   afterInit(server: Server) {
     server.use(usernameMiddleware(this.jwtService));
     console.log('WS Initialized');
-  } 
+  }
 
   /* Indique dans le User scheme qu'il est actif */
   async handleConnection(client: Socket, ...args: any[]) {
