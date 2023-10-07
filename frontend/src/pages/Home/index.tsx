@@ -66,6 +66,13 @@ const testSocketConnection = (socket: Socket | null) => {
   socket.emit('test-event', { message: 'Hello from client!' });
 };
 
+const testMe= () => {
+  UserService.getMe().then((res) => {
+    console.log(res);
+  }).catch((err) => {
+    console.log(err);
+  });
+};
 
 const Home: React.FC = () => {
   const { auth } = useAuth();
@@ -86,7 +93,7 @@ const Home: React.FC = () => {
       )}
       <div className='button-test'>
         <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
-        <button onClick={UserService.getMe}>Test User Me</button>
+        <button onClick={() => testMe()}>Test User Me</button>
         <button onClick={() => getToken(auth)}>Test Token</button>
         <button onClick={() => connected(auth)}>Am i connected ?</button>
         <button onClick={() => testSocketConnection(socket)}>Test Socket Connection</button>

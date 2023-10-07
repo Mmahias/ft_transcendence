@@ -60,6 +60,7 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
                 sendNotificationToServer(socket, 'Create Lobby', mutationData?.name);
                 if (inviteName !== '') {
                     const msg: string = sendInviteToUser(socket, mutationData?.name, inviteName, channel);
+                if (msg)
                     createInfoMessage.mutate([mutationData?.name, msg]);
                 }
             }
@@ -140,10 +141,10 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
           messages.length > 0 &&
           <>
             <div className='channel-link-preview'>
-              <p > 
+              <div > 
                 <h5 className="channel-link-messenger">{messages[messages.length - 1].from.nickname} : </h5> 
                 <h5 className='channel-link-lastmsg'>{msgPreview}</h5>
-              </p>
+              </div>
               <p className='channel-link-date'>{getTimeSinceLastMsg(messages[messages?.length - 1].date)}</p>
             </div>
           </>

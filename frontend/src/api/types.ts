@@ -1,19 +1,25 @@
 export interface User {
-  id:          number;
-  username:    string;
-  password:    string;
-  nickname:    string;
-  login_42:    string;
-  avatar:      string;
-  email:       string;
-  bio:         string;
-  createdAt:   Date;
-  updatedAt:   Date;
-  ownerChans:  User[];
-  adminChans:  User[];
-  friendsList: User[];
-  blockedList: User[];
-  waitingList: User[];
+  id:           number;
+  username:     string;
+  password:     string;
+  nickname:     string;
+  login_42:     string;
+  avatar:       string;
+  email:        string;
+  bio:          string;
+  status:       string;
+  wins:         number;
+  losses:       number;
+  level:        number;
+  achievements: Achievement[];
+
+  createdAt:    Date;
+  updatedAt:    Date;
+  ownerChans:   User[];
+  adminChans:   User[];
+  friendsList:  User[];
+  blockedList:  User[];
+  waitingList:  User[];
 
   authenticationSecret?: string;
   authenticationEnabled: boolean;
@@ -28,7 +34,7 @@ export interface Channel {
   password:    string;
   name:        string;
   owner:       User;
-  adminsUsers: User[];
+  adminUsers:  User[];
   joinedUsers: User[];
   bannedUsers: User[];
   kickedUsers: User[];
@@ -45,4 +51,15 @@ export interface Message {
   from:      User;
   content:   string;
   channel:   Channel;
+}
+
+export interface Achievement {
+  id:          number;
+  title:       string;
+  icon:        string;
+  description: string;
+  date:        Date;
+  fullfilled:  boolean;
+  user:        User;
+  userId:      number;
 }

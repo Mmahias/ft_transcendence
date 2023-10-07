@@ -124,17 +124,22 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   }, [socket, mutate, data]);
 
   // Quand on appuie sur entrée, créé un Message avec nos données et l'envoie
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>, message:string) => {
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>, message: string) => {
     event.preventDefault();
-    mutate(message);
     if (inputValue.trim() !== '') {
-    sendMessage(inputValue);
+        mutate(inputValue);
+        sendMessage(inputValue);
     }
-    const scroll = document.getElementById("convo__messages");
-    if (scroll) {
-      scroll.scrollTop = scroll.scrollHeight;
-    }
-  };
+
+    setTimeout(() => {
+        const scroll = document.getElementById("convo__messages");
+        if (scroll) {
+            console.log("Before: T", scroll.scrollTop, "H ", scroll.scrollHeight);
+            scroll.scrollTop = scroll.scrollHeight;
+            console.log("After: T", scroll.scrollTop, "H ", scroll.scrollHeight);
+        }
+    }, 100); // waits 100ms before scrolling
+};
 
   return (
     <div className='convo__card'>

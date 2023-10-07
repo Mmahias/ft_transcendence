@@ -16,7 +16,6 @@ class UserService{
 
   static async getMe(): Promise<User> {
     const response = await axiosPrivate.get<User>(`${USERS_API}/me`);
-    console.log("get me", response.data);
     return response.data;
   }
   

@@ -53,7 +53,7 @@ export class SocketService {
   };
 
   /* key = userId, value:string = socketId */
-  public currentActiveUsers = new Map;
+  public currentActiveUsers = new Map<number, string>;
 
   public queue: Player[] = [];
 
@@ -208,13 +208,4 @@ export class SocketService {
       }
     }
   }
-
-  // notifyFriendRequest(userId: number)
-  // {
-  // 	const socket = this.currentActiveUsers.get(userId);
-  // 	if (!socket || socket === undefined)
-  // 		return;
-  // 	socket.emit("new friend request");
-  // }
-
 }

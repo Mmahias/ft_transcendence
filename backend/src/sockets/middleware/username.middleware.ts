@@ -15,13 +15,11 @@ export function usernameMiddleware(jwtService: JwtService) {
     const jwt: string = client.handshake.auth.token;
     if (!jwt)
       return next(new UnauthorizedException('No token found.'));
-    console.log('jwt: ', jwt);
 
     // We unsign the jwt cookie to make it readable
     const unsignedJwt = cookieParser.signedCookie(decodeURIComponent(jwt), process.env.COOKIE_SECRET);
     if (!unsignedJwt)
       return next(new UnauthorizedException('Bad cookie signature.'));
-    console.log('unsignedJwt: ', unsignedJwt);
 
     // We check the token's validity
     try {
@@ -41,7 +39,6 @@ export function usernameMiddleware(jwtService: JwtService) {
       });
       if (!user)
         return next(new UnauthorizedException('No user associated with this token.'));
-      console.log('user: ', user);
 
       // We tell that the user is active
       if (user.status === UserStatus.OFFLINE) {
@@ -56,9 +53,11 @@ export function usernameMiddleware(jwtService: JwtService) {
       }
       
       // We add the username to the socket instance for identification
+      console.log('client.data: ', client.data);
       client.data.username = user.nickname;
       client.data.userId = user.id;
-      console.log('ok '); 
+      console.log('client.data: ', client.data);
+      console.log('ok ');
     } catch (error) {
       return next(new UnauthorizedException('Bad token.'));
     }

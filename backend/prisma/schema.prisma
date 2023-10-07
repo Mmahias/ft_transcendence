@@ -22,8 +22,12 @@ model User {
   avatar                 String?
   bio                    String?
   status                 UserStatus      @default(ONLINE)
+  wins                   Int             @default(0)
+  losses                 Int             @default(0)
+  level                  Int             @default(1)
+  achievements           Achievement[]
   // 2FA
-  authenticationSecret   String?
+  authenticationSecret   String?      
   authenticationEnabled  Boolean         @default(false)
   // friends relations
   friends                User[]          @relation("friendship")
@@ -35,10 +39,13 @@ model User {
   adminChans             Channel[]       @relation("admins") // channels that the user can manage
   bannedChans            Channel[]       @relation("banned") // channels that the user is banned from
   joinedChans            Channel[]       @relation("joined") // channels that the user joined
-  kickedFromChans        Channel[]       @relation("kicked") // channels that the user is banned from
+  kickedFromChans        Channel[]       @relation("kicked") // channels that the user is kicked from
   mutedFromChans         Channel[]       @relation("muted") // channels that the user is muted in
   // messages relations
   sentMessages           Message[]       @relation("messages") // messages that the user sent
+  // matches Relations
+  matchesWon             Match[] @relation("winner")
+  matchesLost            Match[] @relation("loser")
 
   @@map("users")
 }
@@ -81,6 +88,34 @@ model Message {
   channelId Int
 
   @@map("messages")
+}
+
+model Achievement {
+  id          Int       @id @default(autoincrement())
+  title       String
+  icon        String
+  description String
+  date        DateTime?
+  fullfilled  Boolean   @default(false)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+
+  @@map("achievements")
+}
+
+model Match {
+  id          Int      @id @default(autoincrement())
+  date        DateTime @default(now())
+  mode        String
+  duration    Int
+  winner      User     @relation(fields: [winnerId], references: [id], name: "winner")
+  winnerId    Int
+  scoreWinner Int
+  loser       User     @relation(fields: [loserId], references: [id], name: "loser")
+  loserId     Int
+  scoreLoser  Int
+
+  @@map("matches")
 }
 
 enum PrismaChanMode {

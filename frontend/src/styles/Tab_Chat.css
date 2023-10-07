@@ -14,6 +14,7 @@
   margin: 0;
   padding: 0;
   max-height: 80vh;
+  position: relative;
 }
 
 .convo__header {
@@ -71,7 +72,7 @@
 .convo__bottom {
   position: absolute;
   width: 100%;
-  /* bottom: 0; */
+  bottom: 0;
   background-color: black;
   border: black solid;
   padding: 1em;
@@ -96,7 +97,7 @@
 #convo__form {
   text-align: center;
   display: flex;
-  gap: 4px;
+  gap: 10px;
 }
 
 #convo__messages {
@@ -105,8 +106,9 @@
   position: relative;
   overflow: scroll;
   overflow-x:hidden;
+  overflow-y: auto;
   overflow-anchor: none;
-  height: 55vh;
+  height: 45vh;
 }
 
 #convo__messages * {

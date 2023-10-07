@@ -23,13 +23,14 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
   
   useEffect(() => {
     if (channel) {
-      const isAdmin = channel.adminsUsers.filter((admin) => admin.nickname === userQuery.data?.nickname);
+      console.log("CHAN HGDJKD", channel);
+      const isAdmin = channel.adminUsers.filter((admin) => admin.nickname === userQuery.data?.nickname);
       const isTargetStillInChan = channel.joinedUsers.some((member) => member.nickname === userTalking.nickname);
       if (isAdmin.length > 0 && isTargetStillInChan === true) {
         setEnableOptions(true);
       }
     }
-  }, [channel, channel?.adminsUsers, userQuery.data, channel?.bannedUsers, channel?.kickedUsers, channel?.mutedUsers, channel?.joinedUsers, userTalking.nickname]);
+  }, [channel, channel?.adminUsers, userQuery.data, channel?.bannedUsers, channel?.kickedUsers, channel?.mutedUsers, channel?.joinedUsers, userTalking.nickname]);
   
   const addToGroup = useMutation({
     mutationFn: ([group, action, channelId]: string[]) => ChatService.updateUserInChannel(userTalking.id, Number(channelId), group, action),
@@ -53,8 +54,10 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
   const sendInfo = (group: string, action: string) => {
     if (socket) {
       const msg: string = handleRequestFromUser(socket, group, action, channelName, userTalking.nickname);
-      if (channel)
+      if (channel && msg.trim())
+      {
         createInfoMessage.mutate([channel.name, msg]);
+      }
     }
   };
 
@@ -95,7 +98,7 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
       {
         toggleDisplay === true && 
         <>
-          <FontAwesomeIcon className='options__icon' title="Make admin" icon={faUserShield} onClick={() => handleRole("adminsUsers")} />
+          <FontAwesomeIcon className='options__icon' title="Make admin" icon={faUserShield} onClick={() => handleRole("adminUsers")} />
           <FontAwesomeIcon className='options__icon' title="Ban" icon={faBan} onClick={() => handleRole("bannedUsers")}/>
           <FontAwesomeIcon className='options__icon' title="Kick" icon={faPersonWalkingArrowRight} onClick={() => handleRole("kickedUsers")}/>
           <FontAwesomeIcon className='options__icon' title="Mute" icon={faCommentSlash} onClick={() => handleRole("mutedUsers")}/>
