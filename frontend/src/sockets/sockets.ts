@@ -4,7 +4,7 @@ import { Channel } from '../api/types';
 /**
  * 
  * @param socket server socket
- * @param event  for example 'chat' 'create lobby' 'game'
+ * @param event  for example 'chat' 'game'
  * @param payload for example 'player move', 'sent message', etc
  */
 export function sendNotificationToServer(socket: Socket | null, event: string, payload: string) {

@@ -18,11 +18,7 @@ h1 {
   justify-content: center;
 }
 
-p {
-  margin: 0;
-}
-
-span {
+.home-span {
   font-family: 'Bebas Neue', cursive;
   color: black;
   font-size: 3em; /* Taille de police réduite pour les écrans plus petits */
@@ -37,7 +33,7 @@ span {
   transition: background-size .7s, background-position .5s ease-in-out;
 }
 
-span:hover {
+.span:hover {
   background-size: 100% 100%;
   background-position: 0% 100%;
   transition: background-position .7s, background-size .5s ease-in-out;

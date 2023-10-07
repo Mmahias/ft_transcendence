@@ -1,48 +1,36 @@
 import '../../styles/Tab_channels.css';
-import React from 'react';
-import { useQuery} from "@tanstack/react-query";
-import ChatService from "../..//api/chat-api";
+import React, { useState } from 'react';
 import ChanCreationForm from './ChanCreationForm';
-import { Channel } from '../../api/types';
+import AccessibleChannelsTab from './AccessibleChannelsTab';
 import '../../styles/Tab_more.css'
-import ChannelMore from './ChannelMore';
+
+enum Tab {
+  JOIN,
+  CREATE,
+}
 
 export default function TabMore() {
 
-  const { data: nonJoinedChannels, error, isLoading, isSuccess } = useQuery({queryKey: ['channels'], queryFn: ChatService.getAccessibleChannels});
+  const [tab, setTab] = useState<Tab>(Tab.CREATE);
   
-  if (error){
-    return <div>Error</div>
-  }
-  if (isLoading || !isSuccess){
-    return <div>Loading...</div>
-  }
-
-  const publicAndPrivateChans: Channel[] = nonJoinedChannels;
+  const toggleTab = () => {
+    if (tab === Tab.CREATE) {
+      setTab(Tab.JOIN);
+    } else {
+      setTab(Tab.CREATE);
+    }
+  };
 
   return (
   <div className='channels_page'>
     <div id="tabmore_page">
-      <h2 className="tabmore_page_title">Want more? Create your own channel or join others!</h2>
-      <ChanCreationForm />
-      <h2 className="tabmore_page_title">Channels that are waiting for you</h2>
-      <div id="tabmore-chanwaiting">
-      {
-        publicAndPrivateChans && Array.isArray(publicAndPrivateChans) && (
-          publicAndPrivateChans.map((chan) => {
-            return (
-              <ChannelMore key={chan.id.toString()} channel={chan} />  
-            );
-          })
-        )
+      {tab === Tab.CREATE
+        ? ( <ChanCreationForm /> )
+        : ( <AccessibleChannelsTab /> )
       }
-      { (!publicAndPrivateChans || (publicAndPrivateChans && publicAndPrivateChans.length === 0)) && 
-        <div className='tabmore_page-noconv'>
-          <h5>There is no public or protected channel you can join at the moment...</h5>
-          <h6>It's time to take charge and create your own!</h6>
-        </div>
-      }
-      </div>
+      <button id = "button-join-create" onClick={toggleTab}>
+        {tab === Tab.CREATE ? "Join a channel" : "Create a channel"}
+      </button>
     </div>
   </div>
   )

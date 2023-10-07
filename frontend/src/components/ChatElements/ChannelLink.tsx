@@ -57,7 +57,7 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
         onSuccess: (mutationData) => {
             queryClient.invalidateQueries(['channels']);
             if (socket && mutationData) {
-                sendNotificationToServer(socket, 'Create Lobby', mutationData?.name);
+                sendNotificationToServer(socket, 'join lobby', mutationData?.name);
                 if (inviteName !== '') {
                     const msg: string = sendInviteToUser(socket, mutationData?.name, inviteName, channel);
                 if (msg)

@@ -131,7 +131,7 @@ h2 {
   margin-bottom: 1em;
 }
 
-h3 {
+.h3-local {
   background: linear-gradient(182deg, #fff0 60%, var(--dark) 0 100%);
   display: inline;
   transform: rotate(-2deg);

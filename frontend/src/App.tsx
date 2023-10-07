@@ -44,7 +44,7 @@ const MainContent: React.FC = () => {
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [activeChan, setActiveChan] = useState<Channel | null>(null);
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
     return (
       <Router>
         <ThemeProvider theme={theme}>

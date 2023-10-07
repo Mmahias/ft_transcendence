@@ -46,7 +46,7 @@
 	/* justify-content: center; */
 	display: block;
 	color: #fff;
-	background: gold;
+	background: rgb(241, 175, 32);
 	font-size: 1em;
 	font-weight: bold;
 	margin-top: 20px;
@@ -83,7 +83,7 @@
   color: #e3eef1;
   display: block;
   color: #fff;
-  background: gold;
+  background: rgb(241, 175, 32);
   font-size: 1em;
   font-weight: bold;
   outline: none;
@@ -102,7 +102,7 @@
 
 #convo__messages {
   background-color: white;
-  border: black solid;
+  border: solid;
   position: relative;
   overflow: scroll;
   overflow-x:hidden;

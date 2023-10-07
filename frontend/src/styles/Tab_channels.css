@@ -4,18 +4,26 @@
 /* ***       TabChat PAGE       ***/
 /* ********************************/
 
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif; /* Set "Helvetica Neue" as primary font */
+  background-image: url('./assets/background.jpg');
+  font-size: 0.9em;
+  color: black;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .channels_page {
   border: black solid;
     border-radius:10px;
     height: 78vh;
     overflow-y: auto;  /* <-- Ajoutez cette ligne */
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(100, 100, 100);
 }
 
 #channels_page_title {
     /* font-family: 'Courier New', Courier, monospace ; */
-    font-weight: 600;
-    font-size: x-large;
     background-color: gold;
     color: rgb(10, 10, 10);
     padding: 1rem;
@@ -57,109 +65,108 @@
 /* ***  ChannelLink COMPONENT   ***/
 /* ********************************/
 
-.channel-link-card {
-    border-bottom: solid 1px black;
-    padding: 1.2em;
-
-    display : flex;
-    flex-direction: column;
-
-    scroll-behavior: auto;
-}
-
-.channel-link-card:hover {
-    background-color: gold;
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif; /* Set "Helvetica Neue" as primary font */
+  background-image: url('./assets/background.jpg');
+  font-size: 0.9em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .channel-link-header {
-    margin-bottom: 1vh;
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 1px solid #e5e5e5; /* Optional: adds a line after each item */
+  padding: 1% 4%;
+  background-color: rgb(150, 150, 150);
 }
+
+.channel-link-item:hover {
+  filter: brightness(0.9); /* This darkens the item a bit */
+  background-color: rgba(0, 0, 0, 0.01); /* Optional: If you want to add a slight grey overlay on hover */
+}
+
+.channel-link-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5; /* Optional: adds a line after each item */
+  padding: 1% 4%;
+  background-color: rgb(150, 150, 150);
+  cursor: pointer;
+  transition: filter 0.1s ease-in-out, background-color 0.1s ease-in-out; /* This adds a smooth transition effect */
+
+}
+
 
 .channel-link-name {
-    font-weight: 400;
-    font-size: x-large;
-    text-decoration-line: underline;
-    color: rgb(7, 7, 7);
+  width: 18%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
 }
 
-.channel-link-span {
-    font-family: 'Open Sans', sans-serif;
-    font-size: small;
-
-    padding: 0.3rem 1rem;
-    margin: 0.5rem;
-    border-radius: 10%;
-
-    background-color: rgb(241, 175, 32);
-    color: white;
+.channel-link-mode {
+  width: 18%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
 }
 
-.channel-link-member {
-    font-size: medium;
-    margin-top: 10%;
-    margin-left: 10px;
+.channel-link-members {
+  width: 18%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
 }
 
-.channel-link-invite {
-    color: white;
+.channel-link-last-update {
+  width: 28%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
 }
 
-.channel-link-invite:hover {
-    color: rgb(23, 25, 27);
+.channel-link-msg-count {
+  width: 18%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
 }
 
-.channel-link-invite-card {
-    display: flex;
-    align-items: center;
-    color: white;
-    font-family: 'Open Sans', sans-serif;
-    padding: 0 1vw;
-    background-color: rgb(241, 175, 32);
-    width: 100%;
+.channel-link-join-btn {
+  width: 15%;
+  background-color: #4CAF50;
+  color: white;
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  padding: 5px 15px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;  /* center the button text */
+}
+.channel-link-join-btn:hover {
+  background-color: #45a049; /* Change as desired */
 }
 
-.channel-link-preview {
-    border-style: dashed solid;
-    padding: 10px;
-
-    font-family: 'Open Sans', sans-serif;
-    color: black;
-    display: flex;
-    justify-content: space-between; /* cela garantira que link-messenger est à gauche et link-date est à droite */
-    align-items: center;
+.channel-link-blank {
+  width: 15%;
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  padding: 5px 15px;
 }
 
-.channel-link-messenger {
-    color: black;
-    font-weight: 600;
-    margin-right: auto;
-}
-
-.channel-link-lastmsg {
-    font-family: 'Courier New', Courier, monospace;
-    font-style: italic;
-    margin-left: 20px;
-    position: relative; /* Si vous avez besoin de le positionner par rapport à .messenger-container */
-    
-    /* Pour le style de bulle de message : */
-    padding: 5px 10px; /* Espace intérieur pour le message */
-    background-color: #e0e0e0; /* Couleur de fond de la bulle. Ajustez selon vos préférences */
-    border-radius: 15px; /* Pour les coins arrondis de la bulle */
-    max-width: 200px; /* Ajustez selon vos préférences */
-    word-wrap: break-word; /* Pour casser les longs mots et les garder à l'intérieur de la bulle */
-}
-
-.channel-link-date {
-    font-size: small;
-    margin-left: auto;
-    margin-bottom: 42px;
-}
-
-.channel-link-password-card {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    background-color: rgb(241, 175, 32);
+.truncate-link-text {
+  white-space: nowrap;    /* Prevent text from wrapping onto the next line */
+  overflow: hidden;       /* Hide overflowed text */
+  text-overflow: ellipsis;/* Show ellipsis when text is too long */
+  max-width: 100%;        /* Optional, ensures content doesn't grow past container */
 }

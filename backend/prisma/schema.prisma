@@ -63,6 +63,7 @@ model Channel {
   date        DateTime       @default(now())
   updatedAt   DateTime       @default(now()) @updatedAt
   mode        PrismaChanMode @default(PUBLIC)
+  nbMessages  Int            @default(0)
   password    String?
   name        String         @unique
   ownerId     Int

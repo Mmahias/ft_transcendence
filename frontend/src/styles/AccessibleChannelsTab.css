@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif; /* Set "Helvetica Neue" as primary font */
+  background-image: url('./assets/background.jpg');
+  font-size: 0.9em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.channel-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 1px solid #e5e5e5; /* Optional: adds a line after each item */
+  padding: 1% 4%;
+  background-color: rgb(150, 150, 150);
+}
+
+.channel-list-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5; /* Optional: adds a line after each item */
+  padding: 1% 4%;
+  background-color: rgb(150, 150, 150);
+}
+
+
+.channel-name {
+  width: 15%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
+}
+
+.channel-mode {
+  width: 15%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
+}
+
+.channel-members {
+  width: 15%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
+}
+
+.channel-last-update {
+  width: 25%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
+}
+
+.channel-msg-count {
+  width: 15%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
+}
+
+.channel-join-btn {
+  width: 15%;
+  background-color: #4CAF50;
+  color: white;
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  padding: 5px 15px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;  /* center the button text */
+}
+.channel-join-btn:hover {
+  background-color: #45a049; /* Change as desired */
+}
+
+.channel-blank {
+  width: 15%;
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  padding: 5px 15px;
+}
+
+.truncate-text {
+  white-space: nowrap;    /* Prevent text from wrapping onto the next line */
+  overflow: hidden;       /* Hide overflowed text */
+  text-overflow: ellipsis;/* Show ellipsis when text is too long */
+  max-width: 100%;        /* Optional, ensures content doesn't grow past container */
+}
+
+.password-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.password-modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}

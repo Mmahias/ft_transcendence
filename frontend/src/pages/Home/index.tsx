@@ -62,7 +62,6 @@ const testSocketConnection = (socket: Socket | null) => {
     console.log('Socket is null or not connected');
     return;
   }
-  // Emitting a test event, you can remove this if not required
   socket.emit('test-event', { message: 'Hello from client!' });
 };
 
@@ -81,7 +80,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
-      <h1><span>FT_TRANSCENDENCE</span></h1>
+      <h1><span className="home-span" >FT_TRANSCENDENCE</span></h1>
       {isLoggedIn ? (
         <>
         <p className='welcome-home'>Welcome to our transcendence</p>

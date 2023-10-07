@@ -13,7 +13,7 @@
   }
   
   .chat.expanded {
-  width: 80%;
+  width: 60%;
   height: 85vh;
   transform: translateX(0);
   }

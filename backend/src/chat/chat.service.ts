@@ -308,9 +308,12 @@ export class ChatService {
 
     await prisma.channel.update({
       where: { id: channelId },
-      data: { updatedAt: new Date() }
+      data: {
+        updatedAt: new Date(),
+        nbMessages: { increment: 1 },
+      }
     });
-
+    
     return await prisma.message.create({
       data: {
         from: { connect: { id: fromId } },

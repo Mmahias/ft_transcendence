@@ -118,7 +118,7 @@ export class SocketsGateway
   /* ######### CHAT ########## */
   /* ######################### */
 
-  @SubscribeMessage('Create Lobby')
+  @SubscribeMessage('join lobby')
   async handleLobbyCreation(client: Socket, payload: string): Promise<void> {
     const room = payload;
     client.join(room);

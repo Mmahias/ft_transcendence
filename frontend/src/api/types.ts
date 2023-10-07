@@ -28,6 +28,7 @@ export interface User {
 export interface Channel {
   id:          number;
   ownerId:     number;
+  nbMessages:  number;
   date:        Date;
   updatedAt:   Date;
   mode:        string;

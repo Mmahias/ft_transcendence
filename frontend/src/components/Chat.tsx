@@ -17,8 +17,7 @@ interface Tab {
 
 const Chat = () => {
   const {data: userMe, status: statusMe } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
-
-  const { activeTab, setActiveTab, activeChan, isExpanded, setIsExpanded } = useContext(ChatStatusContext);
+  const { activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded } = useContext(ChatStatusContext);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -34,11 +33,13 @@ const Chat = () => {
   if (statusMe === "loading" ){
     return <div>Loading...</div>
   }
-  
+
   const tabs: Tab[] = [
-        { label: 'Convs', content: <div><TabChannels/></div> },
-  activeChan ? { label: 'Chat', content: <div><TabChat conv={activeChan} loggedUser={userMe}/></div> } : { label: 'Chat', content: <div id='chat_no-chat'>Join convos to see the chat!</div> },
-        { label: 'More', content: <div><TabMore /></div> },
+    { label: 'Chans', content: <div><TabChannels/></div> },
+    { label: 'Chat', content:
+      activeChan ? <TabChat conv={activeChan} loggedUser={userMe}/> : <div id='chat_no-chat'>Join convos to chat!</div>
+    },
+    { label: 'More', content: <div><TabMore /></div> },
   ];
 
   return (

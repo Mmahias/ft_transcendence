@@ -45,7 +45,7 @@ const Game: React.FC<GameProps> = () => {
   const [lobby, setLobby] = useState<any | null>(null);
 
   const createLobbyHandler = () => {
-    console.log("Create lobby clicked!");
+    console.log("join lobby clicked!");
     const player = { /* your player data here */ }; 
     socket.emit('createLobby', player);
   };
@@ -94,7 +94,7 @@ const Game: React.FC<GameProps> = () => {
         {/* Display the lobby creation and joining UI if waiting for players */}
         {gameState === GameState.WAITING_FOR_PLAYERS && (
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-            <button onClick={createLobbyHandler}>Create Lobby</button>
+            <button onClick={createLobbyHandler}>join lobby</button>
             <div style={{ marginTop: '20px' }}>
               <input placeholder="Enter Lobby ID" value={lobbyID} onChange={(e) => joinLobbyHandler(e.target.value)} />
               <button onClick={() => joinLobbyHandler(lobbyID)}>Join</button>

@@ -95,7 +95,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       setMessages(data);
     }
   }, [data]);
-  
+
   // Fonction pour envoyer son msg au serveur, pour être transféré aux destinataires
   const sendMessage = (message: string) => {
     const payload: string = "/msg  " + conv?.name + "  " + message;
@@ -156,11 +156,11 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
         <div className='convo__bottom'>
           <form id="convo__form" onSubmit={(event) => handleFormSubmit(event, inputValue)}>
             <input
-            type="text"
-            value={inputValue}
-            className='text_input'
-            onChange={(event) => setInputValue(event.target.value)}
-            placeholder="Type Here"
+              type="text"
+              value={inputValue}
+              className='text_input'
+              onChange={(event) => setInputValue(event.target.value)}
+              placeholder="Type Here"
             />
             <button id="convo_send-btn" type="submit">Send</button>
           </form>
