@@ -51,7 +51,7 @@ export default function TabChannels() {
 
   return (
   <div className='channels_page' >
-    <h3 id='channels_page_title'>Your channels</h3>
+    <h6 id='channels_page_title'>Your channels:</h6>
     <div id="channels_page_joinedscroll">
     {
     joinedChannels && (
@@ -68,7 +68,7 @@ export default function TabChannels() {
     }
     { (!joinedChannels || (joinedChannels && joinedChannels.length === 0)) && 
       <div className='channels_page-noconv'>
-        <h3>You have not joined any channels yet!</h3>
+        <h6>You have not joined any channels yet!</h6>
         <h6>Don't be shy, start talking to someone or join a group conversation!</h6>
       </div>
     }

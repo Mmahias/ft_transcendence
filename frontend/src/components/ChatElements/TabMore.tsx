@@ -38,7 +38,7 @@ export default function TabMore() {
       }
       { (!publicAndPrivateChans || (publicAndPrivateChans && publicAndPrivateChans.length === 0)) && 
         <div className='tabmore_page-noconv'>
-          <h3>There is no public or protected channel you can join at the moment...</h3>
+          <h5>There is no public or protected channel you can join at the moment...</h5>
           <h6>It's time to take charge and create your own!</h6>
         </div>
       }
