@@ -1,18 +1,19 @@
 import React from 'react';
 import theme from './theme';
-import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Chat from './components/Chat';
+import Chat from './pages/Chat';
 import Game from './pages/Game/Game';
-import Profile from './pages/User/profile';
+import Navbar from './components/Navbar';
+import MyProfile from './pages/MyProfile';
+import OtherProfile from './pages/OtherProfile';
 import History from './pages/User/history';
 import Friends from './pages/User/friends';
 import Request from './pages/User/Request';
 import Edit from './pages/User/edit';
-import Error from './pages/Error/Error';
+import Error from './pages/Error';
 import Footer from './components/Footer';
 import { useAxiosPrivate } from './hooks';
-import { LoggedStatus } from './pages/Login/Login';
+import { LoggedStatus } from './pages/Login';
 import { ThemeProvider } from 'styled-components';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
@@ -28,11 +29,12 @@ const MainContent: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/game" element={<Game />} />
-        <Route path="/user/profile" element={<Profile />} />
+        <Route path="/user/profile" element={<MyProfile />} />
         <Route path="/user/history" element={<History />} />
         <Route path="/user/friends" element={<Friends />} />
         <Route path="/user/request" element={<Request />} />
         <Route path="/user/edit" element={<Edit />} />
+        <Route path="/user/profile/:reqUsername" element={<OtherProfile />} />
         <Route path="/chat" element={ <Chat/> } />
         <Route path="/login" element={<LoggedStatus />} />
         <Route path='*' element={<Error />}/>

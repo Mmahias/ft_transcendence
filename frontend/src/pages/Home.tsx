@@ -1,12 +1,12 @@
 import React from 'react';
-import './styles.css';
-import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../../constants';
-import { testBackendEndpoint } from '../../api/test-api';
-import { useAuth, useSocket } from '../../hooks';
+import '../styles/Home.css';
+import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../constants';
+import { testBackendEndpoint } from '../api/test-api';
+import { useAuth, useSocket } from '../hooks';
 import { Socket } from 'socket.io-client';
-import { AuthState } from '../../contexts/AuthContext';
+import { AuthState } from '../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";
-import UserService from '../../api/users-api'
+import UserService from '../api/users-api'
 import { SocketContextType } from 'contexts';
 
 export const Log42: React.FC = () => {

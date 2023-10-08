@@ -1,12 +1,14 @@
-import './Navbar.css';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import AuthContext from '../../contexts/AuthContext';
-import AuthService from "../../api/auth-api";
-import logo from '../../assets/school_42.jpeg';
+import AuthService from "../api/auth-api";
+import UserService from "../api/users-api";
+import { User } from '../api/types';
+import { Link, Navigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightFromBracket, faBars } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from '../../hooks';
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from '../hooks';
+import '../styles/Navbar.css';
+import logo from '../assets/school_42.jpeg';
 
 interface NavbarProps {
   theme: string;
@@ -16,18 +18,30 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const { auth, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
+  const [searchResults, setSearchResults] = useState<Partial<User>[]>([]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  const { data, status } = useQuery(
+    ['searchUsers', searchTerm],
+    () => UserService.searchUsers(searchTerm, 8),
+    {
+      enabled: !!searchTerm, // makes sure the query runs only when searchTerm is not empty
+      refetchOnWindowFocus: false, // Optional: prevents refetching on window focus
+      onSuccess: (fetchedData) => {
+        setSearchResults(fetchedData);
+      }
+    }
+  );
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
 
   const handleSearchSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && searchTerm) {
-      // Submit the search term
-      console.log(`Searching for: ${searchTerm}`);
-      // Here you can call any search-related functions or API requests
+    if (event.key === 'Enter' && searchTerm && searchResults[0].username) {
+      return <Navigate to={`/user/profile/${searchResults[0].username}`} />;
     }
   };
+
   const handleLogout = async () => {
     try {
       await AuthService.logout();
@@ -37,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       console.log("logout error", error);
     }
   };
-
+  console.log("real fetch", searchTerm, data);
   return (
     <>
       <nav className="navbar-container">
@@ -56,6 +70,16 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 onChange={handleSearchChange}
                 onKeyDown={handleSearchSubmit}
               />
+              <div className="search-results-">
+                {searchResults.map((user, idx) => (
+                  <div key={idx} className="user-result">
+                    <Link to={`/user/profile/${user.username}`}>
+                      <img src={user.avatar} className="user-avatar" />
+                      {user.username}
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -78,5 +102,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     </>
   );
 };
+
 
 export default Navbar;

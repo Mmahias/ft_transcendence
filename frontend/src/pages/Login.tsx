@@ -1,16 +1,11 @@
-import {
-  AlertSuccess,
-  AlertError,
-} from './Login.styles';
-import './Login.style.css';
-import "./../../App.styles";
-import React, { useState, useEffect }  from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import AuthService from "../../api/auth-api";
+import '../styles/Login.css';
+import "../App.styles";
+import React, { useState }  from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthService from "../api/auth-api";
 // import { createSocketConnexion } from '../sockets/sockets';
 import { Socket } from 'socket.io-client';
-import { useAuth } from '../../hooks/useAuth';
-import { validateUsername, validatePassword, validateNickname, validateLoginUsername, validateLoginPassword } from './validation';
+import { useAuth } from '../hooks/useAuth';
 
 
 export default function Login({ onSetLoggedIn, setSocket }: { 
@@ -28,6 +23,37 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
 
+  const validateUsername = (value: string): string | null => {
+    if (!value) return "Username is required";
+    if (value.length < 4 || value.length > 20) return "Username must be between 4 and 20 characters";
+    return null;
+  };
+  
+  const validatePassword = (value: string): string | null => {
+    if (!value) return "Password is required";
+    if (value.length < 2) return "Password must be at least 2 characters";
+    if (!/[a-z]/.test(value)) return "Password should contain at least one lowercase letter.";
+    if (!/[A-Z]/.test(value)) return "Password should contain at least one uppercase letter.";
+    if (!/[0-9]/.test(value)) return "Password should contain at least one number.";
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value)) return "Password should contain at least one special character.";
+    return null;
+  };
+  
+  const validateNickname = (value: string): string | null => {
+    if (!value) return "Nickname is required";
+    // Pas d'autres règles spécifiques pour le surnom dans vos DTOs
+    return null;
+  };
+  
+  const validateLoginUsername = (value: string): string | null => {
+    if (!value) return "Username is required";
+    return null;
+  };
+
+  const validateLoginPassword = (value: string): string | null => {
+    if (!value) return "Password is required";
+    return null;
+  };
 
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
@@ -119,9 +145,9 @@ export default function Login({ onSetLoggedIn, setSocket }: {
             />
             {passwordError && <small className="error-message">{passwordError}</small>}
             {successMsg &&
-              <AlertSuccess>
+              <div className='success-message'>
                 <h6>{successMsg}</h6>
-              </AlertSuccess>
+              </div>
             }
             <button
               className='button-log'
@@ -167,9 +193,9 @@ export default function Login({ onSetLoggedIn, setSocket }: {
             />
             {nicknameError && <small className="error-message">{nicknameError}</small>}
             {successMsg &&
-              <AlertSuccess>
+              <div className='success-message'>
                 <h6>{successMsg}</h6>
-              </AlertSuccess>
+              </div>
             }
             <button
               className='button-log'
@@ -183,7 +209,6 @@ export default function Login({ onSetLoggedIn, setSocket }: {
     </div>
   );
 }
-
 
 function LoggedStatus() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

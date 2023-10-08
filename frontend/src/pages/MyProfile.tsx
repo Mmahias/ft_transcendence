@@ -1,15 +1,13 @@
 import React from "react";
-import './profile.style.css';
+import '../styles/Profile.css';
 import { useEffect, useState } from "react";
-import userImage from '../../assets/user2.png'
+import userImage from '../assets/user2.png'
 import { Link as RouterLink } from "react-router-dom";
-import UserService from "../../api/users-api";
-import AuthService from "../../api/auth-api";
-import { useAuth } from "../../hooks";
-import { User } from "../../api/types";
+import UserService from "../api/users-api";
+import AuthService from "../api/auth-api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-const Profile: React.FC = () => {
+const MyProfile: React.FC = () => {
 
   const [userName, setUserName] = useState<string>('');
   const [userStatus, setUserStatus] = useState<string>('');
@@ -162,11 +160,10 @@ const Profile: React.FC = () => {
             </div>
             <div className="profile-card-inf">
               <div className="button-container">
-                <RouterLink to='/user/edit'><button className="button-32">Edit profile pic</button></RouterLink>
+                <RouterLink to='/user/edit'><button className="button-32">Edit profile</button></RouterLink>
                 <RouterLink to='/user/history'><button className="button-32">History</button></RouterLink>
                 <RouterLink to='/game'><button className="button-32">Play Game</button></RouterLink>
                 <RouterLink to='/user/friends'><button className="button-32">Friends</button></RouterLink>
-                <RouterLink to='/user/request'><button className="button-32">Request</button></RouterLink>
               </div>
             </div>
             <div className="toggle-container">
@@ -200,4 +197,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default MyProfile;

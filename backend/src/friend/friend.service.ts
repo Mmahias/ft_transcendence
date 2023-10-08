@@ -9,7 +9,7 @@ export class FriendService {
     private userService: UserService
   ) {}
   async createRequest(userId: number, friendNickname: string) {
-    const { id } = await this.userService.getUserByNickname(friendNickname);
+    const { id } = await this.userService.getUserByUsername(friendNickname);
 
     return this.prisma.friendRequest.create({
       data: {

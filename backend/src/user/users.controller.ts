@@ -23,17 +23,21 @@ import { JwtAuthGuard } from '@app/auth/strategies/jwt/jwt-auth.guard';
 export class UserController {
   private readonly logger = new Logger(UserController.name);
   constructor(private userService: UserService) {}
-  @Get()
-  async allUsers() {
-    return this.userService.getAllUser();
-  }
+
   @Get('me')
   async userInformation(@User('id') id: number) {
     return this.userService.getUserById(id);
   }
 
   @Get()
+  async userByUsername(@Query('username') username: string) {
+    console.log("BACK username: ", username)
+    return this.userService.getUserByUsername(username);
+  }
+
+  @Get()
   async userByNickname(@Query('nickname') nickname: string) {
+    console.log("BACK nickname: ", nickname)
     return this.userService.getUserByNickname(nickname);
   }
 
@@ -52,6 +56,14 @@ export class UserController {
         next();
       }
     });
+  }
+
+  @Get('searchUsers')
+  async searchUsers(
+    @Query('searchTerm') searchTerm: string,
+    @Query('nbUsers') nbUsers: number
+  ) {
+    return await this.userService.searchUsers(searchTerm, nbUsers);
   }
 
   @Get('avatar/:nickname')

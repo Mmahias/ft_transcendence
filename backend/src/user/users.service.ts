@@ -46,13 +46,6 @@ export class UserService {
           nickname
         }
       })
-      .then((user) => {
-        const userDto: UserDto = {
-          id: user.id,
-          nickname: user.nickname
-        };
-        return userDto;
-      })
       .catch((error) => {
         this.logger.error(error.message);
         if (error instanceof PrismaClientKnownRequestError) {
@@ -63,20 +56,19 @@ export class UserService {
   }
 
   async getUserByUsername(username: string) {
-    return this.prisma.user
-      .findUniqueOrThrow({
-        where: {
-          username
-        }
-      })
-      .catch((error) => {
-        if (error instanceof PrismaClientKnownRequestError) {
-          const error = `Username [${username}] is not found`;
-          this.logger.log(error);
-          throw new NotFoundException(error);
-        }
-        throw error;
-      });
+    return this.prisma.user.findUniqueOrThrow({
+      where: {
+        username
+      }
+    })
+    .catch((error) => {
+      if (error instanceof PrismaClientKnownRequestError) {
+        const error = `Username [${username}] is not found`;
+        this.logger.log(error);
+        throw new NotFoundException(error);
+      }
+      throw error;
+    });
   }
 
   async createUser(username: string, password: string, nickname?: string) {
@@ -226,5 +218,35 @@ export class UserService {
         }
         throw error;
       });
+  }
+
+  async searchUsers(searchTerm: string, nbUsers: number) {
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          username: {
+            startsWith: searchTerm
+          }
+        },
+        take: Number((nbUsers > 20 ? 20 : nbUsers)),
+        select: {
+          id: true,
+          username: true,
+          avatar: true
+        }
+      });
+      return users.map(user => ({
+        id: user.id,
+        username: user.username,
+        avatar: user.avatar
+      }));
+  
+    } catch (error) {
+      this.logger.error(error.message);
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new NotFoundException(`No user found`);
+      }
+      throw error;
+    }
   }
 }

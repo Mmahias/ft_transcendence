@@ -1,5 +1,5 @@
 import React from 'react';
-import './Error.style.css'
+import '../styles/Error.style.css'
 
 const Error: React.FC = () => {
     return (

@@ -86,14 +86,6 @@ const ChannelListItem: React.FC<ChannelListItemProps> = ({ channel }) => {
     }
   };
 
-  const handleSubmitPassword = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (password !== '') {
-      verifyPassword(password);
-    }
-    setAskForPassword(false);
-  };
-
   const handleCloseModal = () => {
     setAskForPassword(false);
   };

@@ -209,11 +209,11 @@ class ChatService {
     try {
       // gets the users and check if they can communicate
       if (!senderUsername || !receiverUsername) throw new Error('Error: missing username');
-      let sender: User = await UserService.getUserByNickname(senderUsername);
+      let sender: User = await UserService.getUserByUsername(senderUsername);
       if (!sender) {
         throw new Error('Error: sender does not exist');
       }
-      let receiver: User = await UserService.getUserByNickname(receiverUsername);
+      let receiver: User = await UserService.getUserByUsername(receiverUsername);
       if (!receiver) {
         throw new Error('Error: receiver does not exist');
       }

@@ -4,12 +4,13 @@
     bottom: 0;               /* To pin it to the bottom of the screen */
     width: 100%;
     text-align: center;
+    font-size: 0.8em;
     display: flex;
     align-items: center;
     justify-content: center; /* Center the content */
     background-color: black;
     z-index: 1000;
-    padding: 8px;
+    padding: 0.1em;
     color: white;
-    font-size: 0.7rem;
+    height: 1.4em;
 }

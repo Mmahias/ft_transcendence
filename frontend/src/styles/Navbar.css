@@ -1,296 +1,151 @@
-@import '../App.css';
-@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Pacifico&display=swap');
+/* Navbar styles.css */
 
-.navbar {
-    background-color:var(--heading-color);
-    height: 8vh;
-  width: 100%;
-  position : fixed;
+.navbar-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
     display: flex;
-    justify-content:space-between;
+    justify-content: flex-start;
+    padding: 0.1em 0;
     align-items: center;
-  z-index : 150;
-  top : 0%;
-  }
+    background-color: black;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
 
-/* Menu qui apparait quand tu clique sur la croix  */
+.links-container {
+    display: flex;
+    justify-content: left;
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    flex-grow: 1;
+    margin-right: 1em; /* Ajouté pour donner un peu d'espace entre le bouton de menu et les autres liens */
+}
 
-.nav-menu {
-  background-color: var(--sides-color);
-  width: 250px;
+.router-link {
+    color: white;
+    font-family: 'Bebas Neue', cursive;
+    font-weight: bold;
+    font-size: 25px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    margin: 0 1em;
+}
+
+.router-link:hover {
+    color:gold;
+}
+
+.logo {
+    height: 40px;
+    margin-left: 1em; /* Ajouté pour donner un peu d'espace sur le côté gauche */
+}
+
+/* Style pour le bouton du menu déroulant */
+.dropbtn {
+    background-color: transparent;
+    color: white;
+    font-family: 'Bebas Neue', cursive;
+    font-weight: bold;
+    font-size: 25px;
+    cursor: pointer; /* Ajout de cette ligne */
+    border: none;
+    margin: 0 1em;
+    outline: none;
+    transition: color 0.2s ease;
+}
+
+.dropbtn:hover {
+    color: gold;
+}
+
+/* Style pour le menu déroulant */
+.dropdown {
+    position: absolute;
+    right: 1em;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.dropdown-content {
+    display: flex;
+    position: absolute;
+    background-color: black;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1001; /* pour s'assurer qu'il apparait au-dessus des autres éléments */
+    flex-direction: column;
+    transform: translateY(-10px); /* pour le décaler un peu vers le haut */
+    opacity: 0;  /* initialement transparent */
+    visibility: hidden; /* pour qu'il ne soit pas interactif quand il est caché */
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    right: 0;
+}
+
+.dropdown-content .router-link {
+    text-align: left;
+    padding: 12px 16px;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Styling the Search Dropdown Container */
+.search-results- {
+  max-height: 250px;  /* Maximum height of the dropdown */
+  overflow-y: auto;   /* Add a vertical scrollbar if content overflows */
+  border: 1px solid #e5e5e5; /* Adds a border around dropdown */
+  background-color: rgb(150, 150, 150); /* Light grey background */
+  border-radius: 5px; /* Rounds the corners of the dropdown */
+  width: 100%; /* Takes up the full width of its parent element */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Adds a slight shadow */
+  margin-top: 0.5em; /* Adds space between search input and dropdown */
+}
+
+/* Styling each Search Result */
+.search-results- > div {
+  border-bottom: 1px solid #e5e5e5; /* Adds a line after each item */
+  padding: 1% 4%; /* Padding for each item */
+  transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+.search-results- > div:hover {
+  background-color: rgb(246, 195, 9); /* Change background color on hover */
+}
+
+/* Styling the Link of each Search Result */
+.search-results- a {
+  text-decoration: none; /* Remove the underline from links */
+  color: black; /* Set text color to black */
+  display: block; /* Makes the entire area clickable */
+  width: 100%;
   height: 100%;
+}
+
+.search-results- a:hover {
+  text-decoration: underline; /* Add underline on hover for better visibility */
+}
+
+.user-result {
   display: flex;
-  justify-content: center;
-  position: fixed;
-  top: 8%;
-  left: -100%;
-  transition: 850ms;
-  z-index: 100;
+  align-items: center; /* Vertically aligns the avatar and username */
 }
 
-.nav-avatar{
-  padding-right: 10px;
-  display:flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-}
-
-.nav-avatar > button {
-  background: none;
-  border: none;
-}
-
-.nav-logout-icon {
-  color: white;
+.user-avatar {
+  width: 30px;   /* Adjust to your preferred size */
   height: 30px;
-  width: auto;
-  cursor: pointer;
+  border-radius: 50%;  /* Makes the avatar round */
+  margin-right: 10px;  /* Adds some space between the avatar and username */
 }
 
-
-.nav-logout-icon:hover {
-  color:#90d0f0;
-  
-}
-  
-.nav-menu.active {
-left: 0;
-transition: 350ms;
-z-index: 1000;
-}
-
-.nav-text {
-height: 60px;
-font-size:50px;
-border: none;
-color: rgba(246, 234, 245, 0.6);
-text-decoration: none;
-}
-
-.nav-text a {
-  text-decoration: none;
-    color: #e3eef1;
-    font-size: 30px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 30px;
-    border-radius: 4px;
-  text-shadow: 
-  0 0 7px #efefef,
-  0 0 10px #90d0f0,
-  0 0 42px rgb(60, 116, 166),
-  0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
-  -webkit-animation: neon1 1.5s ease-in-out infinite alternate;
-  -moz-animation: neon1 1.5s ease-in-out infinite alternate;
-  /* animation: neon1 1.5s ease-in-out infinite alternate; */
-}
-/* trying something */
-
-.nav-text:hover{
-  background-color: rgb(15, 29, 42);
-  filter: drop-shadow(0 0 20px #90d0f09e) contrast(2) brightness(1);
-  background: linear-gradient(rgba(5, 5, 5, 0.6), rgba(0, 0, 0, 0)), repeating-linear-gradient(0, transparent, transparent 2px, black 3px, black 3px);
-}
-
-/* end of try */
-
-.nav-menu-items {
-  font-size: 18px;
-}
-
-.item_image{
-  width: 30px;
-  height: 30px;
-  top: 50;
-  color: rgb(216, 237, 239);
-  box-shadow: 
-  0 0 7px #efefef,
-  0 0 10px #90d0f0,
-  0 0 42px rgb(60, 116, 166),
-  0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
-  /* outline: none; */
-  border-radius: 5px;
-}
-
-
-.item_title{
-  font-family: var(--font-type);
-  font-size: large;
-  margin-left: 10px;
-
-}
-
-
-
-.item_title span{
-  animation: blink .3s infinite alternate;
-  }
-  
-.item_title span.delay{
-  animation-duration:6s;
-  animation-delay: 2s;
-  animation-direction: alternate;
-/* cubic-bezier(0.5, 0.2, 0.3, 1.0) */
-}
-
-/* START NEON titre */
-.navbar__title {
-  font-family: 'Monoton', cursive;
-  display: flex; 
-  font-size:40px;
-  border: none;
-  color: rgba(255,255,255,0.6);
-  text-decoration: none;
-  font-size: 3rem;
-  text-align: center;
-  color: #e3eef1;
-  text-shadow:
-    0 0 7px #efefef,
-    0 0 10px #90d0f0,
-    0 0 42px rgb(60, 116, 166),
-    0 0 77px rgb(60, 116, 166),
-    0 0 100px rgb(24, 46, 65);
-  animation: lumiere 1s infinite linear;
-}
-@keyframes lumiere {
-0%{
-  text-shadow:
-  0 0 7px #d8e0e1,
-  0 0 10px #90d0f0,
-  0 0 42px rgb(60, 116, 166),
-  0 0 77px rgb(60, 116, 166),
-  0 0 100px rgb(24, 46, 65);
-}
-50%{
-  text-shadow:
-  0 0 7px #ffffff,
-  0 0 10px #90d0f0,
-  0 0 32px rgb(60, 116, 166),
-  0 0 87px rgb(60, 116, 166),
-  0 0 120px rgb(24, 46, 65);
-}
-}
-.effetneon span {
-  font-size: 6rem;
-}
-
-
-/* END NEON */
-
-/* Position du bouton switch mode  */
-
-#test {
-  position: relative;
-  top: 85%;
-  left: -65%;
-}
-
-/* Styling du bouton pour  changer de thème */
-.theme-switch {
-  display: inline-block;
-  height: 34px;
-  position: relative;
-  width: 80px;
-  margin-right: 1.5vw;
-}
-  
-.theme-switch input {
-  display:none;
-}
-
-.slider {
-  background-color: #ccc;
-  bottom: 0;
-  /* cursor: pointer; */
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: .4s;
-}
-
-.slider:before {
-  background-color: #fff;
-  bottom: 4px;
-  content: "";
-  height: 26px;
-  left: 4px;
-  position: absolute;
-  transition: .4s;
-  width: 26px;
-}
-
-input:checked + .slider {
-  background-color: #bfded6;
-}
-
-input:checked + .slider:before {
-  transform: translateX(18px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-  
-  /* Burger menu  */
-
-.nav-elements{
+.user-result a {
   display: flex;
-  flex-direction: column;
-  width: 70px;
-  /* cursor: pointer; */
-  position:relative;
-  transform: scale(0.7);
-}
-
-.nav-elements span{
-  background: white;
-  border-radius: 5px;
-  height: 7px;
-  margin: 7px;
-  transform: .4s cubic-bezier(0.68, -0.6, 0.32,1.6);
-}
-
-/* Les barres du burger menu  */
-
-.span1{
-  width: 50%;
-}
-
-.span2{
-  width: 100%;
-}
-
-.span3{
-  width: 75%;
-} 
-
-/* Display et rotation pour former la croix  */
-
-input[type="checkbox"]{
-  display:none;
-}
-
-input[type="checkbox"]:checked ~ .span1{
-  transform-origin:bottom;
-  transform:rotateZ(45deg) translate(8px,0px)
-}
-
-input[type="checkbox"]:checked ~ .span2{
-  transform-origin:top;
-  transform:rotateZ(-45deg)
-}
-
-input[type="checkbox"]:checked ~ .span3{
-  transform-origin:bottom;
-  width:50%;
-  transform:translate(30px,-11px) rotateZ(45deg)
+  align-items: center; /* Ensures avatar and username are vertically aligned within the link */
+  width: 100%; /* Makes sure the link spans the entire width of its container */
 }
