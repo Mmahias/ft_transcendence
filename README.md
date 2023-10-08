@@ -25,11 +25,10 @@ docker exec -it back bash
 
 Maintenant, tout tourne chez moi
 
-
 TRUCS:
+
 * pour avoir accès aux logs d'un container en direct:
   ```docker logs -f <container_name>```
-
 
 ##### Léo: 01/10
 
@@ -40,3 +39,30 @@ To use it, just add some types or shared data you may need.
 
 * The package.json in it makes it a package and i actually installed it in front and back like any other package with ```npm install ../shared```. It created a symbolic link to the shared folder, so any change youll make in it will be reflected in front and back without having to re-install it.
 
+##### Léo: 02/10
+
+###### TO FIX
+
+*GENERAL:*
+
+* quand on recherche des utilisateurs la fenetre de dropdown est degueulasse
+* quand on clique sur un user dans la dropdown, ca nous redirige vers la page profile de lutilisateur mais ca ne ferme pas la dropdown
+* faire une homepage pour quand on se login (sobre, par exemple avec )
+
+*USER:*
+
+* Le bouton d'edit sur la page profile renvoie sur une page edit qui sert a rien. Mieux vaut creer un modal pour editer le profil ou mettre un state editProfile set a false de base et qui passe a true quand on clique sur le bouton edit pour donner acces a un display d'edit.
+* faire passer lutilisateur offline quand il se deconnecte (via socket)
+* faire passer lutilisateur online quand il se connecte (via socket)
+* si le user se conencte sur 2 sessions, le deconnecter de lautre ?
+* imaginer + implementer des achievemnts pour les users (model achievement deja cree en bdd)
+
+*GAME:*
+
+* foutre les sockets
+* faire un systeme de rooms pour les games (via socket)
+* refaire le jeu avec phaser ?
+* faire un systeme de classement elo
+* reperer les achievements quand ils sont debloques
+* garder un historique des games
+* mettre des features de chat dans les games
