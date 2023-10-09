@@ -93,3 +93,38 @@ export const WinningMessage = styled.h2`
   border-radius: 8px;
   color: ${winningMessageFontColor};
 `;
+
+interface BallProps {
+    x: number;
+    y: number;
+    size: number;
+}
+
+export const StyledBall = styled.div<BallProps>`
+    position: absolute;
+    left: ${props => props.x - props.size}px;
+    top: ${props => props.y - props.size}px;
+    width: ${props => 2 * props.size}px;
+    height: ${props => 2 * props.size}px;
+    background-color: black;
+    border-radius: 50%;
+`;
+
+export const Canvas = styled.canvas<{ canvasWidth: number, canvasHeight: number }>`
+  border: ${props => props.canvasWidth / 100}px solid black;
+  width: ${({ canvasWidth }) => canvasWidth}px;
+  height: ${({ canvasHeight }) => canvasHeight}px;
+  box-sizing: border-box;
+  border-image-slice: 1;
+  background-color: ${canvasBackgroundColor};
+  border-color: ${borderColor};
+`;
+
+export const StyledPaddle = styled.div<{ x: number; y: number; width: number; height: number }>`
+    position: absolute;
+    left: ${props => props.x}px;
+    top: ${props => props.y}px;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
+    background-color: black;
+`;

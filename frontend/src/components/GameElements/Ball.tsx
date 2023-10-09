@@ -1,5 +1,5 @@
 import React  from 'react';
-import { StyledBall } from './Ball.styles';
+import { StyledBall } from './Game.styles';
 
 interface BallProps {
     x: number;

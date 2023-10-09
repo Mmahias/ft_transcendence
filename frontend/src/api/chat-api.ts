@@ -58,7 +58,6 @@ class ChatService {
   static async getAccessibleChannels(): Promise<Channel[]> {
     const user: User = await UserService.getMe();
     const response = await axiosPrivate.get<Channel[]>(`${CHAT_API}/channel/access/${user.id}`);
-    console.log("getAccessibleChannels", response.data);
     return response.data;
   }
 
@@ -140,7 +139,6 @@ class ChatService {
 
   static async leaveChannel(userId: number, channelId: number) {
     try {
-      console.log("leave: ", userId, channelId);
       const response = await axiosPrivate.delete(`${CHAT_API}/channel/${channelId}/users`,
         {
           data: { id: userId },

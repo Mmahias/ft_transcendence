@@ -162,7 +162,9 @@ export class ChatService {
     if (!channel) {
       throw new Error('Channel doest not exist!');
     }
-    return this.passwordService.verifyPassword(channel.password, userInput);
+    const value = await this.passwordService.verifyPassword(channel.password, userInput);
+    console.log('value', value);
+    return value;
   }
 
   // ------------------
@@ -241,7 +243,6 @@ export class ChatService {
   }
 
   async deleteUserFromChannel(channelId: number, body: UpdateChannelDto) {
-    console.log("leave ", body.id, body.name, body);
     if (!body.id && !body.name) {
       throw new BadRequestException('username or user id required');
     }
@@ -259,8 +260,6 @@ export class ChatService {
         mutedUsers: { disconnect: { id: userId } }
       }
     });
-
-    console.log("leave 1  ", userId);
 
     // if the user is the owner of the channel
     const channel = await prisma.channel.findUnique({

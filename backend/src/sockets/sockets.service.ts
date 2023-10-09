@@ -61,7 +61,7 @@ export class SocketService {
 
   public matches: MatchClass[] = [];
 
-  public registerActiveSockets(userId: number, socketId: string) {
+  public addActiveSocket(userId: number, socketId: string) {
     this.currentActiveUsers.set(userId, socketId);
   }
 
@@ -69,7 +69,7 @@ export class SocketService {
     this.currentActiveUsers.delete(client);
   }
 
-  async activeUser(userId: number) {
+  async activateUser(userId: number) {
     try {
       await prisma.user.update({
         where: {

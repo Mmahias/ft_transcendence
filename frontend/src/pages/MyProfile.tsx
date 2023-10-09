@@ -6,8 +6,11 @@ import { Link as RouterLink } from "react-router-dom";
 import UserService from "../api/users-api";
 import AuthService from "../api/auth-api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../hooks";
 
 const MyProfile: React.FC = () => {
+
+  const { auth } = useAuth();
 
   const [userName, setUserName] = useState<string>('');
   const [userStatus, setUserStatus] = useState<string>('');
@@ -20,7 +23,16 @@ const MyProfile: React.FC = () => {
   const [userEnteredCode, setUserEnteredCode] = useState<string>('');
 
   const queryClient = useQueryClient();
-  const {data: userProfile, status: statusProfile } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
+  const {data: userProfile, status: statusProfile } = useQuery({
+    queryKey: ['user'],
+    queryFn: UserService.getMe,
+    enabled: auth?.accessToken ? true : false,
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        console.error('user not connected');
+      }
+    }
+  });
 
   useEffect(() => {
     if (userProfile)
@@ -45,7 +57,6 @@ const MyProfile: React.FC = () => {
         const formattedDate = `${day}/${month}/${year}`;
         setUserSubDate(formattedDate);
       }
-      console.log(userProfile);
     }
   }, [userProfile]);
 

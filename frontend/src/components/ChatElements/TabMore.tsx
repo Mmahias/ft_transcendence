@@ -11,7 +11,7 @@ enum Tab {
 
 export default function TabMore() {
 
-  const [tab, setTab] = useState<Tab>(Tab.CREATE);
+  const [tab, setTab] = useState<Tab>(Tab.JOIN);
   
   const toggleTab = () => {
     if (tab === Tab.CREATE) {

@@ -7,8 +7,16 @@
 body {
   margin: 0;
   font-family: 'Helvetica Neue', Arial, sans-serif; /* Set "Helvetica Neue" as primary font */
-  background-image: url('./assets/background.jpg');
   font-size: 0.9em;
+  color: black;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+span {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif; /* Set "Helvetica Neue" as primary font */
+  font-size: calc(60% + 0.5vw);
   color: black;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -43,17 +51,7 @@ body {
     text-decoration-line: underline;
 }
 
-.channels_page-noconv > h3{
-    font-family: 'Courier New', Courier, monospace;
-    font-size: large;
-    color: rgba(128, 128, 128, 0.486);
 
-}
-
-.channels_page-noconv > h6{
-    font-size: medium;
-    text-align: center;
-}
 
 #channels_page_joinedscroll {
     border: black solid;
@@ -64,15 +62,6 @@ body {
 /* ********************************/
 /* ***  ChannelLink COMPONENT   ***/
 /* ********************************/
-
-body {
-  margin: 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif; /* Set "Helvetica Neue" as primary font */
-  background-image: url('./assets/background.jpg');
-  font-size: 0.9em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 .channel-link-header {
   display: flex;

@@ -1,12 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
-import Canvas from './canvas/Canvas';
-import draw from './draw/draw';
-import { GameWrapper, Score, StyledButton, WinningMessage } from './Game.styles';
-import useGameLogic from './useGameLogic';
+import Canvas from '../components/GameElements/Canvas';
+import draw from '../components/GameElements/utils/draw';
+import { GameWrapper, Score, StyledButton, WinningMessage } from '../components/GameElements/Game.styles';
+import useGameLogic from '../components/GameElements/useGameLogic';
 import {
     CANVAS_WIDTH, CANVAS_HEIGHT
-} from './Game.constants';
-import socket from './socket';
+} from '../components/GameElements/constants';
+import { useSocket } from '../hooks/useSocket';
 
 interface GameProps {}
 
@@ -14,16 +14,17 @@ export enum GameState {
     RUNNING,
     PAUSED,
     GAME_OVER,
-    WAITING_FOR_PLAYERS,
+    WAITING,
 }
 
 const Game: React.FC<GameProps> = () => {
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameWrapperRef = useRef<HTMLDivElement>(null);
-  const [gameState, setGameState] = useState<GameState>(GameState.WAITING_FOR_PLAYERS);
-
+  const [gameState, setGameState] = useState<GameState>(GameState.WAITING);
   const onGameOver = () => setGameState(GameState.GAME_OVER);
 
+  
   const {
     ball,
     leftPaddle,
@@ -31,16 +32,18 @@ const Game: React.FC<GameProps> = () => {
     onKeyDownHandler,
     onKeyUpHandler,
     resetGame,
-} = useGameLogic({
+  } = useGameLogic({
     canvasHeight: CANVAS_HEIGHT(),
     canvasWidth: CANVAS_WIDTH(),
     onGameOver,
     gameState,
-});
+  });
 
   const drawGame = (ctx: CanvasRenderingContext2D) => {
     draw({ ctx, ball, leftPaddle, rightPaddle });
   };
+  const socket = useSocket();
+  if (!socket) return null;
 
   const [lobby, setLobby] = useState<any | null>(null);
 
@@ -71,7 +74,7 @@ const Game: React.FC<GameProps> = () => {
       if(updatedLobby.players.length === 2) {
         setGameState(GameState.RUNNING);
       } else {
-        setGameState(GameState.WAITING_FOR_PLAYERS);
+        setGameState(GameState.WAITING);
       }
     });
 
@@ -92,7 +95,7 @@ const Game: React.FC<GameProps> = () => {
       <GameWrapper ref={gameWrapperRef} tabIndex={0} onKeyDown={onKeyDownHandler} style={{ position: 'relative' }}>
         
         {/* Display the lobby creation and joining UI if waiting for players */}
-        {gameState === GameState.WAITING_FOR_PLAYERS && (
+        {gameState === GameState.WAITING && (
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
             <button onClick={createLobbyHandler}>join lobby</button>
             <div style={{ marginTop: '20px' }}>

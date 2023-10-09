@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { Ball, Paddle } from '../useGameLogic';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../Game.constants';
-import * as S from './Canvas.styles';
+import { Ball, Paddle } from './useGameLogic';
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import * as S from './Game.styles';
 
 type CanvasProps = React.DetailedHTMLProps<
   React.CanvasHTMLAttributes<HTMLCanvasElement>,
@@ -29,13 +29,10 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
             });
         };
 
-        // Initial call to set dimensions
         updateDimensions();
 
-        // Listen for window resize events
         window.addEventListener('resize', updateDimensions);
 
-        // Cleanup listener on component unmount
         return () => {
             window.removeEventListener('resize', updateDimensions);
         };

@@ -25,6 +25,7 @@
     "font-awesome": "^4.7.0",
     "fortawesome": "^0.0.1-security",
     "js-cookie": "^3.0.5",
+    "phaser": "^3.60.0",
     "qrcode": "^1.5.3",
     "qrcode-base64": "^1.0.1",
     "qrcode.react": "^3.1.0",

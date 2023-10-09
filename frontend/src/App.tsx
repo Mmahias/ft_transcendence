@@ -1,9 +1,10 @@
 import React from 'react';
 import theme from './theme';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Chat from './pages/Chat';
-import Game from './pages/Game/Game';
-import Navbar from './components/Navbar';
+// import Game from './pages/Game';
 import MyProfile from './pages/MyProfile';
 import OtherProfile from './pages/OtherProfile';
 import History from './pages/User/history';
@@ -11,7 +12,6 @@ import Friends from './pages/User/friends';
 import Request from './pages/User/Request';
 import Edit from './pages/User/edit';
 import Error from './pages/Error';
-import Footer from './components/Footer';
 import { useAxiosPrivate } from './hooks';
 import { LoggedStatus } from './pages/Login';
 import { ThemeProvider } from 'styled-components';
@@ -28,7 +28,7 @@ const MainContent: React.FC = () => {
     <MainContentWrapper>
       <Routes>
         <Route path="/" element={<Home/>} />
-        <Route path="/game" element={<Game />} />
+        {/* <Route path="/game" element={<Game />} /> */}
         <Route path="/user/profile" element={<MyProfile />} />
         <Route path="/user/history" element={<History />} />
         <Route path="/user/friends" element={<Friends />} />

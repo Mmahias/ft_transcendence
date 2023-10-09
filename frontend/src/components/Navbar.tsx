@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AuthService from "../api/auth-api";
 import UserService from "../api/users-api";
 import { User } from '../api/types';
-import { Link, Navigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from '../hooks';
@@ -14,31 +14,69 @@ interface NavbarProps {
   theme: string;
 }
 
-const Navbar: React.FC<NavbarProps> = (props) => {
+const Navbar: React.FC<NavbarProps> = () => {
+  const navigate = useNavigate();
   const { auth, logout } = useAuth();
+
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [searchResults, setSearchResults] = useState<Partial<User>[]>([]);
+  const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
+  const [searchFocus, setSearchFocus] = useState<boolean>(false);
+  const blurTimeoutRef = useRef<number | null>(null); // Added ref for timeout
+
+  const myProfileQuery = useQuery(['me'], UserService.getMe, {
+    refetchOnWindowFocus: false,
+    enabled: auth?.accessToken ? true : false,
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        console.error('user not connected');
+      }
+    },
+  });
 
   const { data, status } = useQuery(
     ['searchUsers', searchTerm],
     () => UserService.searchUsers(searchTerm, 8),
     {
-      enabled: !!searchTerm, // makes sure the query runs only when searchTerm is not empty
-      refetchOnWindowFocus: false, // Optional: prevents refetching on window focus
+      enabled: !!searchTerm,
+      refetchOnWindowFocus: false,
       onSuccess: (fetchedData) => {
-        setSearchResults(fetchedData);
+        const filteredData = fetchedData.filter(user => user.id !== myProfileQuery.data?.id);
+        setSearchResults(filteredData);
       }
     }
   );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
+    setSelectedUserIndex(null);
   };
 
   const handleSearchSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && searchTerm && searchResults[0].username) {
-      return <Navigate to={`/user/profile/${searchResults[0].username}`} />;
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setSelectedUserIndex(prev => (prev === null || prev === searchResults.length - 1) ? 0 : prev + 1);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setSelectedUserIndex(prev => (prev === null || prev === 0) ? searchResults.length - 1 : prev - 1);
+        break;
+      case 'Enter':
+        if (selectedUserIndex !== null && searchResults[selectedUserIndex]?.username) {
+          handleOnClick(searchResults[selectedUserIndex].username);
+        }
+        break;
+    }
+  };
+
+  const handleOnClick = (username: string | null | undefined) => {
+    if (!username) return; 
+    if (window.location.pathname !== `/user/profile/${username}`) {
+        setSearchResults([]);
+        setSearchTerm('');
+        navigate(`/user/profile/${username}`);
     }
   };
 
@@ -46,43 +84,74 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     try {
       await AuthService.logout();
       logout();
-      console.log("Ok OUT");
+      navigate("/");
     } catch (error) {
       console.log("logout error", error);
     }
   };
-  console.log("real fetch", searchTerm, data);
+  
+  useEffect(() => {
+    setIsLoggedIn(!!auth?.accessToken);
+  }, [auth]);
+
   return (
     <>
       <nav className="navbar-container">
-        <img className="logo" src={logo} alt="App Logo" />
+      <img className="logo" src={logo} alt="App Logo" />
 
-        <div className="links-container">
-          <Link to="/" className="router-link">HOME</Link>
-          <Link to="/game" className="router-link">GAME</Link>
-          <Link to="/chat" className="router-link">CHAT</Link>
-          {isLoggedIn && (
-            <div className="searchBar">
-              <input
-                type="text"
-                placeholder="Search user..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onKeyDown={handleSearchSubmit}
-              />
+      <div className="links-container">
+        <Link to="/" className="router-link">HOME</Link>
+        <Link to="/game" className="router-link">GAME</Link>
+        <Link to="/chat" className="router-link">CHAT</Link>
+        {isLoggedIn && (
+          <div className="searchBar">
+            <input
+              type="text"
+              placeholder="Search user..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onKeyDown={handleSearchSubmit}
+              onFocus={() => {
+                if (blurTimeoutRef.current) {
+                  clearTimeout(blurTimeoutRef.current);
+                  blurTimeoutRef.current = null;
+                }
+                setSearchFocus(true);
+              }}
+              onBlur={() => {
+                blurTimeoutRef.current = window.setTimeout(() => {
+                  setSearchFocus(false);
+                }, 150);
+              }}
+            />
+            {searchResults.length > 0 && searchFocus && (
               <div className="search-results-">
                 {searchResults.map((user, idx) => (
-                  <div key={idx} className="user-result">
-                    <Link to={`/user/profile/${user.username}`}>
+                  <div 
+                    key={idx} 
+                    className={`user-result ${idx === selectedUserIndex ? 'highlighted-user' : ''}`}
+                  >
+                    <Link 
+                      to={`/user/profile/${user.username}`} 
+                      onClick={() => {
+                        if (blurTimeoutRef.current) {
+                          clearTimeout(blurTimeoutRef.current); // Clear timeout when link is clicked
+                          blurTimeoutRef.current = null;
+                        }
+                        handleOnClick(user.username);
+                      }}
+                    >
                       <img src={user.avatar} className="user-avatar" />
                       {user.username}
                     </Link>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        )}
         </div>
+
         <div className="dropdown">
           <div className="dropbtn">
             <FontAwesomeIcon icon={faBars} />
@@ -102,6 +171,5 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     </>
   );
 };
-
 
 export default Navbar;

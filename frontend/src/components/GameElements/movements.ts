@@ -1,6 +1,6 @@
 import { Ball, Paddle } from './useGameLogic';
-import { GameState } from './Game';
-import { BALL_ACC_X, MAX_BALL_SPEED } from './Game.constants';
+import { GameState } from '../../pages/Game';
+import { BALL_ACC_X, MAX_BALL_SPEED } from './constants';
 
 export const willBallHitPaddle = (ball: Ball, paddle: Paddle): boolean => {
     const futureBallX = ball.x + ball.vx;
@@ -98,11 +98,8 @@ export const handleResize = (gameState: GameState,
     setBall: React.Dispatch<React.SetStateAction<Ball>>,
     setGameState: React.Dispatch<React.SetStateAction<GameState>>
     ) => {
-    // Pause the game
     if (gameState !== GameState.GAME_OVER) {
         setGameState(GameState.PAUSED);
     }
-    
-    // Force re-render to update all elements that depend on the window size
     setBall(prev => ({ ...prev }));
 };

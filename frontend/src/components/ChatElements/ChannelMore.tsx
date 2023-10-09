@@ -27,13 +27,23 @@ export default function ChannelMore({ channel }: { channel: Channel }) {
     onError: () => { toast.error('Error : cannot join channel') }
   })
 
-  const { mutate: verifyPassword} = useMutation({
-    mutationFn: (pwd: string) => ChatService.verifyPasswords(channel.id, pwd),
-    onSuccess: () => { 
+  const { mutate: verifyPassword } = useMutation({
+    mutationFn: async (pwd: string) => {
+      const isVerified = await ChatService.verifyPasswords(channel.id, pwd);
+      console.log("verified ?", isVerified);
+      if (!isVerified) {
+        throw new Error("Incorrect password");
+      }
+    },
+    onSuccess: () => {
       toast.success("Correct password!");
-      joinChannelRequest.mutate(channel); },
-    onError: () => { toast.error("Incorrect password!") }
+      joinChannelRequest.mutate(channel);
+    },
+    onError: () => {
+      toast.error("Incorrect password!")
+    }
   })
+  
 
   useEffect(() => {
     if (channel.mode === 'DM' && data) {

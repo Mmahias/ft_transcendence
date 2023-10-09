@@ -4,10 +4,9 @@ import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../constants';
 import { testBackendEndpoint } from '../api/test-api';
 import { useAuth, useSocket } from '../hooks';
 import { Socket } from 'socket.io-client';
-import { AuthState } from '../contexts/AuthContext';
+import { AuthState, isAuthAvailable } from '../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";
 import UserService from '../api/users-api'
-import { SocketContextType } from 'contexts';
 
 export const Log42: React.FC = () => {
   const log = {
@@ -40,7 +39,7 @@ const callTestEndpoint = async () => {
 };
 
 
-const getToken = async (auth: AuthState) => {
+const testToken = async (auth: AuthState) => {
   try {
     console.log('auth: ', auth);
   } catch (error) {
@@ -48,7 +47,7 @@ const getToken = async (auth: AuthState) => {
   }
 };
 
-const connected = async (auth: AuthState) => {
+const testConnected = async (auth: AuthState) => {
   try {
     console.log('isLoggedIn', !!auth?.accessToken);
   } catch (error) {
@@ -76,7 +75,7 @@ const testMe= () => {
 const Home: React.FC = () => {
   const { auth } = useAuth();
   const socket = useSocket();
-  const isLoggedIn = !!auth?.accessToken;
+  const isLoggedIn = isAuthAvailable(auth);
 
   return (
     <div className="home-container">
@@ -93,8 +92,8 @@ const Home: React.FC = () => {
       <div className='button-test'>
         <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
         <button onClick={() => testMe()}>Test User Me</button>
-        <button onClick={() => getToken(auth)}>Test Token</button>
-        <button onClick={() => connected(auth)}>Am i connected ?</button>
+        <button onClick={() => testToken(auth)}>Test Token</button>
+        <button onClick={() => testConnected(auth)}>Am i connected ?</button>
         <button onClick={() => testSocketConnection(socket)}>Test Socket Connection</button>
       </div>
     </div>

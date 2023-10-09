@@ -47,7 +47,6 @@ interface ChannelListItemProps {
 const ChannelListItem: React.FC<ChannelListItemProps> = ({ channel }) => {
 
   const [askForPassword, setAskForPassword] = useState<boolean>(false);
-  const [password, setPassword] = useState<string>('');
 
   const queryClient = useQueryClient();
 
@@ -69,12 +68,20 @@ const ChannelListItem: React.FC<ChannelListItemProps> = ({ channel }) => {
     onError: () => { toast.error('Error : cannot join channel') }
   })
 
-  const { mutate: verifyPassword} = useMutation({
-    mutationFn: (pwd: string) => ChatService.verifyPasswords(channel.id, pwd),
-    onSuccess: () => { 
+  const { mutate: verifyPassword } = useMutation({
+    mutationFn: async (pwd: string) => {
+      const isVerified = await ChatService.verifyPasswords(channel.id, pwd);
+      if (!isVerified) {
+        throw new Error("Incorrect password");
+      }
+    },
+    onSuccess: () => {
       toast.success("Correct password!");
-      joinChannelRequest.mutate(channel); },
-    onError: () => { toast.error("Incorrect password!") }
+      joinChannelRequest.mutate(channel);
+    },
+    onError: () => {
+      toast.error("Incorrect password!")
+    }
   })
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -124,7 +131,6 @@ export default function AccessibleChannelsTab() {
   if (statusJoinedChannels == 'loading'){ return <div>Loading...</div> }
 
   const toBeJoinedChannels: Channel[] = nonJoinedChannels;
-  console.log(toBeJoinedChannels);
 
   return (
     <div className='channels_page'>

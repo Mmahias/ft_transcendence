@@ -46,8 +46,10 @@ To use it, just add some types or shared data you may need.
 *GENERAL:*
 
 * quand on recherche des utilisateurs la fenetre de dropdown est degueulasse
+-- FIXED
 * quand on clique sur un user dans la dropdown, ca nous redirige vers la page profile de lutilisateur mais ca ne ferme pas la dropdown
-* faire une homepage pour quand on se login (sobre, par exemple avec )
+-- FIXED
+* faire une homepage pour quand on se login (sobre)
 
 *USER:*
 

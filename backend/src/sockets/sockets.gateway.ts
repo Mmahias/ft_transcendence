@@ -41,10 +41,10 @@ export class SocketsGateway
   async handleConnection(client: Socket, ...args: any[]) {
     void (args);
 
-    await this.socketService.activeUser(client.data.userId);
+    await this.socketService.activateUser(client.data.userId);
 
     /* Stocker tous les sockets des users actuellement connectés dans un map */
-    this.socketService.registerActiveSockets(client.data.userId, client.id);
+    this.socketService.addActiveSocket(client.data.userId, client.id);
 
     /* Reconnecter le client à son match s'il en avait un en cours */
     this.socketService.cleanupMatches();
@@ -105,12 +105,14 @@ export class SocketsGateway
   handleTestEvent(client: Socket, data: any): Promise<any> {
     console.log('Received test event with data:', data);
     
+    console.log('Current active users:', this.socketService.currentActiveUsers);
+    
     // Responding to the client, you can remove this if not required
     return new Promise((resolve) => {
-      // Simulating asynchronous work
-      setTimeout(() => {
-        resolve({ event: 'test-response', data: 'Hello from server!' });
-      }, 1000);
+        // Simulating asynchronous work
+        setTimeout(() => {
+            resolve({ event: 'test-response', data: 'Hello from server!' });
+        }, 1000);
     });
   }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyledPaddle } from './Paddle.styles';
-import { CANVAS_HEIGHT } from '../Game.constants';
+import { StyledPaddle } from './Game.styles';
+import { CANVAS_HEIGHT } from './constants';
 
 interface PaddleProps {
     initialX: number;
