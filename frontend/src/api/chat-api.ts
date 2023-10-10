@@ -96,6 +96,11 @@ class ChatService {
     }
   }
 
+  // cette fonction est utilisée pour update le status dun user dans un chan
+  // on peut kick, ban, mute etc
+  // cf backend/src/chat/chat.controller.ts puis la fct quil appelle pour lusage
+  // usergroup can be in ['adminUsers', 'joinedUsers', 'bannedUsers', 'kickedUsers', 'mutedUsers']
+  // action can be ['connect', 'disconnect'] to join or leave the group
   static async updateUserInChannel(userId: number, channelId: number, usergroup: string, action: string) {
     try {
       const response = await axiosPrivate.post(`${CHAT_API}/channel/${channelId}/users`,

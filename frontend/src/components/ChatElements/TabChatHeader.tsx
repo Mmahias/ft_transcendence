@@ -1,14 +1,15 @@
-import { Channel, User } from "../..//api/types";
+import { Channel, User } from "../../api/types";
 import React, { useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import '../../styles/Tab_Chat.css';
-import ChatService from "../..//api/chat-api";
-import UserService from "../..//api/users-api";
+import ChatService from "../../api/chat-api";
+import UserService from "../../api/users-api";
 import toast from 'react-hot-toast';
 import { ChatStatusContext } from "../..//contexts";
 import { ChannelTitle } from "./ChannelTitle";
 import { ChannelType } from "./ChannelType";
 import { ChanMode } from "../../shared/types";
+import { useAuth } from "../../hooks";
 
 const getDate = (channel : Channel) => {
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'numeric', day: 'numeric'} as const;
@@ -23,8 +24,17 @@ export function TabChatHeader({ conv }: { conv: Channel}) {
   const { setActiveTab, setActiveChan } = useContext(ChatStatusContext);
   const convName: string = (conv.mode === ChanMode.DM) ? conv.name.replace(' ', ' , ').trim() : conv.name;
   const queryClient = useQueryClient();
+  const { auth } = useAuth();
 
-  const {data: user, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
+  const { data: user, error, isLoading, isSuccess } = useQuery(['me'], UserService.getMe, {
+    refetchOnWindowFocus: false,
+    enabled: !!auth?.accessToken ? true : false,
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        console.error('user not connected');
+      }
+    },
+  });
 
   const leaveChannelRequest = useMutation({
     mutationFn: (user: User) => ChatService.leaveChannel(user.id, conv.id),

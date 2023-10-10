@@ -45,19 +45,26 @@ To use it, just add some types or shared data you may need.
 
 *GENERAL:*
 
-* quand on recherche des utilisateurs la fenetre de dropdown est degueulasse
--- FIXED
-* quand on clique sur un user dans la dropdown, ca nous redirige vers la page profile de lutilisateur mais ca ne ferme pas la dropdown
--- FIXED
+* passer en https (faire un ctrl+f sur le projet et adapter les cors en fonction (cors sur socket + cors sur le back + peut etre quil faut mettre un cors sur le front ?))
+* regler toutes les 401 (cf console) lors du rechargement des pages, cest pas beau
+* revoir un peu l'UX de la search bar ?
 * faire une homepage pour quand on se login (sobre)
+* FIXED: quand on recherche des utilisateurs la fenetre de dropdown est degueulasse
+* FIXED: quand on clique sur un user dans la dropdown, ca nous redirige vers la page profile de lutilisateur mais ca ne ferme pas la dropdown
 
 *USER:*
 
 * Le bouton d'edit sur la page profile renvoie sur une page edit qui sert a rien. Mieux vaut creer un modal pour editer le profil ou mettre un state editProfile set a false de base et qui passe a true quand on clique sur le bouton edit pour donner acces a un display d'edit.
-* faire passer lutilisateur offline quand il se deconnecte (via socket)
-* faire passer lutilisateur online quand il se connecte (via socket)
-* si le user se conencte sur 2 sessions, le deconnecter de lautre ?
+* un peu differencier la page mon profil de la page profil dun random
 * imaginer + implementer des achievemnts pour les users (model achievement deja cree en bdd)
+* FIXED: faire passer lutilisateur offline quand il se deconnecte (via socket)
+* FIXED: faire passer lutilisateur online quand il se connecte (via socket)
+* FIXED: si le user se conencte sur 2 sessions, le deconnecter de lautre ?
+
+*CHAT:*
+
+* quand on passe la souris sur le message dun user, ouvre une petite fenetre avec qq infos + boutons pour mute ou block (cf chat api: updateUserInChannel) + pouvoir acceder a son profil si on  clique sur son nom (si vous galerez, checker comment jai fait dans la search bar, c la meme logique)
+* si on est admin, pouvoir acceder au panel admin pour kick, ban(page prete, bouton pas relie)
 
 *GAME:*
 

@@ -3,22 +3,18 @@ import "../App.styles";
 import React, { useState }  from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from "../api/auth-api";
-// import { createSocketConnexion } from '../sockets/sockets';
-import { Socket } from 'socket.io-client';
 import { useAuth } from '../hooks/useAuth';
 
+const Login = () => {
 
-export default function Login({ onSetLoggedIn, setSocket }: { 
-  onSetLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
-  setSocket: React.Dispatch<React.SetStateAction<Socket | null>> }) {
+  const navigate = useNavigate();
+  const { auth, login } = useAuth();
   
   const [nickname, setNickname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [successMsg, setSuccessMsg] = useState<string>("");
-  const navigate = useNavigate();
-  const { auth, login } = useAuth();
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
@@ -41,7 +37,6 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   
   const validateNickname = (value: string): string | null => {
     if (!value) return "Nickname is required";
-    // Pas d'autres règles spécifiques pour le surnom dans vos DTOs
     return null;
   };
   
@@ -62,7 +57,6 @@ export default function Login({ onSetLoggedIn, setSocket }: {
       if (response) {
         console.log("OK S: ", response);
         login(response);
-        onSetLoggedIn(true);
         setSuccessMsg("Successfully signed up! ");
         setErrorMsg('');
         setTimeout(() => {
@@ -89,16 +83,15 @@ export default function Login({ onSetLoggedIn, setSocket }: {
     setPasswordError(passwordValidationError);
 
     if (usernameValidationError || passwordValidationError) {
-        return; // Ne continuez pas si des erreurs de validation sont présentes
+        return;
     }
 
     event.preventDefault();
     try {
       const response = await AuthService.login(username.toLowerCase(), password);
       if (response) {
-        console.log("OK L: ", response);
+        console.log("Logged in");
         login(response);
-        onSetLoggedIn(true);
         setSuccessMsg("Successfully logged in!");
         setErrorMsg('');
         setTimeout(() => {
@@ -114,7 +107,6 @@ export default function Login({ onSetLoggedIn, setSocket }: {
       }
     }
   }
-
 
   return (
     <div className='sign-log-container'>
@@ -210,13 +202,4 @@ export default function Login({ onSetLoggedIn, setSocket }: {
   );
 }
 
-function LoggedStatus() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentSocket, setSocket] = useState<Socket | null>(null);
-
-  return (
-    <Login onSetLoggedIn={setIsLoggedIn} setSocket={setSocket} />
-  );
-}
-
-export { LoggedStatus };
+export default Login;

@@ -2,15 +2,15 @@ import React from 'react';
 import '../../styles/Tab_Chat.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGamepad, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import ChatService from "../..//api/chat-api";
-import UserService from "../..//api/users-api";
-import { Channel, Message } from "../..//api/types";
+import ChatService from "../../api/chat-api";
+import UserService from "../../api/users-api";
+import { Channel, Message } from "../../api/types";
 import {AdminOptions} from './AdminOptions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { useSocket } from '../../hooks';
+import { useSocket, useAuth } from '../../hooks';
 import { ChanMode } from '../../shared/types';
 
 const getDate = (message: Message) => {
@@ -25,7 +25,16 @@ export function OneMessage({ conv, message, index, myNickname } :
 
   const [isMe, setIsMe] = useState<boolean>(myNickname === message.from.nickname);
   const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
-  const {data: userMe, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
+  const { auth } = useAuth();
+  const { data: userMe, error, isLoading, isSuccess } = useQuery(['me'], UserService.getMe, {
+    refetchOnWindowFocus: false,
+    enabled: !!auth?.accessToken ? true : false,
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        console.error('user not connected');
+      }
+    },
+  });
   const queryClient = useQueryClient();
   const socket = useSocket();
 

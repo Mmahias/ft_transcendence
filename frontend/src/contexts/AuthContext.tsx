@@ -1,9 +1,7 @@
 import React, { createContext, useState, ReactNode, useCallback } from "react";
-import { AxiosResponse } from 'axios';
-import { axiosPublic } from "../api/axios-config";
 
 export interface AuthState {
-  accessToken?: string;
+  accessToken: string | null;
 }
 
 export interface AuthContextType {
@@ -11,7 +9,7 @@ export interface AuthContextType {
   isAuthAvailable: (auth: AuthState) => boolean;
   login: (data: AuthState) => void;
   logout: () => void;
-  refreshToken: () => Promise<string>;
+  refreshToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,26 +28,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [auth, setAuth] = useState<AuthState>(initialAuth);
 
   const login = useCallback((data: AuthState) => {
-    console.log("login", data);
     localStorage.setItem("auth", JSON.stringify(data));
     setAuth(data);
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem("auth");
-    setAuth({});
+    setAuth({ accessToken: null });
   }, []);
 
-  const refreshToken = useCallback(async (): Promise<string> => {
-    const response: AxiosResponse<{ accessToken: string }> = await axiosPublic.get('/refresh', {
-        withCredentials: true
-    });
-    setAuth(prev => ({
-        ...prev,
-        accessToken: response.data.accessToken
-    }));
-      return response.data.accessToken;
-  }, []);
+  const refreshToken = useCallback((): string | null => {
+    const storedToken = localStorage.getItem("auth");
+    if (storedToken) {
+        const parsedToken = JSON.parse(storedToken);
+        setAuth(parsedToken);
+        return parsedToken.accessToken;
+    }
+    return null;
+}, []);
 
   return (
     <AuthContext.Provider value={{ auth, isAuthAvailable: () => isAuthAvailable(auth), login, logout, refreshToken }}>

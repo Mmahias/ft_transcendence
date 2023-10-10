@@ -1,8 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { UserStatus, PrismaClient } from '@prisma/client';
-import { Socket } from 'socket.io';
-
-const prisma = new PrismaClient();
+import { UserStatus } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 export class Player {
   userId: number;
@@ -40,7 +38,9 @@ export class MatchClass {
 
 @Injectable()
 export class SocketService {
-
+  constructor(
+    private prisma: PrismaService,
+  ) {}
   public gameConstants = {
     width: 800, // in pixels
     height: 600, // in pixels
@@ -52,8 +52,10 @@ export class SocketService {
     powerUpRadius: 20, // in pixel
   };
 
-  /* key = userId, value:string = socketId */
-  public currentActiveUsers = new Map<number, string>;
+  /* key = userId, Set:string = socketIds */
+  // FIX IT
+  // Should be set to private, just set to public for test endpoint
+  public currentActiveUsers: Map<number, Set<string>> = new Map();
 
   public queue: Player[] = [];
 
@@ -62,56 +64,48 @@ export class SocketService {
   public matches: MatchClass[] = [];
 
   public addActiveSocket(userId: number, socketId: string) {
-    this.currentActiveUsers.set(userId, socketId);
+    if (!this.currentActiveUsers.has(userId)) {
+      this.currentActiveUsers.set(userId, new Set());
+    }
+    this.currentActiveUsers.get(userId)!.add(socketId);
   }
 
-  public deleteDisconnectedSockets(client: number) {
-    this.currentActiveUsers.delete(client);
+  public removeActiveSocket(userId: number, socketId: string) {
+    const userSockets = this.currentActiveUsers.get(userId);
+    if (userSockets) {
+      userSockets.delete(socketId);
+      if (userSockets.size === 0) {
+        this.currentActiveUsers.delete(userId);
+      }
+    }
   }
 
-  async activateUser(userId: number) {
+  private async updateUserStatus(userId: number, status: UserStatus) {
     try {
-      await prisma.user.update({
+      return await this.prisma.user.update({
         where: {
           id: userId,
         },
         data: {
-          status: UserStatus.ONLINE,
+          status,
         },
       });
     } catch (error) {
+      // FIX IT
       throw new HttpException("No such user", 400);
     }
   }
 
-  async playingUser(userId: number) {
-    try {
-      await prisma.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          status: UserStatus.IS_GAMING,
-        },
-      });
-    } catch (error) {
-      throw new HttpException("No such user", 400);
-    }
+  public async goOnline(userId: number) {
+    return await this.updateUserStatus(userId, UserStatus.ONLINE);
   }
 
-  async inactiveUser(userId: number) {
-    try {
-      await prisma.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          status: UserStatus.OFFLINE,
-        },
-      });
-    } catch (error) {
-      throw new HttpException("No such user", 400);
-    }
+  public async goInGame(userId: number) {
+    return await this.updateUserStatus(userId, UserStatus.IS_GAMING);
+  }
+
+  public async goOffline(userId: number) {
+    return await this.updateUserStatus(userId, UserStatus.OFFLINE);
   }
 
   createPlayer(userId: number, username: string, mode: string) {
@@ -137,75 +131,69 @@ export class SocketService {
     return this.queue.length - 1;
   }
 
-  addMatch(mode = "Classic", player1: Player = undefined, player2: Player = undefined) {
-
-    const match = new MatchClass;
+  addMatch(mode: string = "Classic", player1?: Player, player2?: Player): MatchClass {
+    const match = new MatchClass();
     match.matchId = this.matchId++;
     match.mode = mode;
 
-    if (player1 === undefined) {
-      match.player1 = this.queue.shift();
-    } else {
-      match.player1 = player1;
-    }
-    if (player2 === undefined) {
-      match.player2 = this.queue.shift();
-    } else {
-      match.player2 = player2;
-    }
+    match.player1 = player1 ?? this.queue.shift();
+    match.player2 = player2 ?? this.queue.shift();
 
     match.player1.ready = false;
     match.player2.ready = false;
+
     match.p1posY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
     match.p2posY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
+
     match.ballX = this.gameConstants.width / 2;
     match.ballY = this.gameConstants.height / 2;
+
     match.powerUpOn = false;
     match.powerUpDate = 0;
+
     // Power up config
-    if (mode === "Classic")
-      match.powerUp = false;
-    else
-      match.powerUp = true;
+    match.powerUp = mode === "Classic" ? false : true;
+
     match.powerUpX = Math.random() * (this.gameConstants.width / 2) + (this.gameConstants.width / 4);
     match.powerUpY = Math.random() * this.gameConstants.height;
 
-    // horizontal ball speed is non null
+    // Horizontal ball speed is non-null
     match.ballSpeedX = 90;
     // Random vertical ball speed between 10 and 100
     match.ballSpeedY = Math.random() * 90 + 10;
+
     // Randomize ball direction
-    if (Math.random() > 0.5) {
-      match.ballSpeedX *= -1;
-    }
-    if (Math.random() > 0.5) {
-      match.ballSpeedY *= -1;
-    }
+    if (Math.random() > 0.5) match.ballSpeedX *= -1;
+    if (Math.random() > 0.5) match.ballSpeedY *= -1;
 
     match.started = Date.now();
     this.matches.push(match);
+
     return match;
-  }
+}
+
 
   deleteMatch(matchId: number) {
-    for (let i = 0; i < this.matches.length; i++) {
-      if (this.matches[i].matchId === matchId) {
-        this.matches.splice(i, 1);
-        return;
-      }
+    const matchIndex = this.matches.findIndex(match => match.matchId === matchId);
+    if (matchIndex !== -1) {
+      this.matches.splice(matchIndex, 1);
     }
   }
 
-  cleanupMatches() {
-    for (let i = 0; i < this.matches.length;) {
-      const match = this.matches[i];
-      if ((match.player1.ready === false || match.player2.ready === false) && (Date.now() - match.started > 10000)) {
-        this.deleteMatch(match.matchId);
-      } else if ((Date.now() - match.player1.lastUpdate > 3000) || (Date.now() - match.player2.lastUpdate > 3000)) {
-        this.deleteMatch(match.matchId);
-      } else {
-        i++;
-      }
-    }
+  private shouldDeleteDueToReadiness(match: MatchClass): boolean {
+    return (match.player1.ready === false || match.player2.ready === false) && (Date.now() - match.started > 10000);
+  }
+
+  private shouldDeleteDueToInactivity(match: MatchClass): boolean {
+    return (Date.now() - match.player1.lastUpdate > 3000) || (Date.now() - match.player2.lastUpdate > 3000);
+  }
+
+  public cleanupMatches() {
+    this.matches = this.matches.filter(match => {
+        if (this.shouldDeleteDueToReadiness(match) || this.shouldDeleteDueToInactivity(match)) {
+            return false;
+        }
+        return true;
+    });
   }
 }

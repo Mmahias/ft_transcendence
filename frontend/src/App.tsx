@@ -11,9 +11,9 @@ import History from './pages/User/history';
 import Friends from './pages/User/friends';
 import Request from './pages/User/Request';
 import Edit from './pages/User/edit';
+import Login from './pages/Login';
 import Error from './pages/Error';
 import { useAxiosPrivate } from './hooks';
-import { LoggedStatus } from './pages/Login';
 import { ThemeProvider } from 'styled-components';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
@@ -36,7 +36,7 @@ const MainContent: React.FC = () => {
         <Route path="/user/edit" element={<Edit />} />
         <Route path="/user/profile/:reqUsername" element={<OtherProfile />} />
         <Route path="/chat" element={ <Chat/> } />
-        <Route path="/login" element={<LoggedStatus />} />
+        <Route path="/login" element={<Login />} />
         <Route path='*' element={<Error />}/>
       </Routes>
     </MainContentWrapper>

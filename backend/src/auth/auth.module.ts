@@ -11,6 +11,7 @@ import { LocalStrategy } from '@app/auth/strategies/local/local.strategy';
 import { Oauth42Strategy } from '@app/auth/strategies/oauth/oauth.42.strategy';
 import { Jwt2faStrategy } from '@app/auth/strategies/jwt-2fa/jwt-2fa.strategy';
 import { SocketService } from '@app/sockets/sockets.service';
+import { PrismaModule } from '@app/prisma/prisma.module';
 
 @Module({
   controllers: [AuthController],
@@ -23,6 +24,6 @@ import { SocketService } from '@app/sockets/sockets.service';
     Jwt2faStrategy,
     SocketService
   ],
-  imports: [HttpModule, UserModule, JwtModule, PasswordModule],
+  imports: [HttpModule, UserModule, JwtModule, PasswordModule, PrismaModule],
 })
 export class AuthModule {}

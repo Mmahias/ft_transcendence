@@ -21,18 +21,25 @@ const MyProfile: React.FC = () => {
   const [user2FAEnabled, setUser2FAEnabled] = useState<boolean>(false); // Initialisation
   const [userQrCodeData, setUserQrCodeData] = useState<string>('');
   const [userEnteredCode, setUserEnteredCode] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
 
   const queryClient = useQueryClient();
+  
   const {data: userProfile, status: statusProfile } = useQuery({
     queryKey: ['user'],
     queryFn: UserService.getMe,
-    enabled: auth?.accessToken ? true : false,
+    enabled: isLoggedIn ? true : false,
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('user not connected');
       }
     }
   });
+
+  // listening to login/logout
+  useEffect(() => {
+    setIsLoggedIn(!!auth?.accessToken);
+  }, [auth]);
 
   useEffect(() => {
     if (userProfile)

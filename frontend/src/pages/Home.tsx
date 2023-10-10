@@ -29,53 +29,58 @@ export const Log42: React.FC = () => {
   );
 };
 
-const callTestEndpoint = async () => {
-  try {
-    const result = await testBackendEndpoint();
-    console.log(result);
-  } catch (error) {
-    console.error("Error calling test endpoint:", error);
-  }
-};
-
-
-const testToken = async (auth: AuthState) => {
-  try {
-    console.log('auth: ', auth);
-  } catch (error) {
-    console.error("Error calling test endpoint:", error);
-  }
-};
-
-const testConnected = async (auth: AuthState) => {
-  try {
-    console.log('isLoggedIn', !!auth?.accessToken);
-  } catch (error) {
-    console.error("Error calling test endpoint:", error);
-  }
-};
-
-const testSocketConnection = (socket: Socket | null) => {
-  console.log('socket: ', socket);
-  if (!socket || socket?.connected === null) {
-    console.log('Socket is null or not connected');
-    return;
-  }
-  socket.emit('test-event', { message: 'Hello from client!' });
-};
-
-const testMe= () => {
-  UserService.getMe().then((res) => {
-    console.log(res);
-  }).catch((err) => {
-    console.log(err);
-  });
-};
-
 const Home: React.FC = () => {
   const { auth } = useAuth();
   const socket = useSocket();
   const isLoggedIn = isAuthAvailable(auth);
+
+  
+  const callTestEndpoint = async () => {
+    try {
+      const result = await testBackendEndpoint();
+      console.log(result);
+    } catch (error) {
+      console.error("Error calling test endpoint:", error);
+    }
+  };
+  
+  const testToken = async (auth: AuthState) => {
+    try {
+      console.log('auth: ', auth);
+    } catch (error) {
+      console.error("Error calling test endpoint");
+    }
+  };
+  
+  const testConnected = async (auth: AuthState) => {
+    try {
+      console.log('isLoggedIn', !!auth?.accessToken);
+    } catch (error) {
+      console.error("Error calling test endpoint:", error);
+    }
+  };
+  
+  const testSocketConnection = (socket: Socket | null) => {
+    console.log('socket: ', socket);
+    if (!socket || socket?.connected === null) {
+      console.log('Socket is null or not connected');
+      return;
+    }
+    socket.emit('test-event', { message: 'Hello from client!' });
+  };
+  
+  const testMe= () => {
+    if (!!auth?.accessToken && socket) {
+      UserService.getMe().then((res) => {
+        console.log(res);
+      }).catch(() => {
+        console.log("Error while fetching user data");
+      });
+    }
+    else {
+      console.log("No user connected");
+    }
+  };
 
   return (
     <div className="home-container">

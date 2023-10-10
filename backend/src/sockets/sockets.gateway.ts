@@ -12,8 +12,6 @@ import { usernameMiddleware } from './middleware/username.middleware';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
-
 const corsConfig = {
   origin: '*', // replace with your front-end domain/port
   credentials: true,
@@ -37,69 +35,82 @@ export class SocketsGateway
     console.log('WS Initialized');
   }
 
-  /* Indique dans le User scheme qu'il est actif */
   async handleConnection(client: Socket, ...args: any[]) {
     void (args);
 
-    await this.socketService.activateUser(client.data.userId);
-
-    /* Stocker tous les sockets des users actuellement connectés dans un map */
+    // update user status to ONLINE in db and activate user's socket
+    await this.socketService.goOnline(client.data.userId);
     this.socketService.addActiveSocket(client.data.userId, client.id);
 
-    /* Reconnecter le client à son match s'il en avait un en cours */
+    // Check and cleanup inactive matches
     this.socketService.cleanupMatches();
-    // const match = this.getMatchByUserId(client.data.userId);
-    const match = undefined;
+
+    // Find a match by the user ID
+    const match = this.socketService.matches.find(
+      m => m.player1.userId === client.data.userId || m.player2.userId === client.data.userId
+    );
+
     if (match !== undefined) {
       client.join(match.matchId.toString());
-      switch (client.data.userId) {
-        case match.player1.userId:
-          match.player1.ready = true;
-          break;
-        case match.player2.userId:
-          match.player2.ready = true;
-          break;
-        default:
-          break;
+      if (client.data.userId === match.player1.userId) {
+        match.player1.ready = true;
+      } else if (client.data.userId === match.player2.userId) {
+        match.player2.ready = true;
       }
     }
   }
 
-  /* Indique dans le User scheme qu'il est inactif et le déconnecte */
+  // handle single socket disconnection
   handleDisconnect(client: Socket) {
-    this.socketService.inactiveUser(client.data.userId);
-    this.socketService.deleteDisconnectedSockets(client.data.userId);
+    console.log("disconnect 1 socket");
+    this.socketService.removeActiveSocket(client.data.userId, client.id);
 
-    // Tell the match the user has disconnected
-    // const match = this.getMatchByUserId(client.data.userId);
-    const match = undefined;
-    if (match !== undefined) {
-      switch (client.data.userId) {
-        case match.player1.userId:
+    const userSockets = this.socketService.currentActiveUsers.get(client.data.userId);
+    
+    if (!userSockets || userSockets.size === 0) {
+      const match = this.socketService.matches.find(
+        m => m.player1.userId === client.data.userId || m.player2.userId === client.data.userId);
+      if (match !== undefined) {
+        if (client.data.userId === match.player1.userId) {
           match.player1.ready = false;
-          break;
-        case match.player2.userId:
+        } else if (client.data.userId === match.player2.userId) {
           match.player2.ready = false;
-          break;
-        default:
-          break;
+        }
       }
-    }
 
-    // Remove user from queue if they were in it
-    for (let i = 0; i < this.socketService.queue.length; i++) {
-      if (this.socketService.queue[i].userId === client.data.userId) {
-        this.socketService.queue.splice(i, 1);
-        break;
+      // Remove user from queue if they were in it
+      const userIndex = this.socketService.queue.findIndex(
+        player => player.userId === client.data.userId);
+      if (userIndex !== -1) {
+        this.socketService.queue.splice(userIndex, 1);
       }
-    }
+      
+      // update user status to OFFLINE in db
+      this.socketService.goOffline(client.data.userId);
 
+      }
+      
     client.disconnect(true);
   }
 
-  /* ######################### */
-  /* ######### TEST ########## */
-  /* ######################### */
+  handleDisconnectAll(client: Socket) {
+    console.log("disconnect all sockets");
+    const userSockets = this.socketService.currentActiveUsers.get(client.data.userId);
+    if (userSockets) {
+      for (const socketId of userSockets) {
+        const socketToDisconnect = this.server.sockets.sockets.get(socketId);
+        if (socketToDisconnect) {
+          socketToDisconnect.emit('forceLogout');
+          socketToDisconnect.disconnect(true);
+          this.socketService.removeActiveSocket(client.data.userId, socketId);
+        }
+      }
+    }
+  }
+
+/* ######################### */
+/* ######### TEST ########## */
+/* ######################### */
 
   @SubscribeMessage('test-event')
   handleTestEvent(client: Socket, data: any): Promise<any> {
@@ -109,11 +120,20 @@ export class SocketsGateway
     
     // Responding to the client, you can remove this if not required
     return new Promise((resolve) => {
-        // Simulating asynchronous work
-        setTimeout(() => {
-            resolve({ event: 'test-response', data: 'Hello from server!' });
-        }, 1000);
+      // Simulating asynchronous work
+      setTimeout(() => {
+        resolve({ event: 'test-response', data: 'Hello from server!' });
+      }, 1000);
     });
+  }
+
+/* ######################### */
+/* ######## STATUS ######### */
+/* ######################### */
+
+  @SubscribeMessage('forceDisconnectAll')
+  handleForceDisconnectAll(client: Socket) {
+    this.handleDisconnectAll(client);
   }
 
   /* ######################### */

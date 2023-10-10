@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo, faPencil } from "@fortawesome/free-solid-svg-icons";
-import ChatService from "../..//api/chat-api";
+import ChatService from "../../api/chat-api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Channel, User } from "../..//api/types";
+import { Channel, User } from "../../api/types";
 import { toast } from "react-hot-toast";
 import { ChanMode } from "../..//shared/types";
 import "../../styles/Tab_Chat.css";

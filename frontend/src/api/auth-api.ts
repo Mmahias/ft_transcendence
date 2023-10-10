@@ -7,6 +7,7 @@ const AUTH_API = `/auth`;
 class AuthService {
     static async signUp(newUsername: string, password: string, newNickname: string) {
         try {
+            console.log('signup: ', newUsername, password, newNickname);
             const response = await axiosPublic.post(`${AUTH_API}/signup`, {
                 username: newUsername,
                 password: password,

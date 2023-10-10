@@ -15,7 +15,7 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
 
   useEffect(() => {
     let newSocket: Socket | null = null;
@@ -37,6 +37,33 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       }
     };
   }, [auth]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('connect_error', (error) => {
+        console.error("Connection Error:", error);
+        // FIX IT: Show a notification to the user, or handle the error in another way
+      });
+      socket.on('reconnect', () => {
+        console.log("Successfuly reconnected");
+        // FIX IT: Update any UI state to reflect the reconnected status
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off('connect_error');
+        socket.off('reconnect');
+      }
+    };
+  }, [socket]);
+
+  useEffect(() => {
+      return () => {
+          if (socket) {
+              socket.close();
+          }
+      };
+  }, [logout]);
 
   return (
     <SocketContext.Provider value={{ socket }}>

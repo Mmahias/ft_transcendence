@@ -1,22 +1,33 @@
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Channel } from "../..//api/types";
+import { Channel } from "../../api/types";
 import '../../styles/Tab_channels.css';
-import ChatService from "../..//api/chat-api";
-import UserService from "../..//api/users-api";
+import ChatService from "../../api/chat-api";
+import UserService from "../../api/users-api";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../../hooks';
 import { toast } from 'react-hot-toast';
 
 export default function ChannelMore({ channel }: { channel: Channel }) {
+
+const { auth } = useAuth();
 
   const [convName, setConvName] = useState<string>(channel.name);
   const [askForPassword, setAskForPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const queryClient = useQueryClient();
 
-  const {data, error, isLoading, isSuccess } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
+  const { data, error, isLoading, isSuccess } = useQuery(['me'], UserService.getMe, {
+    refetchOnWindowFocus: false,
+    enabled: !!auth?.accessToken ? true : false,
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        console.error('user not connected');
+      }
+    },
+  });
   
   const joinChannelRequest = useMutation({
     mutationFn: (channel: Channel) => ChatService.updateMeInChannel(channel.id, "joinedUsers", "connect"),

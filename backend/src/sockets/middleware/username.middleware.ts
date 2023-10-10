@@ -9,8 +9,6 @@ const prisma = new PrismaClient();
 export function usernameMiddleware(jwtService: JwtService) {
   return async (client: Socket, next: (err?: any) => void) => {
 
-    console.log('usernameMiddleware');
-
     // We extract the jwt from the cookies
     const jwt: string = client.handshake.auth.token;
     if (!jwt)
@@ -53,11 +51,8 @@ export function usernameMiddleware(jwtService: JwtService) {
       }
       
       // We add the username to the socket instance for identification
-      console.log('client.data: ', client.data);
       client.data.username = user.nickname;
       client.data.userId = user.id;
-      console.log('client.data: ', client.data);
-      console.log('ok ');
     } catch (error) {
       return next(new UnauthorizedException('Bad token.'));
     }

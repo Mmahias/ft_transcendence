@@ -8,12 +8,21 @@ import UserService from '../../api/users-api';
 import { Channel, User } from '../../api/types';
 import toast from 'react-hot-toast';
 import { handleRequestFromUser } from '../../sockets/sockets';
-import { useSocket } from '../../hooks';
+import { useSocket, useAuth } from '../../hooks';
 
 export function AdminOptions({ channelName, userTalking }: { channelName: string, userTalking: User}) {
+  const { auth } = useAuth();
   const [enableOptions, setEnableOptions] = useState<boolean>(false);
   const [toggleDisplay, setToggleDisplay] = useState<boolean>(false);
-  const userQuery = useQuery({ queryKey: ['user'], queryFn: UserService.getMe });
+  const userQuery = useQuery(['me'], UserService.getMe, {
+    refetchOnWindowFocus: false,
+    enabled: !!auth?.accessToken ? true : false,
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        console.error('user not connected');
+      }
+    },
+  });
   const socket = useSocket();
   const { data: channel }= useQuery({ 
     queryKey: ['channels', channelName], 

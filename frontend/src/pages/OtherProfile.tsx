@@ -2,9 +2,11 @@ import '../styles/Profile.css';
 import React from "react";
 import UserService from "../api/users-api";
 import userImage from '../assets/user2.png';
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link as RouterLink, useParams, Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../hooks";
+
 
 type RouteParams = {
   reqUsername: string;
@@ -12,23 +14,43 @@ type RouteParams = {
 
 const OtherProfile: React.FC = () => {
 
+  const { auth } = useAuth();
+
   const { reqUsername } = useParams<RouteParams>();
   const navigate = useNavigate();
-
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
+  
   if (!reqUsername) {
     navigate("/error");
     return null;
   }
 
-  const myProfileQuery = useQuery(['me'], UserService.getMe, {
+  // listening to login/logout
+  useEffect(() => {
+    console.log('isLoggedIn: ', isLoggedIn );
+    setIsLoggedIn(!!auth?.accessToken);
+  }, [auth]);
+
+  // need my name to compare with the one in the url
+  const myProfileQuery = useQuery(
+    ['me'],
+    () => {
+      console.log(' big test')
+      return UserService.getMe;
+    }, {
     refetchOnWindowFocus: false,
+    enabled: isLoggedIn ? true : false,
   });
 
+  // need the user profile to display it
   const userProfileQuery = useQuery(['user', reqUsername], 
-    () => UserService.getUserByUsername(reqUsername), 
+    () => {
+      console.log('FUCK YOUe')
+      return UserService.getUserByUsername(reqUsername);
+    }, 
     {
       refetchOnWindowFocus: false,
-      enabled: !!reqUsername
+      enabled: isLoggedIn && !!reqUsername,
     }
   );
 
