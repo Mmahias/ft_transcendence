@@ -17,7 +17,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: any) {
-    console.log("BACK JwtStrategy payload: ", payload);
     const user = await this.userService.getUserById(payload.sub);
 
     if (user.authenticationEnabled && !payload.isTwoFactorAuthenticated) return null;

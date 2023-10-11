@@ -304,6 +304,7 @@ export class ChatService {
 
   async createMessage(body: CreateMessageDto) {
     const { fromId, to, content, channelId } = body;
+    console.log('body', body);
 
     await prisma.channel.update({
       where: { id: channelId },

@@ -51,40 +51,40 @@ const Navbar: React.FC<NavbarProps> = () => {
         setSearchResults(filteredData);
       }
     }
-    );
+  );
     
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(event.target.value);
-      setSelectedUserIndex(null);
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setSelectedUserIndex(null);
+  };
+  
+  const handleSearchSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+      setSelectedUserIndex(prev => (prev === null || prev === searchResults.length - 1) ? 0 : prev + 1);
+      break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setSelectedUserIndex(prev => (prev === null || prev === 0) ? searchResults.length - 1 : prev - 1);
+      break;
+      case 'Enter':
+        if (selectedUserIndex !== null && searchResults[selectedUserIndex]?.username) {
+          handleOnClick(searchResults[selectedUserIndex].username);
+        }
+        break;
+      }
     };
     
-    const handleSearchSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      switch (event.key) {
-        case 'ArrowDown':
-          event.preventDefault();
-        setSelectedUserIndex(prev => (prev === null || prev === searchResults.length - 1) ? 0 : prev + 1);
-        break;
-        case 'ArrowUp':
-          event.preventDefault();
-          setSelectedUserIndex(prev => (prev === null || prev === 0) ? searchResults.length - 1 : prev - 1);
-        break;
-        case 'Enter':
-          if (selectedUserIndex !== null && searchResults[selectedUserIndex]?.username) {
-            handleOnClick(searchResults[selectedUserIndex].username);
-          }
-          break;
-        }
-      };
-      
-      // handle click on search bar result
-      const handleOnClick = (username: string | null | undefined) => {
-        if (!username) return; 
-        if (window.location.pathname !== `/user/profile/${username}`) {
-          setSearchResults([]);
-          setSearchTerm('');
-          navigate(`/user/profile/${username}`);
-        }
-      };
+  // handle click on search bar result
+  const handleOnClick = (username: string | null | undefined) => {
+    if (!username) return; 
+    if (window.location.pathname !== `/user/profile/${username}`) {
+      setSearchResults([]);
+      setSearchTerm('');
+      navigate(`/user/profile/${username}`);
+    }
+  };
 
   // logout function
   const handleLogout = async () => {

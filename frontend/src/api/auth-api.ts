@@ -13,7 +13,7 @@ class AuthService {
                 password: password,
                 nickname: newNickname
             });
-            console.log('signup: ', response.data);
+            console.log('signfghrtup: ', response.data);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

@@ -55,6 +55,7 @@ export class AuthController {
    */
   @Post('signup')
   async signup(@Body() body: RegisterDto) {
+    console.log('signup: ', body);
     const user = await this.userService.createUser(
       body.username,
       body.password,

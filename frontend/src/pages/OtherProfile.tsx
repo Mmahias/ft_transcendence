@@ -20,7 +20,7 @@ const OtherProfile: React.FC = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   
-  if (!reqUsername) {
+  if (!isLoggedIn || !reqUsername) {
     navigate("/error");
     return null;
   }

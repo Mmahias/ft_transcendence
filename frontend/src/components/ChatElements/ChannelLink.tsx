@@ -71,7 +71,7 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
                 if (inviteName !== '') {
                     const msg: string = sendInviteToUser(socket, mutationData?.name, inviteName, channel);
                 if (msg)
-                    createInfoMessage.mutate([mutationData?.name, msg]);
+                    createInfoMessage.mutate([mutationData?.id, msg]);
                 }
             }
         },
@@ -83,7 +83,7 @@ export default function ChannelLink({ channel }: { channel: Channel }) {
 
 
   const createInfoMessage = useMutation({
-    mutationFn: ([channel, message]: string[]) => ChatService.newMessage(channel, message),
+    mutationFn: ([channelId, message]: [number, string]) => ChatService.newMessage(channelId, message),
     onSuccess: () => {
       queryClient.invalidateQueries(['channels']);
     },

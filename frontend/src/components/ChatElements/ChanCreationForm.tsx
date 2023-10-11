@@ -6,12 +6,14 @@ import ChatService from '../../api/chat-api';
 import { useSocket } from '../../hooks';
 import { sendNotificationToServer } from '../../sockets/sockets';
 import { ChanMode } from '../../shared/types';
+import Chat from 'pages/Chat';
 
 export default function ChanCreationForm() {
   // State
   const [channelMode, setChannelMode] = useState<ChanMode>(ChanMode.PUBLIC);
   const [channelPassword, setChannelPassword] = useState<string>('');
   const [channelName, setChannelName] = useState<string>('');
+  const [channelId, setChannelId] = useState<number>();
   
   const socket = useSocket();
   const queryClient = useQueryClient();
@@ -29,7 +31,7 @@ export default function ChanCreationForm() {
     event.preventDefault();
     createChannelRequest.mutate();
     if (socket) {
-      sendNotificationToServer(socket, 'join lobby', channelName);
+      sendNotificationToServer(socket, 'joinRoom', String(channelId));
     }
   };
 

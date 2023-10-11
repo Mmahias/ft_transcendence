@@ -127,9 +127,9 @@ export class SocketsGateway
     });
   }
 
-/* ######################### */
-/* ######## STATUS ######### */
-/* ######################### */
+  /* ######################### */
+  /* ######## STATUS ######### */
+  /* ######################### */
 
   @SubscribeMessage('forceDisconnectAll')
   handleForceDisconnectAll(client: Socket) {
@@ -140,10 +140,10 @@ export class SocketsGateway
   /* ######### CHAT ########## */
   /* ######################### */
 
-  @SubscribeMessage('join lobby')
-  async handleLobbyCreation(client: Socket, payload: string): Promise<void> {
-    const room = payload;
-    client.join(room);
+  @SubscribeMessage('joinRoom')
+  async handleJoinRoom(client: Socket, payload: string): Promise<void> {
+      const room = payload;
+      client.join(room);
   }
 
   /**

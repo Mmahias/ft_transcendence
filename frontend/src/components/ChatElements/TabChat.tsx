@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import '../../styles/Tab_Chat.css';
 import { ChatStatusContext } from '../../contexts';
 import { useSocket } from '../../hooks';
@@ -11,32 +11,34 @@ import toast from 'react-hot-toast';
 
 function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 
+  const socket = useSocket();
+  const queryClient = useQueryClient();
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const { setActiveTab, setActiveChan } = useContext(ChatStatusContext);
-  // const { isMuted, setIsMuted, muteExpiration, setMuteExpiration } = useContext(MuteContext);
-  const socket = useSocket();
-  const queryClient = useQueryClient();
+  const socketRef = useRef(socket);
 
   // obligée de requery le chan pour avoir ses MàJs....
-  const { data: channel } = useQuery({ 
-    queryKey: ['channels', conv.name], 
-    queryFn: () => ChatService.getChannelByName(conv.name) 
+  const { data: channel } = useQuery({
+    queryKey: ['channels', conv.id],
+    queryFn: () => ChatService.getChannelById(conv.id)
   });
 
-  // Queries pour récupérer les messages du channel, ou pour créer un message
+  // post a new message
   const { mutate } = useMutation({
-    mutationFn: (message: string) => ChatService.newMessage(conv.name, message),
+    mutationFn: (message: string) => ChatService.newMessage(conv.id, message),
     onSuccess: () => {
       queryClient.invalidateQueries(['channels']);
     },
     onError: () => toast.error('Message not sent: retry')
   });
+
+  // gets all channels messages
   const { data } = useQuery({
     queryKey: ['messages', conv.id],
     queryFn: () => ChatService.getAllMessages(conv.id),
-    refetchInterval: 100,
   });
 
   const leaveChannelRequest = useMutation({
@@ -47,7 +49,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     onError: () => { toast.error(`Error : someone tried to make you quit the channel but cannot`) }
   });
 
-  // A l'arrivée sur le chat, faire défiler les messages jusqu'aux plus récents (bas de la fenêtre)
+  // scroll to bottom of messages when you get on chat
   useEffect(() => {
     const scroll = document.getElementById("convo__messages");
     if (scroll) {
@@ -100,28 +102,28 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   const sendMessage = (message: string) => {
     const payload: string = "/msg  " + conv?.name + "  " + message;
     
-    if (socket) {
-      socket.emit('Chat', payload);
+    if (socketRef) {
+      socketRef.current?.emit('Chat', payload);
       setInputValue('');
-  }
+    }
   };
 
   // Si la connexion est assurée, récupère tous les messages qui nous sont envoyés
   useEffect(() => {
-    if (socket) {
-      /* Listen tous les messages de l'event receiveMessage */
-      socket.on('receiveMessage', (message: Message) => {
-        if (data) {
-          
-          setMessages([...data, message]);
-        }
-      });
+    socketRef.current?.on('receiveMessage', (message: Message) => {
+      console.log("Received message from:", message.from, "Logged in as:", loggedUser.nickname);
+      setMessages(prevMessages => [...prevMessages, message]);
+    });
 
-      return () => {
-      socket.off('receiveMessage');
-      };
-    }
-  }, [socket, mutate, data]);
+    return () => {
+      socketRef.current?.off('receiveMessage');
+    };
+  }, [socketRef, mutate, data]);
+
+  // listening to socket change to limit React re renders
+  useEffect(() => {
+    socketRef.current = socket; // always keep the ref updated
+  }, [socket]);
 
   // Quand on appuie sur entrée, créé un Message avec nos données et l'envoie
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>, message: string) => {

@@ -53,7 +53,7 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
     setToggleDisplay(!toggleDisplay);
   }
   const createInfoMessage = useMutation({
-    mutationFn: ([channel, message]: string[]) => ChatService.newMessage(channel, message),
+    mutationFn: ([channel, message]: [number, string]) => ChatService.newMessage(channel, message),
     onSuccess: () => {
       queryClient.invalidateQueries(['channels']);
     },
@@ -65,7 +65,7 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
       const msg: string = handleRequestFromUser(socket, group, action, channelName, userTalking.nickname);
       if (channel && msg.trim())
       {
-        createInfoMessage.mutate([channel.name, msg]);
+        createInfoMessage.mutate([channel.id, msg]);
       }
     }
   };

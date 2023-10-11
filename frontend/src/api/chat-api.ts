@@ -161,17 +161,17 @@ class ChatService {
    * @param channelId channel id
    * @returns message object
    */
-  static async newMessage(channelName: string, content: string): Promise<Message> {
+  static async newMessage(channelId: number, content: string): Promise<Message> {
 
     try {
-      const id: number = await ChatService.getChannelByName(channelName).then((chan) => chan.id);
+      const channel: Channel = await ChatService.getChannelById(channelId);
       const user: User = await UserService.getMe();
       const response = await axiosPrivate.post(`${CHAT_API}/message`,
         {
           fromId: user.id,
-          to: channelName,
+          to: channel.name,
           content: content,
-          channelId: id
+          channelId: channelId
         },
         {
           headers: {

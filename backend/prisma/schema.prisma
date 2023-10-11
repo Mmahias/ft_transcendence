@@ -85,7 +85,7 @@ model Message {
   fromId    Int
   to        String // channel name OR username if DM
   content   String
-  channel   Channel  @relation(fields: [channelId], references: [id], name: "messages")
+  channel   Channel  @relation(fields: [channelId], references: [id], name: "messages", onDelete: Cascade)
   channelId Int
 
   @@map("messages")

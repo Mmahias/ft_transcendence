@@ -2,15 +2,16 @@ import React from "react";
 import '../styles/Profile.css';
 import { useEffect, useState } from "react";
 import userImage from '../assets/user2.png'
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import UserService from "../api/users-api";
 import AuthService from "../api/auth-api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
 
 const MyProfile: React.FC = () => {
-
+  
   const { auth } = useAuth();
+  const navigate = useNavigate();
 
   const [userName, setUserName] = useState<string>('');
   const [userStatus, setUserStatus] = useState<string>('');
@@ -35,6 +36,11 @@ const MyProfile: React.FC = () => {
       }
     }
   });
+
+  if (!isLoggedIn) {
+    navigate("/error");
+    return null;
+  }
 
   // listening to login/logout
   useEffect(() => {

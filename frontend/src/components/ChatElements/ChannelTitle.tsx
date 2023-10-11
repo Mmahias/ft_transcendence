@@ -43,7 +43,7 @@ export function ChannelTitle({ conv, initialName } : { conv: Channel, initialNam
     if (conv.ownerId === user.id) {
       setIsEditing(true);
     }
-    };
+  };
 
   const handleInputBlur = () => {
     setIsEditing(false);
@@ -53,6 +53,7 @@ export function ChannelTitle({ conv, initialName } : { conv: Channel, initialNam
   };
 
   const handleInputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
     if (event.key === "Enter" && newTitle !== initialName && newTitle !== '') {
       setIsEditing(false);
       updateChannel.mutate(newTitle);
@@ -74,7 +75,7 @@ export function ChannelTitle({ conv, initialName } : { conv: Channel, initialNam
           {newTitle}
           {
             conv.ownerId === user.id && 
-            <FontAwesomeIcon icon={faPencil} />
+            <FontAwesomeIcon icon={faPencil} style={{ cursor: "pointer" }}/>
           } 
         </h1>
         
