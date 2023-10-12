@@ -4,10 +4,11 @@
 
 body {
   margin: 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif; /* Set "Helvetica Neue" as primary font */
+  font-family: Arial, sans-serif;
   color: black;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);  /* Added this line */
 }
 
 code {
@@ -16,8 +17,5 @@ code {
 }
 
 :root {
-    --primary-color: #282c34;
-    --secondary-color: #61dafb;
-    --background-color: #505050;
-    --footer-color: #1e1e1e;
+    --background-color: #1f2833;
   }

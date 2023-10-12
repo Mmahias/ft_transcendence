@@ -11,6 +11,9 @@ export default ({ mode }) => {
     plugins: [react()],
     server: {
       host: '0.0.0.0',
+      watch: {
+        usePolling: true,
+      },
       // Use process.env for accessing environment variables.
       port: Number(env.VITE_FRONTEND_PORT),
       proxy: {
