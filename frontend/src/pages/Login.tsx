@@ -18,6 +18,18 @@ const Login = () => {
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
+  
+  const [rightPanelActive, setRightPanelActive] = useState(false);
+
+  const switchToSignIn = () => {
+    setRightPanelActive(false);
+  }
+  
+  const switchToSignUp = () => {
+    setRightPanelActive(true);
+  }
+  
+
 
   const validateUsername = (value: string): string | null => {
     if (!value) return "Username is required";
@@ -106,96 +118,72 @@ const Login = () => {
         setErrorMsg("Wrong nickname or password");
       }
     }
+
   }
 
   return (
-    <div className='sign-log-container'>
-      <h1 style={{ justifyContent: "center", marginTop: "100px" }}><span className="profile-p">LogIn / SignUp</span></h1>
-      <div className="login-container">
-        <input type="checkbox" id="chk" />
-        <div className="signup">
-          <form>
-            <label htmlFor="chk">LogIn</label>
-            <input
-              onChange={(event) => {
-                setUsername(event.target.value);
-                setUsernameError(validateUsername(event.target.value));
-              }}
-              type="text"
-              placeholder="Username"
-              id="username"
-            />
+    <div className="login-page">
+      <div className={`container ${rightPanelActive ? 'right-panel-active' : ''}`} id="container">
+        <div className="form-container sign-up-container">
+          <form action="#">
+            <h1>Create Account</h1>
+            <input type="text" placeholder="Username" id="username" onChange={(event) => {
+              setUsername(event.target.value);
+              setUsernameError(validateUsername(event.target.value));
+            }} />
             {usernameError && <small className="error-message">{usernameError}</small>}
-            <input
-              onChange={(event) => {
-                setPassword(event.target.value);
-                setPasswordError(validatePassword(event.target.value));
-              }}
-              type="password"
-              placeholder="Password"
-              id="password"
-            />
+            <input type="password" placeholder="Password" id="password" onChange={(event) => {
+              setPassword(event.target.value);
+              setPasswordError(validatePassword(event.target.value));
+            }} />
             {passwordError && <small className="error-message">{passwordError}</small>}
-            {successMsg &&
-              <div className='success-message'>
-                <h6>{successMsg}</h6>
-              </div>
-            }
-            <button
-              className='button-log'
-              onClick={handleLogin}
-              disabled={!!(usernameError || passwordError)}>
-              Login
-            </button>
-          </form>
-          <button className='button-log'><a href={import.meta.env.VITE_URL_42}>Log with 42</a></button>
-        </div>
-        <div className="login">
-          <form>
-            <label htmlFor="chk">SignUp</label>
-            <input
-              onChange={(event) => {
-                setUsername(event.target.value);
-                setUsernameError(validateLoginUsername(event.target.value));
-              }}
-              type="text"
-              placeholder="Username"
-              id="username"
-            />
-            {usernameError && <small className="error-message">{usernameError}</small>}
-
-            <input
-              onChange={(event) => {
-                setPassword(event.target.value);
-                setPasswordError(validateLoginPassword(event.target.value));
-              }}
-              type="password"
-              placeholder="Password"
-              id="password"
-            />
-            {passwordError && <small className="error-message">{passwordError}</small>}
-            <input
-              onChange={(event) => {
-                setNickname(event.target.value);
-                setNicknameError(validateNickname(event.target.value));
-              }}
-              type="text"
-              placeholder="nickname"
-              id="nickname"
-            />
+            <input type="text" placeholder="Nickname" id="nickname" onChange={(event) => {
+              setNickname(event.target.value);
+              setNicknameError(validateNickname(event.target.value));
+            }} />
             {nicknameError && <small className="error-message">{nicknameError}</small>}
             {successMsg &&
               <div className='success-message'>
                 <h6>{successMsg}</h6>
               </div>
             }
-            <button
-              className='button-log'
-              onClick={handleSignUp}
-              disabled={!!(usernameError || passwordError || nicknameError)}>
-              Sign up
-            </button>
+            <button onClick={handleSignUp} disabled={!!(usernameError || passwordError || nicknameError)}>Sign Up</button>
           </form>
+        </div>
+        <div className="form-container sign-in-container">
+          <form action="#">
+            <h1>Log In</h1>
+            <input type="text" placeholder="Username" id="username" onChange={(event) => {
+              setUsername(event.target.value);
+              setUsernameError(validateUsername(event.target.value));
+            }} />
+            {usernameError && <small className="error-message">{usernameError}</small>}
+            <input type="password" placeholder="Password" id="password" onChange={(event) => {
+              setPassword(event.target.value);
+              setPasswordError(validatePassword(event.target.value));
+            }} />
+            {passwordError && <small className="error-message">{passwordError}</small>}
+            {successMsg &&
+              <div className='success-message'>
+                <h6>{successMsg}</h6>
+              </div>
+            }
+            <button onClick={handleLogin} disabled={!!(usernameError || passwordError)}>Log In</button>
+          </form>
+        </div>
+        <div className="overlay-container">
+          <div className="overlay">
+            <div className="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>To keep connected with us please login with your personal info</p>
+              <button className="ghost" id="signIn" onClick={switchToSignIn}>Log In</button>
+            </div>
+            <div className="overlay-panel overlay-right">
+              <h1>Hello, Friend!</h1>
+              <p>Enter your personal details and start journey with us</p>
+              <button className="ghost" id="signUp" onClick={switchToSignUp}>Sign Up</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

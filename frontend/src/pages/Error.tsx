@@ -1,31 +1,33 @@
-import React from 'react';
-import '../styles/Error.style.css'
+import React, { useEffect, useRef } from 'react';
+import '../styles/Error.css'
 
 const Error: React.FC = () => {
     return (
-    <section className="page_404">
-            <h1 style={{justifyContent: "center", marginTop: "100px"}}><span className="profile-p">ERROR 404</span></h1>
-            <div className="container">
-                <div className="row">
-                    <div className="col-sm-12 ">
-                        <div className="text-center">
-                            <div className="four_zero_four_bg">
-                                {/* <h1 className="text-center ">404</h1> */}
-                            </div>
-                            <div className="contant_box_404">
-                                <h3 className="h2">
-                                    Look like you're lost
-                                </h3>
-                                <p style={{fontSize: '20px'}}>the page you are looking for is not available!</p>
-                            </div>
-                        </div>
-                    </div>
+        <div className='error-page'>
+            <div className="stars">
+                <div className="central-body">
+                    <img className="image-404" src="http://salehriaz.com/404Page/img/404.svg" width="300px" />
+                        <a href="/" className="btn-go-home">GO BACK HOME</a>
                 </div>
-                <div style={{marginTop: '15%', alignContent: 'center', marginLeft: '30%'}}>
-                <a href="" className="button-32">Go to Home</a>
+                <div className="objects">
+                    <img className="object_rocket" src="http://salehriaz.com/404Page/img/rocket.svg" width="40px" />
+                        <div className="earth-moon">
+                            <img className="object_earth" src="http://salehriaz.com/404Page/img/earth.svg" width="100px" />
+                                <img className="object_moon" src="http://salehriaz.com/404Page/img/moon.svg" width="80px" />
+                                </div>
+                                <div className="box_astronaut">
+                                    <img className="object_astronaut" src="http://salehriaz.com/404Page/img/astronaut.svg" width="140px" />
+                                </div>
+                        </div>
+                        <div className="glowing_stars">
+                            <div className="star"></div>
+                            <div className="star"></div>
+                            <div className="star"></div>
+                            <div className="star"></div>
+                            <div className="star"></div>
+                        </div>
                 </div>
             </div>
-        </section>
     );
 }
 

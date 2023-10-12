@@ -4,11 +4,11 @@
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: black;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color);  /* Added this line */
+  background-color: var(--background-color);
 }
 
 code {
@@ -17,5 +17,5 @@ code {
 }
 
 :root {
-    --background-color: #1f2833;
+    --background-color: #17252a;
   }

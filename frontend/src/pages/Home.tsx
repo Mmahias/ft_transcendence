@@ -8,6 +8,7 @@ import { AuthState, isAuthAvailable } from '../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";
 import UserService from '../api/users-api'
 
+
 export const Log42: React.FC = () => {
   const log = {
     client_id: CLIENT_ID,
@@ -84,14 +85,19 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
-      <h1><span className="home-span" >FT_TRANSCENDENCE</span></h1>
+      <h1 className="home-title" data-shadow='FT_TRANSCENDENCE'>FT_TRANSCENDENCE</h1>
       {isLoggedIn ? (
         <>
-        <p className='welcome-home'>Welcome to our transcendence</p>
+        <div className="wlcm-container">
+          <div className='wlcm-div'>
+            <p className='wlcm-msg'>Welcome to our transcendence</p>
+          </div>
+        </div>
         </>
       ) : (
-        <div className='button-home-container'>
-        <RouterLink to='/login'><button className="button-52">SignUp/Login</button></RouterLink>
+        <div className="home-btn-container">
+        <RouterLink to='/login'><button className="home-btn">SignUp/Login</button></RouterLink>
+        
       </div>
       )}
       <div className='button-test'>
