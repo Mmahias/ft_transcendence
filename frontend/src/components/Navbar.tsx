@@ -125,12 +125,11 @@ const Navbar: React.FC<NavbarProps> = () => {
   return (
     <>
       <nav className="navbar-container">
-      <img className="logo" src={logo} alt="App Logo" />
+        <a href="/">
+          <img className="logo" src={logo} alt="App Logo" />
+        </a>
 
       <div className="links-container">
-        <Link to="/" className="router-link">HOME</Link>
-        <Link to="/game" className="router-link">GAME</Link>
-        <Link to="/chat" className="router-link">CHAT</Link>
         {isLoggedIn && (
           <div className="searchBar">
             <input
@@ -188,6 +187,8 @@ const Navbar: React.FC<NavbarProps> = () => {
             {isLoggedIn ? (
               <>
                 <Link to="/user/profile" className="router-link">PROFILE</Link>
+                <Link to="/game" className="router-link">GAME</Link>
+                <Link to="/chat" className="router-link">CHAT</Link>
                 <Link to="/" onClick={handleLogout} className="router-link">LOGOUT</Link>
               </>
             ) : (

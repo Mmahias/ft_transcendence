@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-
-:root {
-  --background-color: #282c34;
-}
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap");
 
 .home-container {
   display: flex;
@@ -12,121 +9,144 @@
   height: 100vh;
 }
 
-h1 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.home-span {
-  font-family: 'Bebas Neue', cursive;
-  color: black;
-  font-size: 3em; /* Taille de police réduite pour les écrans plus petits */
+.home-title {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  color: #def2f1;
+  font-size: 7em;
   position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-image: linear-gradient(gold, gold);
-  background-size: 100% 10px;
-  background-repeat: no-repeat;
-  background-position: 100% 0%;
-  transition: background-size .7s, background-position .5s ease-in-out;
-}
-
-.span:hover {
-  background-size: 100% 100%;
-  background-position: 0% 100%;
-  transition: background-position .7s, background-size .5s ease-in-out;
-}
-
-
-.welcome-home {
+  top: 30%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 100px;
-  font-size: 25px;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
-  background: linear-gradient(90deg, #000, rgb(245, 210, 13), #000);
+  text-shadow: .03em .03em 0 #3aafa9;
+}
+
+.home-title:after {
+  content: attr(data-shadow);
+  position: absolute;
+  top: .06em;
+  left: .06em;
+  z-index: -1;
+  text-shadow: none;
+  background-image:
+    linear-gradient(45deg,
+      transparent 50%,
+      hsla(48, 20%, 90%, 1) 45%,
+      hsla(48, 20%, 90%, 1) 55%,
+      transparent 0);
+  background-size: .05em .05em;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-repeat: no-repeat;
-  background-size: 80%;
-  animation: shine 5s linear infinite;
-  position: relative;
+  animation: shad-anim 15s linear infinite;
 }
 
-@keyframes shine {
+/* WELCOME MSG */
+
+.wlcm-container {
+  font-size: 2rem;
+}
+.wlcm-div {
+  padding: 2rem 1rem;
+  width: auto;
+  margin: auto;
+}
+.wlcm-msg {
+  font-weight: bold;
+  color: #3aafa9;
+  width: 27ch;
+  border-right: 4px solid #2b7A78;
+  margin: 2rem auto;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 2s steps(13, end), blink-caret 0.5s step-end infinite alternate;
+}
+
+/* BUTTON HOME */
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+		-webkit-tap-highlight-color: transparent;
+}
+
+.home-btn-container {
+  margin-top: 10%;
+}
+
+.home-btn {
+	width: 150px;
+	height: 60px;
+	cursor: pointer;
+	font-size: 20px;
+	font-weight: bold;
+	color: #3aafa9;
+	border: 2px solid #3aafa9;
+	box-shadow: 5px 5px 0 #3aafa9,
+		-5px -5px 0 #3aafa9,
+		-5px 5px 0 #3aafa9,
+		5px -5px 0 #3aafa9;
+	transition: 500ms ease-in-out;
+  margin-bottom: 20%;
+}
+
+.home-btn:hover {
+	box-shadow: 20px 5px 0 #2b7A78, -20px -5px 0 #2b7A78;
+}
+
+.home-btn:focus {
+	outline: none;
+}
+
+
+/* KEYFRAMES */
+
+@keyframes animate {
   0% {
-    background-position-x: -500%;
+    background-position-y: 0;
   }
-
   100% {
-    background-position-x: 500%;
-  }
-}
-
-/* Média query pour les écrans plus petits */
-@media screen and (max-width: 768px) {
-  span {
-      font-size: 2em; /* Ajustez la taille de la police pour les écrans plus petits */
+    background-position-y: -480px;
   }
 }
 
 
-
-/* CSS */
-
-.button-home-container {
-  margin-top: 200px;
-  display: flex;
-  justify-content: center; /* Centrez les boutons horizontalement */
-  gap: 20px; /* Ajoutez de l'espace entre les boutons (vous pouvez ajuster la valeur selon vos besoins) */
-  flex-wrap: wrap; /* Permet aux boutons de passer à la ligne lorsque l'espace est insuffisant */
+@keyframes shad-anim {
+  0% {background-position: 0 0}
+  0% {background-position: 100% -100%}
 }
 
-
-.button-52 {
-  font-size: 16px;
-  font-weight: 200;
-  letter-spacing: 1px;
-  padding: 13px 20px 13px;
-  outline: 0;
-  border: 1px solid black;
-  cursor: pointer;
-  position: relative;
-  background-color: rgba(8, 8, 8, 0);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+@keyframes typing {
+  from {
+      width: 0;
+  }
+}
+@keyframes blink-caret {
+  50% {
+      border-color: transparent;
+  }
 }
 
-.button-52:after {
-  content: "";
-  background-color: gold;
-  width: 100%;
-  z-index: -1;
-  position: absolute;
-  height: 100%;
-  top: 7px;
-  left: 7px;
-  transition: 0.2s;
+/* MEDIA (RESPONSIVE) */
+
+@media (min-width: 1025px) and (max-width: 1300px) {
+  .home-title {
+    font-size: 6em;
+  }
 }
 
-.button-52:hover:after {
-  top: 0px;
-  left: 0px;
+@media (min-width: 768px) and (max-width: 1024px) {
+  .home-title {
+    font-size: 4em;
+  }
 }
 
-.button-test {
-  margin-top: 100px;
-}
-
-@media (min-width: 768px) {
-  .button-52 {
-    padding: 13px 50px 13px;
+@media (min-width: 480px) and (max-width: 767px) {
+  .home-title {
+    font-size: 3em;
   }
 }

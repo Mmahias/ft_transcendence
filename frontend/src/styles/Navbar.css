@@ -25,9 +25,9 @@
 
 .router-link {
     color: white;
-    font-family: 'Bebas Neue', cursive;
+    font-family: "Montserrat", sans-serif;
     font-weight: bold;
-    font-size: 25px;
+    font-size: 20px;
     cursor: pointer;
     transition: color 0.2s ease;
     text-decoration: none;
@@ -35,7 +35,7 @@
 }
 
 .router-link:hover {
-    color:gold;
+    color: #3aafa9;
 }
 
 .logo {
@@ -47,7 +47,7 @@
 .dropbtn {
     background-color: transparent;
     color: white;
-    font-family: 'Bebas Neue', cursive;
+    font-family: "Montserrat", sans-serif;
     font-weight: bold;
     font-size: 25px;
     cursor: pointer; /* Ajout de cette ligne */
@@ -58,7 +58,7 @@
 }
 
 .dropbtn:hover {
-    color: gold;
+    color: #3aafa9;
 }
 
 /* Style pour le menu déroulant */
