@@ -12,6 +12,7 @@ class SocketService {
    */
   static sendNotificationToServer(socket: Socket | null, event: string, payload: string) {
     if (socket) {
+      console.log("sendNotificationToServer: ", event, payload)
       socket.emit(event, payload);
     }
   };
@@ -28,32 +29,33 @@ class SocketService {
       case "bannedUsers":
         role = "/ban";
         info = (action === "connect") ?
-          `#INFO# ${userTalking} was banned.`
-          : `#INFO# ${userTalking} was unbanned.`
+          `#INFO# ${channelId} ${userTalking} was banned.`
+          : `#INFO# ${channelId} ${userTalking} was unbanned.`
         break;
       case "kickedUsers":
         role = "/kick";
         info = (action === "connect") ?
-          `#INFO# ${userTalking} was kicked.`
-          : `#INFO# ${userTalking} was unkicked.`
+          `#INFO# ${channelId} ${userTalking} was kicked.`
+          : `#INFO# ${channelId} ${userTalking} was unkicked.`
         break;
       case "mutedUsers":
         role = "/mute";
         info = (action === "connect") ?
-          `#INFO# ${userTalking} was muted.`
-          : `#INFO# ${userTalking} was unmuted.`
+          `#INFO# ${channelId} ${userTalking} was muted.`
+          : `#INFO# ${channelId} ${userTalking} was unmuted.`
         break;
-      case "admin":
+      case "adminUsers":
         role = "/admin";
         info = (action === "connect") ?
-          `#INFO# ${userTalking} is now admin.`
-          : `#INFO# ${userTalking} is not an Admin anymore.`
+          `#INFO# ${channelId} ${userTalking} is now admin.`
+          : `#INFO# ${channelId} ${userTalking} is not admin anymore.`
         break;
       default:
         role = "/msg";
-        info = `#INFO# ${userTalking} is quoted.`
+        info = `#INFO# ${channelId} ${userTalking} is quoted.`
     }
     const payload: string = role + "***" + channelId + "***" + userTalking;
+    console.log("payload: ", payload);
 
     this.sendNotificationToServer(socket, 'Chat', payload);
     return (info);

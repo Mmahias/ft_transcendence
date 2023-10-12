@@ -19,7 +19,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   const [inputValue, setInputValue] = useState<string>('');
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
-  const socketRef = useRef(socket);
+  const socketRef = useRef(useSocket());
 
   // Fetch channel details
   const { data: channel } = useQuery({
@@ -66,8 +66,8 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   // Listen for new messages
   useEffect(() => {
     socketRef.current?.on('newMessage', () => {
-      console.log('new message');
-      queryClient.invalidateQueries(['channelMessages']);
+      console.log('Received new message');
+      queryClient.invalidateQueries([channelMessages, 'channelMessages']);
     });
     scrollToBottom();
     

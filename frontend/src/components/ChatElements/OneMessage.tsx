@@ -80,7 +80,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
   if (message.content.startsWith('#INFO# ') === true) {
 
     const content = message.content.replace('#INFO# ', '');
-    const channelId: string = content.slice(content.lastIndexOf(' ') + 1, content.indexOf('.'));
+    const channelId = content.split(' ')[0];
     const censoredContent = content.replace(channelId, '');
     if (content.includes(" been invited to the channel") && isMe === true) {
       return (

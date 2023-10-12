@@ -172,16 +172,15 @@ export class SocketsGateway
         content: msgToTransfer,
       };
       this.server.to(room).emit('newMessage', message);
-      // client.emit('newMessage', message);
     }
-    if (action === '/mute' || action === '/kick' || action === '/ban' || action === '/admin' || action === '/invite') {
+    else if (action === '/mute' || action === '/kick' || action === '/ban' || action === '/admin' || action === '/invite') {
       const message = {
         date: new Date(),
         from: client.data.username,
         fromId: client.data.userId,
         content: `${action}  ${msgToTransfer}`,
       };
-      this.server.to(room).emit('receiveMessage', message);
+      this.server.to(room).emit('newMessage', message);
     }
   }
 }

@@ -16,6 +16,8 @@ export function AdminOptions({ channelId, userTalking }: { channelId: number, us
   const socket = useSocket();
   const queryClient = useQueryClient();
 
+  const [payload, setPayload] = useState<string>("");
+
   const [enableOptions, setEnableOptions] = useState<boolean>(false);
   const [toggleDisplay, setToggleDisplay] = useState<boolean>(false);
 
@@ -63,17 +65,19 @@ export function AdminOptions({ channelId, userTalking }: { channelId: number, us
 
   const createInfoMessage = useMutation({
     mutationFn: ([channelId, message]: [number, string]) => ChatService.newMessage(channelId, message),
-    onSuccess: () => queryClient.invalidateQueries(['channels']),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['channelMessages']);
+      SocketService.sendNotificationToServer(socket, 'Chat', payload);
+    },
     onError: () => toast.error('Message not sent: retry'),
   });
 
   const sendInfo = (group: string, action: string) => {
     if (socket) {
-      const msg: string = SocketService.handleRequestFromUser(socket, group, action, channelId, userTalking.nickname);
-      console.log(msg);
-      if (channel && msg.trim())
+      setPayload(SocketService.handleRequestFromUser(socket, group, action, channelId, userTalking.nickname));
+      if (channel && payload.trim())
       {
-        createInfoMessage.mutate([channel.id, msg]);
+        createInfoMessage.mutate([channel.id, payload]);
       }
     }
   };
