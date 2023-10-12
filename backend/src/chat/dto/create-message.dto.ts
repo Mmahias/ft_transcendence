@@ -16,6 +16,10 @@ export class CreateMessageDto {
 
   @IsNotEmpty()
   @IsString()
+  fromUsername: string;
+
+  @IsNotEmpty()
+  @IsString()
   to: string;
 
   @IsNotEmpty()

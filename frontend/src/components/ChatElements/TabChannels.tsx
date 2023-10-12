@@ -44,7 +44,7 @@ const TabChannels: React.FC = () => {
 
   const handleChannelClick = (channel: Channel) => {
     if (socket && channel.name) {
-      sendNotificationToServer(socket, 'join lobby', channel.name);
+      sendNotificationToServer(socket, 'joinRoom', String(channel.id));
     }
     setActiveChan(channel);
     setActiveTab(1);

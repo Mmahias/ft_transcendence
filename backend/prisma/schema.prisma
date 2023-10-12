@@ -79,14 +79,15 @@ model Channel {
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  date      DateTime @default(now())
-  from      User     @relation(fields: [fromId], references: [id], name: "messages")
-  fromId    Int
-  to        String // channel name OR username if DM
-  content   String
-  channel   Channel  @relation(fields: [channelId], references: [id], name: "messages", onDelete: Cascade)
-  channelId Int
+  id           Int      @id @default(autoincrement())
+  date         DateTime @default(now())
+  from         User     @relation(fields: [fromId], references: [id], name: "messages")
+  fromId       Int
+  fromUsername String
+  to           String // channel name OR username if DM
+  content      String
+  channel      Channel  @relation(fields: [channelId], references: [id], name: "messages", onDelete: Cascade)
+  channelId    Int
 
   @@map("messages")
 }

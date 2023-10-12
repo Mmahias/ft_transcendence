@@ -30,17 +30,22 @@ export default function ChanCreationForm() {
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     createChannelRequest.mutate();
-    if (socket) {
-      sendNotificationToServer(socket, 'joinRoom', String(channelId));
-    }
-  };
+};
 
   // Mutation for creating a channel
   const createChannelRequest = useMutation({
     mutationFn: () => ChatService.createChannel(channelName, channelMode, channelPassword),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries(['channels']);
       toast.success(`Your channel ${channelName} was successfully created!`);
+      
+      const channel = await ChatService.getChannelByName(channelName);
+      console.log("Fetched channel:", channel);
+      if (socket && channel.id) {
+        sendNotificationToServer(socket, 'joinRoom', String(channel.id));
+      }
+      console.log('channel.id', channel.id);
+      setChannelId(channel.id);
     },
     onError: () => {
       toast.error('Error during creation of channel');

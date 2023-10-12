@@ -44,14 +44,15 @@ export interface Channel {
 }
 
 export interface Message {
-  id:        number;
-  channelId: number;
-  fromId:    number;
-  to:        number;
-  date:      Date;
-  from:      User;
-  content:   string;
-  channel:   Channel;
+  id:           number;
+  fromId:       number;
+  fromUsername: string;
+  channelId:    number;
+  to:           number;
+  date:         Date;
+  from:         User;
+  content:      string;
+  channel:      Channel;
 }
 
 export interface Achievement {

@@ -17,6 +17,14 @@
   position: relative;
 }
 
+.convo__bottom {
+  width: 100%;
+  background-color: black;
+  border: black solid;
+  padding: 1em;
+  height: 10vh;
+}
+
 .convo__header {
   border: solid black;
   background-color: white;
@@ -67,16 +75,6 @@
     font-weight: 400;
     font-size: 2.3;
     color: black;
-}
-
-.convo__bottom {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  background-color: black;
-  border: black solid;
-  padding: 1em;
-  height: 10vh;
 }
 
 #convo_send-btn {
@@ -135,7 +133,7 @@
 }
 
 /* ********************************/
-/* ***   OneMessage COMPONENT   ***/
+/* ***    COMPONENT   ***/
 /* ********************************/
 
 .one__msg {

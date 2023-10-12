@@ -32,7 +32,6 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
   
   useEffect(() => {
     if (channel) {
-      console.log("CHAN HGDJKD", channel);
       const isAdmin = channel.adminUsers.filter((admin) => admin.nickname === userQuery.data?.nickname);
       const isTargetStillInChan = channel.joinedUsers.some((member) => member.nickname === userTalking.nickname);
       if (isAdmin.length > 0 && isTargetStillInChan === true) {

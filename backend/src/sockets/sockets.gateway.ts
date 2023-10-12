@@ -142,8 +142,13 @@ export class SocketsGateway
 
   @SubscribeMessage('joinRoom')
   async handleJoinRoom(client: Socket, payload: string): Promise<void> {
-      const room = payload;
-      client.join(room);
+    const room = payload;
+    console.log("JOIN ROOM")
+    const rooms = client.rooms;  // This should give you a Set of room IDs the client is in
+    if (!rooms.has(room)) {
+      client.leave(room);
+    }
+    client.join(room);
   }
 
   /**
@@ -152,21 +157,25 @@ export class SocketsGateway
    * @param payload `<roomName> <messageToTransfer>`. Exemple: "RockLovers Hello comment ça va?"
    */
   @SubscribeMessage('Chat')
-  async handleSendMessage(client: Socket, payload: string): Promise<void> {
-    const splitStr: string[] = payload.split('  ');
+  async handleMessage(client: Socket, payload: string): Promise<void> {
+    const splitStr: string[] = payload.split('***');
 
     const action = splitStr[0];
     const room = splitStr[1];
     const msgToTransfer = splitStr[2];
-
+    // console.log('action', action, '\nroom', room, '\nmsgToTransfer', msgToTransfer);
     if (action === "/msg") {
       const message = {
         date: new Date(),
         from: client.data.username,
         fromId: client.data.userId,
+        fromUsername: client.data.username,
+        avatar: client.data.avatar,
         content: msgToTransfer,
       };
-      this.server.to(room).emit('receiveMessage', message);
+      this.server.to(room).emit('newMessage', message);
+      console.log("rooms:", this.server.sockets.adapter.rooms);
+      // client.emit('newMessage', message);
     }
     if (action === '/mute' || action === '/kick' || action === '/ban' || action === '/admin' || action === '/invite') {
       const message = {
@@ -175,7 +184,6 @@ export class SocketsGateway
         fromId: client.data.userId,
         content: `${action}  ${msgToTransfer}`,
       };
-
       this.server.to(room).emit('receiveMessage', message);
     }
   }

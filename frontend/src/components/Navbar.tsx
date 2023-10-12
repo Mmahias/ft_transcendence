@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { useAuth, useSocket } from '../hooks';
+import { useAuth, useSocket, useTraceUpdate } from '../hooks';
 import '../styles/Navbar.css';
 import logo from '../assets/school_42.jpeg';
 
@@ -31,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     refetchOnWindowFocus: false,
     enabled: isLoggedIn ? true : false,
     onSuccess: () => {
-      console.log('Fetched user profile');
+      // console.log('Fetched user profile');
     },
     onError: (error: any) => {
       if (error.response?.status === 401) {

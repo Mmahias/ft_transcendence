@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useSocket, useAuth } from '../../hooks';
 import { ChanMode } from '../../shared/types';
+import { useTraceUpdate } from '../../hooks';
 
 const getDate = (message: Message) => {
   const options: Intl.DateTimeFormatOptions = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit' } as const;
@@ -20,52 +21,42 @@ const getDate = (message: Message) => {
   return formattedDate;
 }
 
-export function OneMessage({ conv, message, index, myNickname } : 
-{ conv:Channel, message: Message, index: number, myNickname: string}) {
+export function OneMessage({ conv, message, index, myUsername, fromUsername }: { conv: Channel, message: Message, index: number, myUsername: string, fromUsername: string }) {
 
-  const [isMe, setIsMe] = useState<boolean>(myNickname === message.from.nickname);
-  const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
   const { auth } = useAuth();
-  const { data: userMe, error, isLoading, isSuccess } = useQuery(['me'], UserService.getMe, {
+  const socket = useSocket();
+  const queryClient = useQueryClient();
+  const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
+  const isMe = myUsername === fromUsername;
+  useTraceUpdate({ conv, message, index, myUsername, fromUsername });
+  // Fetch my details
+  const { data: userMe, error, isLoading } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
-    enabled: !!auth?.accessToken ? true : false,
+    enabled: !!auth?.accessToken,
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('user not connected');
       }
     },
   });
-  const queryClient = useQueryClient();
-  const socket = useSocket();
 
-  useEffect(() => {
-    if (userMe?.nickname === message.from.nickname) {
-      setIsMe(true)
-    }
-  }, [userMe, message.from, setIsMe, conv])
-  
+  // Mutation for joining a channel
   const makeUserJoinChan = useMutation({
     mutationFn: ([myId, group, action, channelId]: [number, string, string, string]) => ChatService.updateUserInChannel(myId, Number(channelId), group, action),
-    onSuccess: () => { 
+    onSuccess: () => {
       queryClient.invalidateQueries(['channels']);
       toast.success('You joined the channel!')
     },
     onError: () => { toast.error(`An error occured`) }
   });
-  if (error) {
-    return <div>Error while sending your message. Please retry.</div>
-  }
-  if (isLoading || !isSuccess || userMe === undefined) {
-    return <div>Fetching your message...</div>
-  }
 
   // Invite to a game of Pong!
   const handleInvitation = () => {
-    socket?.emit('invite match', message.from.nickname);
+    socket?.emit('invite match', fromUsername);
     toast.success('Invitation sent', {id: 'invite'});
   }
-  socket?.on('match invitation declined', (nickname: string) => {
-    toast.error(`${nickname} declined your invitation.`, {id: 'invite'});
+  socket?.on('match invitation declined', (username: string) => {
+    toast.error(`${username} declined your invitation.`, {id: 'invite'});
   });
 
   const handleAcceptInvite = (event: React.FormEvent, channelId: string) => {
@@ -76,14 +67,14 @@ export function OneMessage({ conv, message, index, myNickname } :
     }
   }
 
-  if (userMe?.blockedList && userMe.blockedList.some((user) => user.nickname === message.from.nickname) === true) {
+  if (userMe?.blockedList && userMe.blockedList.some((user) => user.username === fromUsername) === true) {
     
     return (
       <div key={index + 2} className='one__msg_role'>
         <div key={index + 1} className='one__msg_header_info'>
           <h6>{getDate(message)}</h6>
         </div>
-        <p className='one_msg_announcement' key={index}>You blocked {message.from.nickname} so this message is censored.</p>
+        <p className='one_msg_announcement' key={index}>You blocked {fromUsername} so this message is censored.</p>
       </div>
     );
   }
@@ -96,7 +87,7 @@ export function OneMessage({ conv, message, index, myNickname } :
       return (
         <div key={index + 2} className='one__msg_role'>
             <div key={index + 1} className='one__msg_header_info'>
-              <h6>Initiated by: {message.from.nickname} on {getDate(message)}</h6>
+              <h6>Initiated by: {fromUsername} on {getDate(message)}</h6>
             </div>
             <p className='one_msg_announcement' key={index}>{censoredContent}</p>
             {
@@ -112,7 +103,7 @@ export function OneMessage({ conv, message, index, myNickname } :
       return (
         <div key={index + 2} className='one__msg_role'>
             <div key={index + 1} className='one__msg_header_info'>
-              <h6>Initiated by: {message.from.nickname} on {getDate(message)}</h6>
+              <h6>Initiated by: {fromUsername} on {getDate(message)}</h6>
             </div>
             <p className='one_msg_announcement' key={index}>{censoredContent}</p>
         </div>
@@ -122,13 +113,13 @@ export function OneMessage({ conv, message, index, myNickname } :
   return (
   <div key={index + 2} className={`${isMe === true ? 'one__msg_me' : 'one__msg'}`} >
     <div className="one__msg_avatar_container">
-      <Link to={`/user/${message.from.nickname}`} >
+      <Link to={`/user/${fromUsername}`} >
       <img src={message.from.avatar} title="See profile" className='one__msg_avatar' alt="Avatar"/>
       </Link >
     </div>
     <div className='one__msg_info'>
       <div key={index + 1} className='one__msg_header'>
-        <h4>{message.from.nickname}</h4>
+        <h4>{fromUsername}</h4>
         <h6>{getDate(message)}</h6>
       </div>
       <p className={`${isMe === true ? 'one__msg_content_me' : 'one__msg_content'}`} key={index}>{message.content}</p>
@@ -139,7 +130,7 @@ export function OneMessage({ conv, message, index, myNickname } :
     }
     {
       conv.mode !== ChanMode.DM && isMe === false && 
-      conv.adminUsers.filter((admin) => admin.nickname === userMe?.nickname).length === 1 && 
+      conv.adminUsers.filter((admin) => admin.username === userMe?.username).length === 1 && 
       <AdminOptions channelName={conv.name}  userTalking={message.from}/>
     }
   </div>

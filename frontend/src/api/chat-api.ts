@@ -171,7 +171,8 @@ class ChatService {
           fromId: user.id,
           to: channel.name,
           content: content,
-          channelId: channelId
+          channelId: channelId,
+          fromUsername: user.username,
         },
         {
           headers: {

@@ -94,13 +94,8 @@ export class ChatService {
     return await prisma.channel.findUnique({
       where: { name },
       include: {
-        owner: true,
-        adminUsers: true,
         joinedUsers: true,
-        bannedUsers: true,
-        kickedUsers: true,
-        mutedUsers: true,
-        messages: true
+        adminUsers: true,
       }
     });
   }
@@ -303,8 +298,9 @@ export class ChatService {
    *******/
 
   async createMessage(body: CreateMessageDto) {
-    const { fromId, to, content, channelId } = body;
-    console.log('body', body);
+    const { fromId, to, content, channelId, fromUsername } = body;
+
+    console.log(fromUsername)
 
     await prisma.channel.update({
       where: { id: channelId },
@@ -317,6 +313,7 @@ export class ChatService {
     return await prisma.message.create({
       data: {
         from: { connect: { id: fromId } },
+        fromUsername,
         to,
         content,
         channel: { connect: { id: channelId } }
