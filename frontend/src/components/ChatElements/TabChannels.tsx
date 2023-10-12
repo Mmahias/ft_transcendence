@@ -5,7 +5,7 @@ import { useSocket } from '../../hooks';
 import ChatService from '../../api/chat-api';
 import { Channel, User } from '../../api/types';
 import { ChanMode } from '../../shared/types';
-import { sendNotificationToServer } from "../../sockets/sockets";
+import SocketService from "../../sockets/sockets";
 import '../../styles/Tab_channels.css';
 
 interface ChannelListItemProps {
@@ -44,7 +44,7 @@ const TabChannels: React.FC = () => {
 
   const handleChannelClick = (channel: Channel) => {
     if (socket && channel.name) {
-      sendNotificationToServer(socket, 'joinRoom', String(channel.id));
+      SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
     }
     setActiveChan(channel);
     setActiveTab(1);

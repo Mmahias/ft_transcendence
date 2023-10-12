@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { useAuth, useSocket, useTraceUpdate } from '../hooks';
+import { useAuth, useSocket } from '../hooks';
 import '../styles/Navbar.css';
 import logo from '../assets/school_42.jpeg';
 

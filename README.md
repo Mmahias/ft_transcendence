@@ -63,8 +63,9 @@ To use it, just add some types or shared data you may need.
 
 *CHAT:*
 
-* quand on passe la souris sur le message dun user, ouvre une petite fenetre avec qq infos + boutons pour mute ou block (cf chat api: updateUserInChannel) + pouvoir acceder a son profil si on  clique sur son nom (si vous galerez, checker comment jai fait dans la search bar, c la meme logique)
-* si on est admin, pouvoir acceder au panel admin pour kick, ban(page prete, bouton pas relie)
+* gerer les dm correctement (faire un systeme de rooms pour les dms)
+* FIXED: pouvoir acceder au profil si on  clique dessus
+* FIXED: si on est admin, pouvoir acceder au panel admin pour kick, ban(page prete, bouton pas relie)
 * FIXED: regler cette histoire de barre d'input qui prend la moitie de la fenetre dans un chat
 
 *GAME:*

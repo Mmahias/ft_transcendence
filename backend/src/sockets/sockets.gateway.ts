@@ -143,7 +143,6 @@ export class SocketsGateway
   @SubscribeMessage('joinRoom')
   async handleJoinRoom(client: Socket, payload: string): Promise<void> {
     const room = payload;
-    console.log("JOIN ROOM")
     const rooms = client.rooms;  // This should give you a Set of room IDs the client is in
     if (!rooms.has(room)) {
       client.leave(room);
@@ -163,7 +162,6 @@ export class SocketsGateway
     const action = splitStr[0];
     const room = splitStr[1];
     const msgToTransfer = splitStr[2];
-    // console.log('action', action, '\nroom', room, '\nmsgToTransfer', msgToTransfer);
     if (action === "/msg") {
       const message = {
         date: new Date(),
@@ -174,7 +172,6 @@ export class SocketsGateway
         content: msgToTransfer,
       };
       this.server.to(room).emit('newMessage', message);
-      console.log("rooms:", this.server.sockets.adapter.rooms);
       // client.emit('newMessage', message);
     }
     if (action === '/mute' || action === '/kick' || action === '/ban' || action === '/admin' || action === '/invite') {

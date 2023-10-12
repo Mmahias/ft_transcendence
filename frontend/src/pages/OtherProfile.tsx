@@ -35,17 +35,20 @@ const OtherProfile: React.FC = () => {
   const myProfileQuery = useQuery(
     ['me'],
     () => {
-      console.log(' big test')
-      return UserService.getMe;
+      return UserService.getMe();
     }, {
     refetchOnWindowFocus: false,
     enabled: isLoggedIn ? true : false,
+    onSuccess: () => {
+      if (reqUsername === myProfileQuery.data?.username) {
+        navigate("/user/profile");
+      }
+    }
   });
 
   // need the user profile to display it
   const userProfileQuery = useQuery(['user', reqUsername], 
     () => {
-      console.log('FUCK YOUe')
       return UserService.getUserByUsername(reqUsername);
     }, 
     {
@@ -62,11 +65,6 @@ const OtherProfile: React.FC = () => {
 
   if (myProfileQuery.isError || userProfileQuery.isError) {
     return <div>Error fetching user profile.</div>;
-  }
-
-  if (myProfileQuery.isSuccess && reqUsername === myProfileQuery.data?.username) {
-    navigate("/user/profile");
-    return null;
   }
 
   const formatDate = (dateStr: string): string => {

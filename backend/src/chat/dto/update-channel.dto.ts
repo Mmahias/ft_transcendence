@@ -1,4 +1,4 @@
-import { IsOptional, IsIn } from "class-validator";
+import { IsOptional, IsIn, Length } from "class-validator";
 import { ChanMode } from "../../shared/types"
 
 export class UpdateChannelDto {
@@ -7,6 +7,7 @@ export class UpdateChannelDto {
   id: number;
 
   @IsOptional()
+  @Length(2, 10)
   name: string;
 
   @IsOptional()

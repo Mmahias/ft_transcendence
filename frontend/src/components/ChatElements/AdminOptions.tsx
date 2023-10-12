@@ -7,13 +7,19 @@ import ChatService from '../../api/chat-api';
 import UserService from '../../api/users-api';
 import { Channel, User } from '../../api/types';
 import toast from 'react-hot-toast';
-import { handleRequestFromUser } from '../../sockets/sockets';
+import SocketService from '../../sockets/sockets';
 import { useSocket, useAuth } from '../../hooks';
 
-export function AdminOptions({ channelName, userTalking }: { channelName: string, userTalking: User}) {
+export function AdminOptions({ channelId, userTalking }: { channelId: number, userTalking: User}) {
+
   const { auth } = useAuth();
+  const socket = useSocket();
+  const queryClient = useQueryClient();
+
   const [enableOptions, setEnableOptions] = useState<boolean>(false);
   const [toggleDisplay, setToggleDisplay] = useState<boolean>(false);
+
+  // Fetch my details
   const userQuery = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     enabled: !!auth?.accessToken ? true : false,
@@ -23,13 +29,14 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
       }
     },
   });
-  const socket = useSocket();
+
+  // Fetch channel's details
   const { data: channel }= useQuery({ 
-    queryKey: ['channels', channelName], 
-    queryFn: () => ChatService.getChannelByName(channelName) 
+    queryKey: ['channels', channelId], 
+    queryFn: () => ChatService.getChannelById(channelId) 
   });
-  const queryClient = useQueryClient();
-  
+
+  // check to enable the admin options button
   useEffect(() => {
     if (channel) {
       const isAdmin = channel.adminUsers.filter((admin) => admin.nickname === userQuery.data?.nickname);
@@ -39,29 +46,31 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
       }
     }
   }, [channel, channel?.adminUsers, userQuery.data, channel?.bannedUsers, channel?.kickedUsers, channel?.mutedUsers, channel?.joinedUsers, userTalking.nickname]);
-  
+
+  // Mutation for adding a user to a group
   const addToGroup = useMutation({
     mutationFn: ([group, action, channelId]: string[]) => ChatService.updateUserInChannel(userTalking.id, Number(channelId), group, action),
     onSuccess: () => { 
       queryClient.invalidateQueries(['channels']);
     },
-    onError: () => { toast.error(`Error : cannot change ${userTalking.nickname}'s role.`) }
+    onError: () => { 
+      toast.error(`Error : cannot change ${userTalking.nickname}'s role.`) }
   });
 
   const handleClick = () => {
     setToggleDisplay(!toggleDisplay);
   }
+
   const createInfoMessage = useMutation({
-    mutationFn: ([channel, message]: [number, string]) => ChatService.newMessage(channel, message),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['channels']);
-    },
+    mutationFn: ([channelId, message]: [number, string]) => ChatService.newMessage(channelId, message),
+    onSuccess: () => queryClient.invalidateQueries(['channels']),
     onError: () => toast.error('Message not sent: retry'),
   });
 
   const sendInfo = (group: string, action: string) => {
     if (socket) {
-      const msg: string = handleRequestFromUser(socket, group, action, channelName, userTalking.nickname);
+      const msg: string = SocketService.handleRequestFromUser(socket, group, action, channelId, userTalking.nickname);
+      console.log(msg);
       if (channel && msg.trim())
       {
         createInfoMessage.mutate([channel.id, msg]);
@@ -74,18 +83,17 @@ export function AdminOptions({ channelName, userTalking }: { channelName: string
       const userInGroup: boolean = (Array.isArray(channel[group] as User[])) ?
         (channel[group] as User[]).some((member: User) => member.id === userTalking.id)
         : false;
-  
       if (!userInGroup && userTalking.id !== channel.ownerId) {
         addToGroup.mutate([group, "connect", String(channel?.id)]);
-        toast.success(`${userTalking.nickname}'s role has been added!`);
+        toast.success(`${userTalking.nickname}'s role was added!`);
         sendInfo(group, "connect");        
       } else {
         if (userTalking.id !== channel.ownerId) {
           addToGroup.mutate([group, "disconnect", String(channel?.id)]);
-          toast.success(`${userTalking.nickname} has been removed from this role.`);
+          toast.success(`${userTalking.nickname}'s role was removed.`);
           sendInfo(group, "disconnect");
         } else {
-          toast.error(`Can't do that to ${userTalking.nickname}, as the owner of this channel!`)
+          toast.error(`Cannot change admin's status.`)
         }
       }
     }

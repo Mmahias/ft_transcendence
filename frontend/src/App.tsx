@@ -13,6 +13,7 @@ import Request from './pages/User/Request';
 import Edit from './pages/User/edit';
 import Login from './pages/Login';
 import Error from './pages/Error';
+import { Toaster } from 'react-hot-toast';
 import { useAxiosPrivate } from './hooks';
 import { ThemeProvider } from 'styled-components';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -53,11 +54,12 @@ const App: React.FC = () => {
           <AuthProvider>
             <SocketProvider>
               <ChatStatusContext.Provider value={ {activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded}}>
-                <AppWrapper>
-                  <Navbar theme={'dark'} />
-                  <MainContent />
-                  <Footer />
-                </AppWrapper>
+                <Toaster />
+                  <AppWrapper>
+                    <Navbar theme={'dark'} />
+                    <MainContent />
+                    <Footer />
+                  </AppWrapper>
               </ChatStatusContext.Provider>
             </SocketProvider>
           </AuthProvider>

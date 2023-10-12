@@ -41,7 +41,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   useEffect(() => {
     if (socket) {
       socket.on('connect_error', (error) => {
-        console.error("Connection Error:", error);
+        console.error("Connection error");
         // FIX IT: Show a notification to the user, or handle the error in another way
       });
       socket.on('reconnect', () => {

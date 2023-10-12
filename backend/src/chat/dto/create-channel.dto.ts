@@ -14,7 +14,7 @@ export class CreateChannelDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(2, 30)
+  @Length(2, 10)
   name: string;
 
   @IsOptional()

@@ -12,7 +12,6 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useSocket, useAuth } from '../../hooks';
 import { ChanMode } from '../../shared/types';
-import { useTraceUpdate } from '../../hooks';
 
 const getDate = (message: Message) => {
   const options: Intl.DateTimeFormatOptions = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit' } as const;
@@ -28,7 +27,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
   const queryClient = useQueryClient();
   const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
   const isMe = myUsername === fromUsername;
-  useTraceUpdate({ conv, message, index, myUsername, fromUsername });
+
   // Fetch my details
   const { data: userMe, error, isLoading } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
@@ -113,7 +112,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
   return (
   <div key={index + 2} className={`${isMe === true ? 'one__msg_me' : 'one__msg'}`} >
     <div className="one__msg_avatar_container">
-      <Link to={`/user/${fromUsername}`} >
+      <Link to={`/user/profile/${fromUsername}`} >
       <img src={message.from.avatar} title="See profile" className='one__msg_avatar' alt="Avatar"/>
       </Link >
     </div>
@@ -131,7 +130,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     {
       conv.mode !== ChanMode.DM && isMe === false && 
       conv.adminUsers.filter((admin) => admin.username === userMe?.username).length === 1 && 
-      <AdminOptions channelName={conv.name}  userTalking={message.from}/>
+      <AdminOptions channelId={conv.id}  userTalking={message.from}/>
     }
   </div>
   );

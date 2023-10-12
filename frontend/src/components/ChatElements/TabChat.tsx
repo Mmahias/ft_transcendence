@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import '../../styles/Tab_Chat.css';
 import { ChatStatusContext } from '../../contexts';
-import { useSocket, useTraceUpdate } from '../../hooks';
+import { useSocket } from '../../hooks';
 import { Channel, Message, User } from '../../api/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ChatService from '../../api/chat-api';
 import { OneMessage } from './OneMessage';
 import { TabChatHeader } from './TabChatHeader';
 import toast from 'react-hot-toast';
-import { sendNotificationToServer } from '../../sockets/sockets';
+import SocketService from '../../sockets/sockets';
 
 function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   const socket = useSocket();
@@ -39,9 +39,11 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 
   // Mutation for sending a new message
   const sendMessageMutation = useMutation({
-    mutationFn: (message: string) => ChatService.newMessage(conv.id, message),
+    mutationFn: async (inputMessage: string) => {
+      return await ChatService.newMessage(conv.id, inputMessage);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['channelMessages']);
+      sendMessage(inputValue);
     },
     onError: () => toast.error('Message not sent: retry')
   });
@@ -56,16 +58,16 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   // On mount: join room and scroll to the bottom of messages
   useEffect(() => {
     if (socketRef && channel?.id) {
-      sendNotificationToServer(socket, 'joinRoom', String(channel.id));
+      SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
       scrollToBottom();
     }
   }, []);
 
   // Listen for new messages
   useEffect(() => {
-    socketRef.current?.on('newMessage', (message: Message) => {
-      setMessages(prevMessages => [...prevMessages, message]);
-      console.log('new message received', message)
+    socketRef.current?.on('newMessage', () => {
+      console.log('new message');
+      queryClient.invalidateQueries(['channelMessages']);
     });
     scrollToBottom();
     
@@ -112,7 +114,6 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     event.preventDefault();
     if (inputValue.trim() !== '') {
       sendMessageMutation.mutate(inputValue);
-      sendMessage(inputValue);
     }
   };
 
@@ -122,7 +123,6 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       messagesElement.scrollTop = messagesElement.scrollHeight;
     }
   }
-  useTraceUpdate(messages);
   return (
     <div>
       <div className='convo__card'>

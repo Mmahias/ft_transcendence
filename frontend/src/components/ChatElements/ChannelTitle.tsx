@@ -10,6 +10,7 @@ import { useAuth } from '../../hooks';
 
 export function ChannelTitle({ conv, initialName } : { conv: Channel, initialName: string}) {
   const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(initialName);
   const [newTitle, setNewTitle] = useState(initialName);
   const { auth } = useAuth();
     const { data: user, error, isLoading, isSuccess } = useQuery(['me'], UserService.getMe, {
@@ -27,10 +28,13 @@ export function ChannelTitle({ conv, initialName } : { conv: Channel, initialNam
     mutationFn: (newValue: string) => ChatService.updateChannel(conv.id, "name" ,newValue),
     onSuccess: () => { 
       queryClient.invalidateQueries(['channels']);
-      toast.success(`You updated the name of the channel!`) 
+      toast.success(`You updated the name of the channel!`);
     },
-    onError: () => { toast.error(`Error : cannot leave channel (tried to leave chan or group you weren't a part of)`) }
-  });
+    onError: () => {
+      toast.error(`Error : cannot update the channel name.`);
+      setTitle(initialName);  // Revert back to the initial title on error
+    }
+});
 
   if (error) {
     return <div>Error</div>
@@ -47,29 +51,33 @@ export function ChannelTitle({ conv, initialName } : { conv: Channel, initialNam
 
   const handleInputBlur = () => {
     setIsEditing(false);
-    if (newTitle === '') {
-      setNewTitle(initialName);
-    }
+    setNewTitle(title);
   };
 
   const handleInputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    if (event.key === "Enter" && newTitle !== initialName && newTitle !== '') {
-      setIsEditing(false);
-      updateChannel.mutate(newTitle);
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (newTitle.length > 10) {
+        toast.error(`Channel name too long (max 10 characters)`);
+      }
+      else if (newTitle !== initialName && newTitle.trim() !== '') {
+        setIsEditing(false);
+        updateChannel.mutate(newTitle);
+        setTitle(newTitle);
+      }
     }
   };
 
   return (
     <div>
       {isEditing ? (
-      <input
-        type="text"
-        value={newTitle}
-        onChange={(event) => setNewTitle(event.target.value)}
-        onBlur={handleInputBlur}
-        onKeyDown={handleInputKeyPress}
-      />
+        <input
+          type="text"
+          value={newTitle}
+          onChange={(event) => setNewTitle(event.target.value)}
+          onBlur={handleInputBlur}
+          onKeyDown={handleInputKeyPress}
+        />
       ) : (
         <h1 id="convo__name" onClick={handleTitleClick}>
           {newTitle}

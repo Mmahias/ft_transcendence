@@ -4,7 +4,7 @@ import '../../styles/Tab_channels.css';
 import toast from 'react-hot-toast';
 import ChatService from '../../api/chat-api';
 import { useSocket } from '../../hooks';
-import { sendNotificationToServer } from '../../sockets/sockets';
+import SocketService from '../../sockets/sockets';
 import { ChanMode } from '../../shared/types';
 import Chat from 'pages/Chat';
 
@@ -42,7 +42,7 @@ export default function ChanCreationForm() {
       const channel = await ChatService.getChannelByName(channelName);
       console.log("Fetched channel:", channel);
       if (socket && channel.id) {
-        sendNotificationToServer(socket, 'joinRoom', String(channel.id));
+        SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
       }
       console.log('channel.id', channel.id);
       setChannelId(channel.id);
