@@ -9,6 +9,7 @@ import { OneMessage } from './OneMessage';
 import { TabChatHeader } from './TabChatHeader';
 import toast from 'react-hot-toast';
 import SocketService from '../../sockets/sockets';
+import Chat from 'pages/Chat';
 
 function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   const socket = useSocket();
@@ -27,7 +28,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     queryFn: () => ChatService.getChannelById(conv.id)
   });
 
-  // Fetch channel messages
+  // Fetch channel messages and refresh them on success
   const { data: channelMessages } = useQuery({
     queryKey: ['channelMessages', conv.id],
     queryFn: () => ChatService.getAllMessages(conv.id),
@@ -43,7 +44,9 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       return await ChatService.newMessage(conv.id, inputMessage);
     },
     onSuccess: () => {
-      sendMessage(inputValue);
+      const payload: string = `/msg***${conv?.id}***${inputValue}`;
+      socketRef.current?.emit('Chat', payload);
+      setInputValue('');
     },
     onError: () => toast.error('Message not sent: retry')
   });
@@ -63,18 +66,19 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     }
   }, []);
 
-  // Listen for new messages
+  // Listen for new messages, refetch messages when it receives one
   useEffect(() => {
     socketRef.current?.on('newMessage', () => {
-      console.log('Received new message');
-      queryClient.invalidateQueries([channelMessages, 'channelMessages']);
+      console.log('new message received')
+      queryClient.invalidateQueries(['channelMessages']);
+      queryClient.invalidateQueries(['channelDetails']);
     });
+
     scrollToBottom();
-    
     return () => {
       socketRef.current?.off('newMessage');
     };
-  }, [socketRef, sendMessageMutation, channelMessages]);
+  }, [socketRef, sendMessageMutation]);
 
   // Handle user permissions in the channel
   useEffect(() => {
@@ -82,7 +86,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       const userIsMuted = channel?.mutedUsers.some(user => user.id === loggedUser.id);
       setIsMuted(userIsMuted);
 
-      const userActionHandler = (actionMessage: string) => {
+      const kickBanUser = (actionMessage: string) => {
         leaveChannelMutation.mutate([loggedUser, channel.id]);
         toast(actionMessage);
         setActiveTab(0);
@@ -90,25 +94,14 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       };
 
       if (channel.kickedUsers.some(user => user.id === loggedUser.id)) {
-        userActionHandler(`You have been kicked from ${channel.name}!`);
+        kickBanUser(`You were kicked from ${channel.name}!`);
+        ChatService.updateUserInChannel(loggedUser.id, channel.id, 'kickedUsers', 'disconnect');
       }
-
-      if (channel.bannedUsers.some(user => user.id === loggedUser.id)) {
-        userActionHandler(`You have been banned from ${channel.name}!`);
+      else if (channel.bannedUsers.some(user => user.id === loggedUser.id)) {
+        kickBanUser(`You were banned from ${channel.name}!`);
       }
     }
   }, [channel, loggedUser, leaveChannelMutation]);
-
-  // Update messages when channelMessages changes
-  useEffect(() => {
-    channelMessages && setMessages(channelMessages);
-  }, [channelMessages, setMessages]);
-
-  const sendMessage = (message: string) => {
-    const payload: string = `/msg***${conv?.id}***${message}`;
-    socketRef.current?.emit('Chat', payload);
-    setInputValue('');
-  };
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>, message: string) => {
     event.preventDefault();
@@ -123,6 +116,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       messagesElement.scrollTop = messagesElement.scrollHeight;
     }
   }
+
   return (
     <div>
       <div className='convo__card'>

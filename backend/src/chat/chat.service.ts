@@ -85,7 +85,6 @@ export class ChatService {
         bannedUsers: true,
         kickedUsers: true,
         mutedUsers: true,
-        messages: true
       }
     });
   }
@@ -202,6 +201,7 @@ export class ChatService {
     if (usergroup === 'joinedUsers' && action === 'disconnect') {
       throw new ForbiddenException('Invalid request from client');
     }
+    console.log("UPDATE_CHANNEL_USERLIST", body)
     return await prisma.channel.update({
       where: { id: channelId },
       data: {
@@ -300,6 +300,7 @@ export class ChatService {
   async createMessage(body: CreateMessageDto) {
     const { fromId, to, content, channelId, fromUsername } = body;
 
+    console.log(fromUsername, content)
     await prisma.channel.update({
       where: { id: channelId },
       data: {

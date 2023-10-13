@@ -54,10 +54,7 @@ class SocketService {
         role = "/msg";
         info = `#INFO# ${channelId} ${userTalking} is quoted.`
     }
-    const payload: string = role + "***" + channelId + "***" + userTalking;
-    console.log("payload: ", payload);
-
-    this.sendNotificationToServer(socket, 'Chat', payload);
+    console.log ("info", info);
     return (info);
   }
 

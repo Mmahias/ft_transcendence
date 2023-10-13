@@ -17,7 +17,6 @@ export function AdminOptions({ channelId, userTalking }: { channelId: number, us
   const queryClient = useQueryClient();
 
   const [payload, setPayload] = useState<string>("");
-
   const [enableOptions, setEnableOptions] = useState<boolean>(false);
   const [toggleDisplay, setToggleDisplay] = useState<boolean>(false);
 
@@ -53,53 +52,49 @@ export function AdminOptions({ channelId, userTalking }: { channelId: number, us
   const addToGroup = useMutation({
     mutationFn: ([group, action, channelId]: string[]) => ChatService.updateUserInChannel(userTalking.id, Number(channelId), group, action),
     onSuccess: () => { 
-      queryClient.invalidateQueries(['channels']);
+      queryClient.invalidateQueries(['channelDetails']);
     },
     onError: () => { 
       toast.error(`Error : cannot change ${userTalking.nickname}'s role.`) }
+  });
+  
+  const sendMessage = useMutation({
+    mutationFn: ([channelId, message]: [number, string]) => ChatService.newMessage(channelId, message),
+    onSuccess: () => {
+      console.log("sendMessage", payload);
+      SocketService.sendNotificationToServer(socket, 'Chat', `/action***${channelId}***${payload}`);
+    },
+    onError: () => toast.error('Message not sent: retry'),
   });
 
   const handleClick = () => {
     setToggleDisplay(!toggleDisplay);
   }
 
-  const createInfoMessage = useMutation({
-    mutationFn: ([channelId, message]: [number, string]) => ChatService.newMessage(channelId, message),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['channelMessages']);
-      SocketService.sendNotificationToServer(socket, 'Chat', payload);
-    },
-    onError: () => toast.error('Message not sent: retry'),
-  });
-
-  const sendInfo = (group: string, action: string) => {
-    if (socket) {
-      setPayload(SocketService.handleRequestFromUser(socket, group, action, channelId, userTalking.nickname));
-      if (channel && payload.trim())
-      {
-        createInfoMessage.mutate([channel.id, payload]);
-      }
-    }
-  };
-
   const handleRole = (group: keyof Channel) => {
-    if (channel) {
+    if (channel && userTalking.id !== channel.ownerId) {
       const userInGroup: boolean = (Array.isArray(channel[group] as User[])) ?
         (channel[group] as User[]).some((member: User) => member.id === userTalking.id)
         : false;
-      if (!userInGroup && userTalking.id !== channel.ownerId) {
+      
+      if (!userInGroup) {
+        console.log("2")
         addToGroup.mutate([group, "connect", String(channel?.id)]);
         toast.success(`${userTalking.nickname}'s role was added!`);
-        sendInfo(group, "connect");        
+        console.log("payload", group, "connect", channelId, userTalking.nickname)
+        setPayload(SocketService.handleRequestFromUser(socket, group, "connect", channelId, userTalking.nickname));
+        sendMessage.mutate([channel.id, payload]);
       } else {
-        if (userTalking.id !== channel.ownerId) {
-          addToGroup.mutate([group, "disconnect", String(channel?.id)]);
-          toast.success(`${userTalking.nickname}'s role was removed.`);
-          sendInfo(group, "disconnect");
-        } else {
-          toast.error(`Cannot change admin's status.`)
-        }
-      }
+        console.log("1")
+        addToGroup.mutate([group, "disconnect", String(channel?.id)]);
+        toast.success(`${userTalking.nickname}'s role was removed.`);
+        console.log("payload", group, "connect", channelId, userTalking.nickname)
+        setPayload(SocketService.handleRequestFromUser(socket, group, "disconnect", channelId, userTalking.nickname));
+        sendMessage.mutate([channel.id, payload]);
+      } 
+    }
+    else {
+      toast.error(`Cannot change admin's status.`)
     }
   }
 

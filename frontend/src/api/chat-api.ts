@@ -155,12 +155,12 @@ class ChatService {
   }
 
   /**
-   * @param from sender id
-   * @param to recipient (channel name)
-   * @param content message
-   * @param channelId channel id
-   * @returns message object
-   */
+  ** @param from sender id
+  ** @param to recipient (channel name)
+  ** @param content message
+  ** @param channelId channel id
+  ** @returns message object
+  **/
   static async newMessage(channelId: number, content: string): Promise<Message> {
 
     try {

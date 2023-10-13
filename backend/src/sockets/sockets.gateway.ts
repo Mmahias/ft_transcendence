@@ -157,12 +157,16 @@ export class SocketsGateway
    */
   @SubscribeMessage('Chat')
   async handleMessage(client: Socket, payload: string): Promise<void> {
+    console.log("ChatSocket PING: '", payload, "'");
     const splitStr: string[] = payload.split('***');
-
+    
     const action = splitStr[0];
     const room = splitStr[1];
     const msgToTransfer = splitStr[2];
+    console.log("action = '", action, "'");
+    console.log("msgToTransfer = '", msgToTransfer, "'");
     if (action === "/msg") {
+      console.log("MSG: '", payload, "'");
       const message = {
         date: new Date(),
         from: client.data.username,
@@ -173,7 +177,8 @@ export class SocketsGateway
       };
       this.server.to(room).emit('newMessage', message);
     }
-    else if (action === '/mute' || action === '/kick' || action === '/ban' || action === '/admin' || action === '/invite') {
+    else if (action === '/action') {
+      console.log("ACTION: '", payload, "'");
       const message = {
         date: new Date(),
         from: client.data.username,
