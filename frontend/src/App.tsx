@@ -7,10 +7,6 @@ import Chat from './pages/Chat';
 // import Game from './pages/Game';
 import MyProfile from './pages/MyProfile';
 import OtherProfile from './pages/OtherProfile';
-import History from './pages/User/history';
-import Friends from './pages/User/friends';
-import Request from './pages/User/Request';
-import Edit from './pages/User/edit';
 import Login from './pages/Login';
 import Error from './pages/Error';
 import { Toaster } from 'react-hot-toast';
@@ -31,10 +27,6 @@ const MainContent: React.FC = () => {
         <Route path="/" element={<Home/>} />
         {/* <Route path="/game" element={<Game />} /> */}
         <Route path="/user/profile" element={<MyProfile />} />
-        <Route path="/user/history" element={<History />} />
-        <Route path="/user/friends" element={<Friends />} />
-        <Route path="/user/request" element={<Request />} />
-        <Route path="/user/edit" element={<Edit />} />
         <Route path="/user/profile/:reqUsername" element={<OtherProfile />} />
         <Route path="/chat" element={ <Chat/> } />
         <Route path="/login" element={<Login />} />

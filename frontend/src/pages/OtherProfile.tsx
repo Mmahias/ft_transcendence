@@ -76,8 +76,8 @@ const OtherProfile: React.FC = () => {
   };
 
   return (
-    <div className="wrapper">
-      <div className="profile-card js-profile-card" style={{ marginTop: '25px' }}>
+    <div className="profile-page">
+      {/* <div className="profile-card js-profile-card" style={{ marginTop: '25px' }}>
         <div className="profile-card__img">
           <img src={userImage} alt="profile card" />
         </div>
@@ -122,6 +122,136 @@ const OtherProfile: React.FC = () => {
               <RouterLink to='/game'><button className="button-32">Play Game</button></RouterLink>
               <RouterLink to='/user/history'><button className="button-32">Game history</button></RouterLink>
               <RouterLink to='/user/friends'><button className="button-32">Friends</button></RouterLink>
+            </div>
+          </div>
+        </div>
+      </div> */}
+
+      <div className="main-content">
+        <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style={{ backgroundSize: "cover", backgroundPosition: "center top" }} >
+          <span className="mask bg-gradient-default opacity-8"></span>
+          <div className="container-fluid d-flex align-items-center">
+            <div className="col-lg-7 col-md-10">
+              <h1 className="display-2 text-white">Welcome to profile of {userProfile?.username}</h1>
+            </div>
+          </div>
+        </div>
+        <div className="container-fluid mt--7">
+          <div className="row">
+            <div className="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+              <div className="card card-profile shadow">
+                <div className="row justify-content-center">
+                  <div className="col-lg-3 order-lg-2">
+                    <div className="card-profile-image">
+                      <a href="#">
+                        <img src={userImage} className="rounded-circle" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                </div>
+                <div className="card-body pt-0 pt-md-4">
+                  <div className="row">
+                    <div className="col">
+                      <div className="card-profile-stats d-flex justify-content-center mt-md-5">
+                        <div>
+                          <span className="heading">{userProfile?.level}</span>
+                          <span className="description">Level</span>
+                        </div>
+                        <div>
+                          <span className="heading">{userProfile?.wins}</span>
+                          <span className="description">Wins</span>
+                        </div>
+                        <div>
+                          <span className="heading">{userProfile?.losses}</span>
+                          <span className="description">Losses</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <h3>
+                      {userProfile?.username}
+                    </h3>
+                    <div className="h5 font-weight-300">
+                      <i style={{
+                        color: userProfile?.status === "ONLINE"
+                          ? '#006400'
+                          : userProfile?.status === "INGAME"
+                            ? '#FFD700'
+                            : userProfile?.status === "OFFLINE"
+                              ? '#CB0000'
+                              : 'black'
+                      }}>
+                        {userProfile?.status}
+                      </i>
+                    </div>
+                    <div className="h5 mt-4">
+                      <i className="ni business_briefcase-24 mr-2"></i>Joined at
+                    </div>
+                    <div>
+                      <i className="ni education_hat mr-2"></i>{userProfile?.createdAt && formatDate(String(userProfile.createdAt))}
+                    </div>
+                    <hr className="my-4" />
+                    <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
+                    <a href="/game" className="btn btn-sm btn-primary ghost">Invite Game</a>
+                    <a href="#!" className="btn btn-sm btn-primary ghost">Add</a>
+                    <a href="#!" className="btn btn-sm btn-no ghost">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-8 order-xl-1">
+              <div className="card bg-secondary shadow">
+                <div className="card-header bg-white border-0">
+                  <div className="row align-items-center">
+                    <div className="col-8">
+                      <h3 className="mb-0">Profile: {userProfile?.username}</h3>
+                    </div>
+                    <div className="col-4 text-right">
+                    </div>
+                  </div>
+                </div>
+                <div className="card-body">
+                  <div className="tab-container">
+                    <div className="tabs-profile">
+                      <div className="tab-2">
+                        <label htmlFor="tab2-3">Game Histories</label>
+                        <input id="tab2-3" name="tabs-two" type="radio" />
+                        <div>
+
+                          <div className="table-wrapper">
+                            <table className="fl-table">
+                              <thead>
+                                <tr>
+                                  <th>GAME_ID</th>
+                                  <th>OPPONENT</th>
+                                  <th>RANK</th>
+                                  <th>LEVEL</th>
+                                  <th>SCORE</th>
+                                  <th>WINNER</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                    <td>1</td>
+                                    <td>Friend_1</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>1/3</td>
+                                    <td>Winner_Name</td>
+                                  </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

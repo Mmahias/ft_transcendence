@@ -52,7 +52,7 @@
 	border-color: #def2f1;
 }
 
-form {
+.login-page form {
 	background-color: #def2f1;
 	display: flex;
 	align-items: center;
@@ -63,7 +63,7 @@ form {
 	text-align: center;
 }
 
-input {
+.login-page input {
 	background-color: white;
 	border: none;
 	padding: 12px 15px;

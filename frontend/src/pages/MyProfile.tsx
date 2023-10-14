@@ -7,9 +7,11 @@ import UserService from "../api/users-api";
 import AuthService from "../api/auth-api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
+import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
+import '../styles/Request.style.css'
 
 const MyProfile: React.FC = () => {
-  
+
   const { auth } = useAuth();
   const navigate = useNavigate();
 
@@ -25,8 +27,8 @@ const MyProfile: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
 
   const queryClient = useQueryClient();
-  
-  const {data: userProfile, status: statusProfile } = useQuery({
+
+  const { data: userProfile, status: statusProfile } = useQuery({
     queryKey: ['user'],
     queryFn: UserService.getMe,
     enabled: isLoggedIn ? true : false,
@@ -48,8 +50,7 @@ const MyProfile: React.FC = () => {
   }, [auth]);
 
   useEffect(() => {
-    if (userProfile)
-    {
+    if (userProfile) {
       if (userProfile.username) {
         setUserName(userProfile.username);
       } if (userProfile.status) {
@@ -107,12 +108,12 @@ const MyProfile: React.FC = () => {
       enable2FAMutation.mutate();
     }
   };
-  
+
   const verify2FACodeMutation = useMutation(async (code: string) => {
     const verificationResponse = await AuthService.verify2FACode(code);
     if (verificationResponse && verificationResponse.accessToken) {
-        await AuthService.enable2FA(code);
-        return true; // Signal success
+      await AuthService.enable2FA(code);
+      return true; // Signal success
     }
     return false; // Signal verification failed
   }, {
@@ -126,7 +127,7 @@ const MyProfile: React.FC = () => {
       }
     },
     onError: () => {
-        alert('Failed to verify or enable 2FA. Please try again.');
+      alert('Failed to verify or enable 2FA. Please try again.');
     }
   });
 
@@ -134,89 +135,246 @@ const MyProfile: React.FC = () => {
     verify2FACodeMutation.mutate(userEnteredCode);
   };
 
+  const [gamesHistory, setGamesHistory] = React.useState([
+    {
+      id: 1,
+      opponent: 'FRIEND_1',
+      opponentRank: 5,
+      opponentLevel: 10,
+      score: "3/2",
+      winner: 'WINNER_NAME'
+    },
+    {
+      id: 2,
+      opponent: 'FRIEND_1',
+      opponentRank: 5,
+      opponentLevel: 10,
+      score: "1/3",
+      winner: 'WINNER_NAME'
+    },
+  ]);
+
   return (
-    <div className="wrapper">
-      {statusProfile === 'loading' && <div className="loading-screen-user"></div>}
-      {statusProfile === 'error' && <div>Error fetching user profile.</div>}
-      {statusProfile === 'success' && 
-        <div className="profile-card js-profile-card" style={{ marginTop: '25px' }}>
-          <div className="profile-card__img">
-            <img
-              src={userImage}
-              alt="profile card"
-            />
+    <div className="profile-page">
+
+      <div className="main-content">
+        <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style={{ backgroundSize: "cover", backgroundPosition: "center top" }} >
+          <span className="mask bg-gradient-default opacity-8"></span>
+          <div className="container-fluid d-flex align-items-center">
+            <div className="col-lg-7 col-md-10">
+              <h1 className="display-2 text-white">Hello {userName}</h1>
+            </div>
           </div>
-          <div className="profile-card__cnt js-profile-cnt">
-            <div className="profile-card__name">{userName}</div>
-            <div className="profile-card-loc">
-              {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right-circle" viewBox="0 0 16 16" style={{ color: 'red' }}>
-                <path fillRule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
-              </svg> */}
-              <p style={{
-                color: userStatus === "ONLINE" 
-                  ? '#006400'  // dark green
-                  : userStatus === "INGAME"
-                  ? '#FFD700'  // gold (as a substitute for dark yellow)
-                  : userStatus === "OFFLINE"
-                  ? '#8B0000'  // dark red
-                  : 'black'  // default color
-              }}>
-                {userStatus}
-              </p>
-            </div>
-            <div className="profile-card-stats">
-              <div className="profile-card-stats__item">
-                <div className="profile-card-stats__title">Level</div>
-                <div className="profile-card-stats__value">{userLevel}</div>
-              </div>
-              <div className="profile-card-stats__item">
-                <div className="profile-card-stats__title">Wins</div>
-                <div className="profile-card-stats__value">{userWins}</div>
-              </div>
-              <div className="profile-card-stats__item">
-                <div className="profile-card-stats__title">Losses</div>
-                <div className="profile-card-stats__value">{userLosses}</div>
-              </div>
-              <div className="profile-card-stats__item">
-                <div className="profile-card-stats__title">Joined</div>
-                <div className="profile-card-inf__txt">{userSubDate}</div>
-              </div>
-            </div>
-            <div className="profile-card-inf">
-              <div className="button-container">
-                <RouterLink to='/user/edit'><button className="button-32">Edit profile</button></RouterLink>
-                <RouterLink to='/user/history'><button className="button-32">History</button></RouterLink>
-                <RouterLink to='/game'><button className="button-32">Play Game</button></RouterLink>
-                <RouterLink to='/user/friends'><button className="button-32">Friends</button></RouterLink>
-              </div>
-            </div>
-            <div className="toggle-container">
-              <label className="lab-fa">2FA Authentication:</label>
-              <input
-                type="checkbox"
-                checked={user2FAEnabled}
-                onChange={handle2FAToggle}
-                disabled={!!userQrCodeData} // Désactive la case à cocher si le QR Code est affiché
-              />
-              </div>
-              <div className="qrcode-container">
-              {userQrCodeData && (
-                <div>
-                  <p>Veuillez scanner ce QR Code avec votre application d'authentification et entrer le code généré ci-dessous.</p>
-                  <img className="img-qrcode" src={userQrCodeData} />
-                  <input
-                    type="text"
-                    value={userEnteredCode}
-                    onChange={(e) => setUserEnteredCode(e.target.value)}
-                    placeholder="Enter the code from your app"
-                  />
-                  <button onClick={handleVerifyCode}>Verify Code</button>
+        </div>
+        <div className="container-fluid mt--7">
+          <div className="row">
+            <div className="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+              <div className="card card-profile shadow">
+                <div className="row justify-content-center">
+                  <div className="col-lg-3 order-lg-2">
+                    <div className="card-profile-image">
+                      <a href="#">
+                        <img src={userImage} className="rounded-circle" />
+                      </a>
+                    </div>
+                  </div>
                 </div>
-              )}
+                <div className="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                </div>
+                <div className="card-body pt-0 pt-md-4">
+                  <div className="row">
+                    <div className="col">
+                      <div className="card-profile-stats d-flex justify-content-center mt-md-5">
+                        <div>
+                          <span className="heading">{userLevel}</span>
+                          <span className="description">Level</span>
+                        </div>
+                        <div>
+                          <span className="heading">{userWins}</span>
+                          <span className="description">Wins</span>
+                        </div>
+                        <div>
+                          <span className="heading">{userLosses}</span>
+                          <span className="description">Losses</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <h3>
+                      {userName}
+                    </h3>
+                    <div className="h5 font-weight-300">
+                      <i style={{
+                        color: userStatus === "ONLINE"
+                          ? '#006400'
+                          : userStatus === "INGAME"
+                            ? '#FFD700'
+                            : userStatus === "OFFLINE"
+                              ? '#8B0000'
+                              : 'black'
+                      }}>
+                        {userStatus}
+                      </i>
+                    </div>
+                    <div className="h5 mt-4">
+                      <i className="ni business_briefcase-24 mr-2"></i>Joined at
+                    </div>
+                    <div>
+                      <i className="ni education_hat mr-2"></i>{userSubDate}
+                    </div>
+                    <hr className="my-4" />
+                  </div>
+                </div>
+              </div>
             </div>
+            <div className="col-xl-8 order-xl-1">
+              <div className="card bg-secondary shadow">
+                <div className="card-header bg-white border-0">
+                  <div className="row align-items-center">
+                    <div className="col-8">
+                      <h3 className="mb-0">My Profile</h3>
+                    </div>
+                    <div className="col-4 text-right">
+                      <a href="#!" className="btn btn-sm btn-primary ghost">Save</a>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-body">
+                  <form>
+                    <h6 className="heading-small text-muted mb-4">Edit Profile</h6>
+                    <div className="pl-lg-4">
+                      <div className="row">
+                        <div className="col-lg-6">
+                          <div className="form-group focused">
+                            <label className="form-control-label" htmlFor="input-file">Avatar</label>
+                            <input className="form-control" type="file" id="formFile" accept="image/*" />
+                          </div>
+                        </div>
+                        <div className="col-lg-6">
+                          <div className="form-group">
+                            <label className="form-control-label" htmlFor="input-username">UserName</label>
+                            <input type="text" id="input-username" value={userName} onChange={e => setUserName(e.target.value)} className="form-control form-control-alternative" placeholder="new Username" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">2FA</h6>
+                    <div className="pl-lg-4">
+                      <div className="form-group focused">
+                        <Checkbox size='md' type="checkbox"
+                          checked={user2FAEnabled}
+                          onChange={handle2FAToggle}
+                          disabled={!!userQrCodeData}
+                          className="form-control form-control-alternative">
+                          Active 2FA
+                        </Checkbox>
+                        {userQrCodeData && (
+                          <div className="pl-lg-4">
+                            <label className="form-control-label">Veuillez scanner ce QR Code avec votre application d'authentification:</label>
+                            <img className="img-qrcode" style={{ margin: "auto" }} src={userQrCodeData} />
+                            <input
+                              type="text"
+                              value={userEnteredCode}
+                              onChange={(e) => setUserEnteredCode(e.target.value)}
+                              className="form-control form-control-alternative"
+                              placeholder="Enter the code"
+                              style={{ margin: "auto" }}
+                            />
+                            <a className="btn btn-sm btn-primary ghost" onClick={handleVerifyCode} style={{ marginTop: "10px" }}>Verify Code</a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </form>
+                  <div className="tab-container">
+                    <div className="tabs-profile">
+                      <div className="tab-2">
+                        <label htmlFor="tab2-1">My Friends</label>
+                        <input id="tab2-1" name="tabs-two" type="radio" />
+                        <div>
+                          <div className="friends-content">
+                          <ul className="team">
+                              {/* Ici, vous pouvez répliquer le code pour chaque list d'ami */}
+                              <li className="member">
+                                <div className="thumb"><img src={userImage} alt="friend_img" /></div>
+                                <div className="description">
+                                  <h3>Friend UserName</h3>
+                                  <p>You can send a chat message, play game or visit this friend's profile and more &#128521;</p>
+                                  <a href="/" className="btn btn-sm btn-primary ghost">Profile</a>
+                                  <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
+                                  <a href="/game" className="btn btn-sm btn-primary ghost">Invit Game</a>
+                                  <button className="btn btn-sm btn-no ghost">Delete</button>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="tab-2">
+                        <label htmlFor="tab2-2">Request Friends</label>
+                        <input id="tab2-2" name="tabs-two" type="radio" />
+                        <div>
+                          <div className="request-content">
+                            <ul className="team">
+                              {/* Ici, vous pouvez répliquer le code pour chaque demande d'ami */}
+                              <li className="member">
+                                <div className="thumb"><img src={userImage} alt="friend_img" /></div>
+                                <div className="description">
+                                  <h3>Friend UserName</h3>
+                                  <p>You sent a friend request</p>
+                                  <button className="btn btn-sm btn-primary ghost">Accept</button>
+                                  <button className="btn btn-sm btn-no ghost">Refuse</button>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="tab-2">
+                        <label htmlFor="tab2-3">Game Histories</label>
+                        <input id="tab2-3" name="tabs-two" type="radio" />
+                        <div>
+
+                          <div className="table-wrapper">
+                            <table className="fl-table">
+                              <thead>
+                                <tr>
+                                  <th>GAME_ID</th>
+                                  <th>OPPONENT</th>
+                                  <th>RANK</th>
+                                  <th>LEVEL</th>
+                                  <th>SCORE</th>
+                                  <th>WINNER</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {gamesHistory.map(game => (
+                                  <tr key={game.id}>
+                                    <td>{game.id}</td>
+                                    <td>{game.opponent}</td>
+                                    <td>{game.opponentRank}</td>
+                                    <td>{game.opponentLevel}</td>
+                                    <td>{game.score}</td>
+                                    <td>{game.winner}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                                </table>
+                              </div>
+
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      }
+
     </div>
   );
 };
