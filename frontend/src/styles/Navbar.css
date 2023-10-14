@@ -109,6 +109,15 @@
 }
 
 /* Styling each Search Result */
+
+.navbar-container input {
+	background-color: white;
+	border: none;
+	padding: 10px 15px;
+	margin: 8px 0;
+	width: 75%;
+}
+
 .search-results- > div {
   border-bottom: 1px solid #e5e5e5; /* Adds a line after each item */
   padding: 1% 4%; /* Padding for each item */
@@ -116,7 +125,7 @@
 }
 
 .search-results- > div:hover {
-  background-color: rgb(246, 195, 9); /* Change background color on hover */
+  background-color: #3aafa9; /* Change background color on hover */
 }
 
 /* Styling the Link of each Search Result */

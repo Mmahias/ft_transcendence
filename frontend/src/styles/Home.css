@@ -79,7 +79,7 @@
 }
 
 .home-btn {
-	width: 150px;
+	/* width: 150px; */
 	height: 60px;
 	cursor: pointer;
 	font-size: 20px;
@@ -92,6 +92,7 @@
 		5px -5px 0 #3aafa9;
 	transition: 500ms ease-in-out;
   margin-bottom: 20%;
+  padding: 10px;
 }
 
 .home-btn:hover {
