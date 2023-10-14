@@ -37,6 +37,8 @@ const TabChannels: React.FC = () => {
   const isBlockedByUser = (targetUser: User, user: User) => user.blockedList.some(blocked => blocked.id === targetUser.id);
 
   const isBlockedInDM = (channel: Channel) => {
+    console.log("goobs", channel.joinedUsers);
+    return false;
     if (channel.mode !== ChanMode.DM) return false;
     const [userA, userB] = channel.joinedUsers;
     return !!(userA && userB && (isBlockedByUser(userA, userB) || isBlockedByUser(userB, userA)));

@@ -27,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   const blurTimeoutRef = useRef<number | null>(null); // Added ref for timeout
   const socketRef = useRef(socket);
 
-  const myProfileQuery = useQuery(['me'], UserService.getMe, {
+  const { data: myDetails } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     enabled: isLoggedIn ? true : false,
     onSuccess: () => {
@@ -47,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       enabled: !!searchTerm && isLoggedIn,
       refetchOnWindowFocus: false,
       onSuccess: (fetchedData) => {
-        const filteredData = fetchedData.filter(user => user.id !== myProfileQuery.data?.id);
+        const filteredData = fetchedData.filter(user => user.id !== myDetails?.id);
         setSearchResults(filteredData);
       }
     }
@@ -125,6 +125,9 @@ const Navbar: React.FC<NavbarProps> = () => {
   return (
     <>
       <nav className="navbar-container">
+        <div className="dropbtn">
+          <p> {myDetails?.username}</p>
+        </div>
         <a href="/">
           <img className="logo" src={logo} alt="App Logo" />
         </a>
@@ -178,7 +181,6 @@ const Navbar: React.FC<NavbarProps> = () => {
           </div>
         )}
         </div>
-
         <div className="dropdown">
           <div className="dropbtn">
             <FontAwesomeIcon icon={faBars} />

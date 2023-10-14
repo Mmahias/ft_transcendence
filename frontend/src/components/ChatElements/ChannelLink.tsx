@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { useSocket, useAuth } from '../../hooks';
-import { sendInviteToUser, sendNotificationToServer } from "../..//sockets/sockets";
+import { sendInviteToUser, sendNotificationToServer } from "../../sockets/sockets";
 import { toast } from 'react-hot-toast';
 import { ChanMode } from '../../shared/types';
 

@@ -12,15 +12,15 @@ import SocketService from '../../sockets/sockets';
 import Chat from 'pages/Chat';
 
 function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
-  const socket = useSocket();
   const queryClient = useQueryClient();
+  const socketRef = useRef(useSocket());
   const { setActiveTab, setActiveChan } = useContext(ChatStatusContext);
-
+  
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [tryToKickBan, setTryToKickBan] = useState<boolean>(false);
 
-  const socketRef = useRef(useSocket());
 
   // Fetch channel details
   const { data: channel } = useQuery({
@@ -35,6 +35,8 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     onSuccess: (data) => {
       setMessages(data);
       scrollToBottom();
+      setTryToKickBan(true);
+      console.log("{{{conv", conv.name, conv.joinedUsers)
     }
   });
 
@@ -45,6 +47,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     },
     onSuccess: () => {
       const payload: string = `/msg***${conv?.id}***${inputValue}`;
+      console.log('{{{sending message', payload);
       socketRef.current?.emit('Chat', payload);
       setInputValue('');
     },
@@ -59,12 +62,12 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   });
 
   // On mount: join room and scroll to the bottom of messages
-  useEffect(() => {
-    if (socketRef && channel?.id) {
-      SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
-      scrollToBottom();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (socketRef && channel?.id) {
+  //     SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
+  //     scrollToBottom();
+  //   }
+  // }, []);
 
   // Listen for new messages, refetch messages when it receives one
   useEffect(() => {
@@ -80,12 +83,16 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     };
   }, [socketRef, sendMessageMutation]);
 
-  // Handle user permissions in the channel
+  // Handle user muted permissions in the channel
   useEffect(() => {
     if (channel && loggedUser) {
       const userIsMuted = channel?.mutedUsers.some(user => user.id === loggedUser.id);
       setIsMuted(userIsMuted);
+    }
+  }, [channel]);
 
+  useEffect(() => {
+    if (channel && loggedUser && tryToKickBan) {
       const kickBanUser = (actionMessage: string) => {
         leaveChannelMutation.mutate([loggedUser, channel.id]);
         toast(actionMessage);
@@ -94,15 +101,17 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       };
 
       if (channel.kickedUsers.some(user => user.id === loggedUser.id)) {
+        console.log("{{{kickedusers:", channel.kickedUsers.forEach(user => console.log(user.username)));
         kickBanUser(`You were kicked from ${channel.name}!`);
         ChatService.updateUserInChannel(loggedUser.id, channel.id, 'kickedUsers', 'disconnect');
       }
       else if (channel.bannedUsers.some(user => user.id === loggedUser.id)) {
+        console.log("{{{bannedusers:", channel.bannedUsers.forEach(user => console.log(user.username)));
         kickBanUser(`You were banned from ${channel.name}!`);
       }
     }
-  }, [channel, loggedUser, leaveChannelMutation]);
-
+  }, [channel]);
+  
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>, message: string) => {
     event.preventDefault();
     if (inputValue.trim() !== '') {

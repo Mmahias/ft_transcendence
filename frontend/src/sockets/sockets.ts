@@ -54,7 +54,7 @@ class SocketService {
         role = "/msg";
         info = `#INFO# ${channelId} ${userTalking} is quoted.`
     }
-    console.log ("info", info);
+    console.log("{{{info", info);
     return (info);
   }
 

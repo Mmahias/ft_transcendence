@@ -208,7 +208,6 @@ class ChatService {
     }
   }
 
-
   static async getDMs(senderUsername: string, receiverUsername: string): Promise<Channel> {
     try {
       // gets the users and check if they can communicate
@@ -227,16 +226,17 @@ class ChatService {
       if (sender.blockedList && sender.blockedList.some((user) => user.id === receiver.id)) {
         throw new Error('You blocked this user');
       }
-
+      
       const name = [senderUsername, receiverUsername]
-        .map(name => name.toLowerCase()) // Convert to lowercase to ensure case-insensitivity
-        .sort()                          // Sort the names alphabetically
-        .join('@');                      // Separate the names with an '@' symbol
+      .map(name => name.toLowerCase()) // Convert to lowercase to ensure case-insensitivity
+      .sort()                          // Sort the names alphabetically
+      .join('@');                      // Separate the names with an '@' symbol
+      console.log("getDMs: ", senderUsername, receiverUsername)
       let conv: Channel = await ChatService.getChannelByName(name);
       if (!conv) {
         conv = await ChatService.createChannel(name, ChanMode.DM);
+        ChatService.updateUserInChannel(receiver.id, conv.id, 'joinedUsers', 'connect');
       }
-      await ChatService.updateUserInChannel(sender.id, conv.id, 'joinedUsers', 'connect');
       return conv;
     } catch (error) {
       throw new Error('Error: cannot establish the DMs');

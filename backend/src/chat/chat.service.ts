@@ -138,9 +138,10 @@ export class ChatService {
       where: {
         OR: [{ mode: PrismaChanMode.PROTECTED }, { mode: PrismaChanMode.PUBLIC }],
         NOT: {
-          joinedUsers: {
-            some: { id: userId }
-          }
+          OR: [
+            { joinedUsers: { some: { id: userId } } },
+            { bannedUsers: { some: { id: userId } } }
+          ]
         }
       },
       include: {
@@ -194,13 +195,42 @@ export class ChatService {
 
   async updateChannelUserlist(channelId: number, body: UpdateChannelDto) {
     const { id, usergroup, action } = body;
+
+    console.log("UPDATEZZZ", body)
+    
+    // Check for missing parameters
     if (!id || !usergroup || !action) {
       throw new BadRequestException('Missing parameters');
     }
+
+    // Fetch the user
     const user = await this.userService.getUserById(id);
+
+    // Fetch the channel to get lists of users in different groups
+    const channel = await prisma.channel.findUnique({
+      where: { id: channelId },
+      select: {
+        adminUsers: true,
+        bannedUsers: true,
+      },
+    });
+
+    // Prevent disconnecting from joinedUsers
     if (usergroup === 'joinedUsers' && action === 'disconnect') {
       throw new ForbiddenException('Invalid request from client');
     }
+
+    // Check if user belongs to adminUsers
+    if (channel?.adminUsers.some(adminUser => adminUser.id === user.id)) {
+      throw new ForbiddenException('Admin users cannot be modified in this manner.');
+    }
+
+    // Check if usergroup is joinedUsers and user belongs to bannedUsers
+    if (usergroup === 'joinedUsers' && channel?.bannedUsers.some(bannedUser => bannedUser.id === user.id)) {
+      throw new ForbiddenException('Banned users cannot join a channel.');
+    }
+
+    // If all checks pass, proceed with the update
     console.log("UPDATE_CHANNEL_USERLIST", body)
     return await prisma.channel.update({
       where: { id: channelId },
@@ -208,7 +238,7 @@ export class ChatService {
         [usergroup]: { [action]: { id: user.id } }
       }
     });
-  }
+}
 
   // ------------------
   // ----- DELETE -----
@@ -250,7 +280,6 @@ export class ChatService {
       data: {
         adminUsers: { disconnect: { id: userId } },
         joinedUsers: { disconnect: { id: userId } },
-        bannedUsers: { disconnect: { id: userId } },
         kickedUsers: { disconnect: { id: userId } },
         mutedUsers: { disconnect: { id: userId } }
       }
@@ -308,7 +337,6 @@ export class ChatService {
         nbMessages: { increment: 1 },
       }
     });
-    
     return await prisma.message.create({
       data: {
         from: { connect: { id: fromId } },

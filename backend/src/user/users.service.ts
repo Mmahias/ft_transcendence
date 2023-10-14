@@ -28,6 +28,9 @@ export class UserService {
       .findUniqueOrThrow({
         where: {
           id
+        },
+        include: {
+          blockedUsers: true
         }
       })
       .catch((error) => {
@@ -235,6 +238,7 @@ export class UserService {
           avatar: true
         }
       });
+
       return users.map(user => ({
         id: user.id,
         username: user.username,

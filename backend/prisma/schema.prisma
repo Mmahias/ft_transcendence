@@ -34,6 +34,8 @@ model User {
   friendedBy             User[]          @relation("friendship")
   friendsRequestSent     FriendRequest[] @relation("sentRequests")
   friendsRequestReceived FriendRequest[] @relation("receivedRequests")
+  blockList   User[] @relation("blocked")
+  blockedFrom User[] @relation("blocked")
   // channels relations
   ownerChans             Channel[]       @relation("owner") // channels that the user owns
   adminChans             Channel[]       @relation("admins") // channels that the user can manage
