@@ -202,6 +202,7 @@ export class ChatService {
     if (!id || !usergroup || !action) {
       throw new BadRequestException('Missing parameters');
     }
+    console.log("UPDATEZZZ", body)
 
     // Fetch the user
     const user = await this.userService.getUserById(id);

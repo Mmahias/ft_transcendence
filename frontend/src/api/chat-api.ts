@@ -211,20 +211,25 @@ class ChatService {
   static async getDMs(senderUsername: string, receiverUsername: string): Promise<Channel> {
     try {
       // gets the users and check if they can communicate
-      if (!senderUsername || !receiverUsername) throw new Error('Error: missing username');
+      if (!senderUsername || !receiverUsername) {
+        throw new Error('missing username');
+      }
+      if (senderUsername == receiverUsername) {
+        throw new Error('cannot DM yourself');
+      }
       let sender: User = await UserService.getUserByUsername(senderUsername);
       if (!sender) {
-        throw new Error('Error: sender does not exist');
+        throw new Error('sender does not exist');
       }
       let receiver: User = await UserService.getUserByUsername(receiverUsername);
       if (!receiver) {
-        throw new Error('Error: receiver does not exist');
+        throw new Error('receiver does not exist');
       }
       if (receiver.blockedList && receiver.blockedList.some((user) => user.id === sender.id)) {
-        throw new Error('You are blocked by this user');
+        throw new Error('you are blocked by this user');
       }
       if (sender.blockedList && sender.blockedList.some((user) => user.id === receiver.id)) {
-        throw new Error('You blocked this user');
+        throw new Error('you blocked this user');
       }
       
       const name = [senderUsername, receiverUsername]
@@ -238,8 +243,8 @@ class ChatService {
         ChatService.updateUserInChannel(receiver.id, conv.id, 'joinedUsers', 'connect');
       }
       return conv;
-    } catch (error) {
-      throw new Error('Error: cannot establish the DMs');
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 }

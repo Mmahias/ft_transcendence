@@ -1,28 +1,18 @@
-import '../../styles/Tab_channels.css';
+import { User } from "../api/types";
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import ChanCreationForm from './ChanCreationForm';
-import AccessibleChannelsTab from './AccessibleChannelsTab';
-import UserService from '../../api/users-api'; // Make sure to import UserService
-import ChatService from '../../api/chat-api'; // Assuming this is the correct import for ChatService.createDMChan
-import { User } from '../../api/types'; // Assuming this is the correct import for ChatService.createDMChan
+import '../styles/SearchBar.css';
+import UserService from "../api/users-api";
 import toast from 'react-hot-toast';
-import '../../styles/Tab_more.css';
 
-enum Tab {
-  JOIN,
-  CREATE,
-}
-
-export default function TabMore() {
-  const [tab, setTab] = useState<Tab>(Tab.JOIN);
+const SearchBar: React.FC<{ onUserClick: (selectedUserID: string) => Promise<void> }> = ({ onUserClick }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<Array<any>>([]); // replace any with your user type if needed
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const blurTimeoutRef = useRef<number | null>(null);
 
-  const { data: myDetails } = useQuery(['me'], UserService.getMe, {
+  const { data: myDetails, error, isLoading, isSuccess } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     onError: (error: any) => {
       if (error.response?.status === 401) {
@@ -64,29 +54,23 @@ export default function TabMore() {
     }
   };
 
-  const handleUserClick = async (receiverUsername: string) => { // replace string with the correct user id type if needed
+  const handleUserClick = async (receiverUserId: string) => { 
     try {
-      await ChatService.getDMs(String(myDetails?.username), receiverUsername);
-      toast.success(`DM chan with ${receiverUsername} created!`);
-      setSearchTerm(''); // clear search after creating a DM
+      await onUserClick(receiverUserId);
+      setSearchTerm(''); // clear search after adding the user to the conversation
     } catch (err: any) {
       console.log("err", err);
-      toast.error(`Error creating DM: ${err.message}`);
+      toast.error(`Error adding user to conversation: ${err.message}`);
     }
-  };
-  
-  const toggleTab = () => {
-    setTab(tab === Tab.CREATE ? Tab.JOIN : Tab.CREATE);
   };
 
   return (
-    <div className='channels_page'>
-
-      <div className="search-container">
-        
+    <div className="links-container">
+    {
+      <div className="searchBar">
         <input
           type="text"
-          placeholder="Search for users..."
+          placeholder="Search user..."
           value={searchTerm}
           onChange={handleSearchChange}
           onKeyDown={handleSearchSubmit}
@@ -103,31 +87,25 @@ export default function TabMore() {
             }, 150);
           }}
         />
-
         {searchResults.length > 0 && searchFocus && (
-          <div className="search-results">
+          <div className="search-results-">
             {searchResults.map((user, idx) => (
               <div 
                 key={idx} 
                 className={`user-result ${idx === selectedUserIndex ? 'highlighted-user' : ''}`}
               >
-                <button onClick={() => handleUserClick(user.username)}>
+                <button onClick={() => handleUserClick(user.id)}>
+                  <img src={user.avatar} className="user-avatar" />
                   {user.username}
                 </button>
               </div>
             ))}
           </div>
         )}
-
       </div>
-      
-      <div id="tabmore_page">
-        {tab === Tab.CREATE ? <ChanCreationForm /> : <AccessibleChannelsTab />}
-        <button id="button-join-create" onClick={toggleTab}>
-          {tab === Tab.CREATE ? "Join a channel" : "Create a channel"}
-        </button>
-      </div>
-
+    }
     </div>
-  )
-}
+  );
+};
+
+export default SearchBar;

@@ -30,7 +30,7 @@ export class UserService {
           id
         },
         include: {
-          blockedUsers: true
+          blockedList: true
         }
       })
       .catch((error) => {
@@ -47,6 +47,9 @@ export class UserService {
       .findUniqueOrThrow({
         where: {
           nickname
+        },
+        include: {
+          blockedList: true
         }
       })
       .catch((error) => {
@@ -62,6 +65,9 @@ export class UserService {
     return this.prisma.user.findUniqueOrThrow({
       where: {
         username
+      },
+      include: {
+        blockedList: true
       }
     })
     .catch((error) => {

@@ -125,7 +125,10 @@ return (
 
 export default function AccessibleChannelsTab() {
 
-  const { data: nonJoinedChannels, status: statusJoinedChannels } = useQuery({queryKey: ['channels'], queryFn: ChatService.getAccessibleChannels});
+  const { data: nonJoinedChannels, status: statusJoinedChannels } = useQuery({
+    queryKey: ['channels'],
+    queryFn: ChatService.getAccessibleChannels
+  });
   
   if (statusJoinedChannels == 'error'){ return <div>Error</div> }
   if (statusJoinedChannels == 'loading'){ return <div>Loading...</div> }

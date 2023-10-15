@@ -1,0 +1,46 @@
+/* SearchBar.css */
+
+.searchBar {
+  position: relative; /* To position the dropdown relative to the input */
+  width: 250px; /* Defines the width of the search bar */
+}
+
+input[type="text"] {
+  width: 100%; /* Ensures the input stretches to the full width of .searchBar */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-results- {
+  position: absolute;
+  top: 100%; /* Place it right below the input */
+  width: 100%; /* Ensures the dropdown matches the width of .searchBar */
+  max-height: 200px; /* Adjust based on your needs */
+  overflow-y: auto; /* Adds scroll if results overflow the max-height */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 10; /* To ensure the dropdown is above other elements */
+}
+
+.user-result {
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.user-result:hover, 
+.user-result.highlighted-user {
+  background-color: #f7f7f7; /* Light gray background for highlighted/hover state */
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px; /* Some space between the avatar and the username */
+  border-radius: 50%; /* Circular avatar */
+  object-fit: cover;
+}

@@ -59,10 +59,6 @@ span {
   overflow-x:hidden;
 }
 
-/* ********************************/
-/* ***  ChannelLink COMPONENT   ***/
-/* ********************************/
-
 .channel-link-header {
   display: flex;
   justify-content: space-between;
@@ -156,4 +152,19 @@ span {
   overflow: hidden;       /* Hide overflowed text */
   text-overflow: ellipsis;/* Show ellipsis when text is too long */
   max-width: 100%;        /* Optional, ensures content doesn't grow past container */
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  z-index: 1;
 }
