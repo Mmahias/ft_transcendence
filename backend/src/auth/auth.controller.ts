@@ -12,11 +12,10 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from '@app/auth/dto';
 import { UserService } from '@app/user/users.service';
 import { Oauth42Guard } from '@app/auth/strategies/oauth/oauth.42.guard';
-import { JwtAuthGuard } from '@app/auth/strategies/jwt/jwt-auth.guard';
 import { TwoFaAuth } from '@app/auth/dto/two-fa-auth';
 import { User } from '@app/user/decorator';
 import { LocalAuthGuard } from '@app/auth/strategies/local/local-auth.guard';
-import {Jwt2faAuthGuard} from "@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard";
+import { Jwt2faAuthGuard } from '@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard';
 
 @Controller('auth')
 export class AuthController {
@@ -74,6 +73,15 @@ export class AuthController {
       await this.authService.generateTwoFactorAuthenticationSecret(user);
 
     return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
+  }
+
+  @Get('2fa/is-turn-on')
+  @UseGuards(Jwt2faAuthGuard)
+  async isTurnOnTwoFactorAuthentication(@User('id') userId: number) {
+    const user = await this.userService.getUserById(userId);
+    const { authenticationEnabled } = user;
+
+    return { isAuthenticationEnabled: authenticationEnabled };
   }
 
   @Post('2fa/turn-on')

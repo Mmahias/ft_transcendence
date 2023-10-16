@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { UserDto, UserUpdateDto } from './dto';
+import { UserUpdateDto } from './dto';
 import { PasswordService } from '@app/password/password.service';
 
 @Injectable()
@@ -62,22 +62,23 @@ export class UserService {
   }
 
   async getUserByUsername(username: string) {
-    return this.prisma.user.findUniqueOrThrow({
-      where: {
-        username
-      },
-      include: {
-        blockedList: true
-      }
-    })
-    .catch((error) => {
-      if (error instanceof PrismaClientKnownRequestError) {
-        const error = `Username [${username}] is not found`;
-        this.logger.log(error);
-        throw new NotFoundException(error);
-      }
-      throw error;
-    });
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: {
+          username
+        },
+        include: {
+          blockedList: true
+        }
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          const error = `Username [${username}] is not found`;
+          this.logger.log(error);
+          throw new NotFoundException(error);
+        }
+        throw error;
+      });
   }
 
   async createUser(username: string, password: string, nickname?: string) {
@@ -97,7 +98,7 @@ export class UserService {
               throw new ConflictException(`Username [${username}] is already taken`);
             default:
               throw new InternalServerErrorException(
-                'An unexpected error occurred while creating the user'
+                `An unexpected error occurred while creating the user [${error.code}]`
               );
           }
         } else {
@@ -237,7 +238,7 @@ export class UserService {
             startsWith: searchTerm
           }
         },
-        take: Number((nbUsers > 20 ? 20 : nbUsers)),
+        take: Number(nbUsers > 20 ? 20 : nbUsers),
         select: {
           id: true,
           username: true,
@@ -245,12 +246,11 @@ export class UserService {
         }
       });
 
-      return users.map(user => ({
+      return users.map((user) => ({
         id: user.id,
         username: user.username,
         avatar: user.avatar
       }));
-  
     } catch (error) {
       this.logger.error(error.message);
       if (error instanceof PrismaClientKnownRequestError) {
