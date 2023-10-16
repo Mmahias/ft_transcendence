@@ -1,5 +1,5 @@
 import { Ball, Paddle } from './useGameLogic';
-import { GameState } from '../../pages/Game';
+import { GameStatus } from '../../pages/Game';
 import { BALL_ACC_X, MAX_BALL_SPEED } from './constants';
 
 export const willBallHitPaddle = (ball: Ball, paddle: Paddle): boolean => {
@@ -94,12 +94,12 @@ export const calculateBounceAngle = (ball: Ball, paddle: Paddle): number => {
     return angle;
 };
 
-export const handleResize = (gameState: GameState,
-    setBall: React.Dispatch<React.SetStateAction<Ball>>,
-    setGameState: React.Dispatch<React.SetStateAction<GameState>>
-    ) => {
-    if (gameState !== GameState.GAME_OVER) {
-        setGameState(GameState.PAUSED);
-    }
-    setBall(prev => ({ ...prev }));
+export const handleResize = (gameStatus: GameStatus,
+  setBall: React.Dispatch<React.SetStateAction<Ball>>,
+  setGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>
+  ) => {
+  if (gameStatus !== GameStatus.GAME_OVER) {
+      setGameStatus(GameStatus.PAUSED);
+  }
+  setBall(prev => ({ ...prev }));
 };

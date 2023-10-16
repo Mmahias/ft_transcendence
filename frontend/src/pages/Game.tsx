@@ -9,7 +9,7 @@ import { useSocket } from '../hooks/useSocket';
 
 interface GameProps {}
 
-export enum GameState {
+export enum GameStatus {
   RUNNING,
   PAUSED,
   GAME_OVER,
@@ -20,25 +20,23 @@ const Game: React.FC<GameProps> = () => {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameWrapperRef = useRef<HTMLDivElement>(null);
-  const [gameState, setGameState] = useState<GameState>(GameState.WAITING);
-  const socketRef = useRef(useSocket());
+  const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.WAITING);
+  const socket = useSocket();
   
   const {
-    ball,
-    networkPlayerPaddle,
-    localPlayerPaddle,
+    gameState,
     onKeyDownHandler,
     onKeyUpHandler,
     resetGame,
   } = useGameLogic({
     height: Number(CANVAS_HEIGHT()),
     width: Number(CANVAS_WIDTH()),
-    onGameOver: () => setGameState(GameState.GAME_OVER),
-    gameState,
+    onGameOver: () => setGameStatus(GameStatus.GAME_OVER),
+    gameStatus,
   });
   
   const drawGame = (ctx: CanvasRenderingContext2D) => {
-    draw({ ctx, ball, leftPaddle: networkPlayerPaddle, rightPaddle: localPlayerPaddle });
+    draw({ ctx, gameState });
   };
   
   useEffect(() => {
@@ -51,78 +49,70 @@ const Game: React.FC<GameProps> = () => {
   // Socket listeners
   useEffect(() => {
     const handleMatchFound = () => {
-      setGameState(GameState.RUNNING);
+      setGameStatus(GameStatus.RUNNING);
+      console.log("Match found")
     };
-    socketRef.current?.on('foundMatch', handleMatchFound);
-    socketRef.current?.on('connect_error', (error) => {
+    socket?.on('foundMatch', handleMatchFound);
+    socket?.on('connect_error', (error) => {
       console.error("Socket connection error:", error);
     });
   
     return () => {
-      socketRef.current?.off('foundMatch', handleMatchFound);
-      socketRef.current?.off('connect_error');
+      socket?.off('foundMatch', handleMatchFound);
+      socket?.off('connect_error');
     };
   }, []);
 
+  const handleJoinQueue = (mode: string) => {
+    if (!socket) {
+      console.error("Socket is not defined.");
+      return;
+    }
+    socket.emit('joinQueue', { mode });
+    console.log(`Joining ${mode} queue`);
+  };
+
+    // New function for testing the queue
+    const handleTestQueue = () => {
+      if (!socket) {
+        console.error("Socket is not defined.");
+        return;
+      }
+      socket.emit('test-event', { mode: 'special' });
+    };
+  
+    // New function to toggle the game state between paused and running
+    const handleToggleGameStatus = () => {
+      setGameStatus(
+        gameStatus === GameStatus.RUNNING ? GameStatus.PAUSED : GameStatus.RUNNING
+      );
+    };
 
 
   const determineWinner = () => {
-    if (networkPlayerPaddle.score > localPlayerPaddle.score) return "Player 1";
-    if (networkPlayerPaddle.score < localPlayerPaddle.score) return "Player 2";
-    return "It's a tie"; // For equal scores
+    if (gameState.p1Score > gameState.p2Score)
+      return "You won";
+    else
+      return "You lost"; // For equal scores
   };
 
   return (
     <div tabIndex={0} onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler}>
       <GameWrapper ref={gameWrapperRef} tabIndex={0} onKeyDown={onKeyDownHandler} style={{ position: 'relative' }}>
         
-        <Score>{`${networkPlayerPaddle.score} - ${localPlayerPaddle.score}`}</Score>
-        <Canvas ref={canvasRef} draw={drawGame} ball={ball} leftPaddle={networkPlayerPaddle} rightPaddle={localPlayerPaddle} />
+        <Score>{`${gameState.p1Score} - ${gameState.p1Score}`}</Score>
+        <Canvas ref={canvasRef} draw={drawGame} gameState={gameState} />
         
-        {/* Join Classic Mode Queue */}
-        <StyledButton onClick={() => {
-            socketRef.current?.emit('joinQueue', { mode: 'classic' });
-            console.log("Joining queue");
-        }}>
-            Join Classic Queue
-        </StyledButton>
-
-        {/* Join Special Mode Queue */}
-        <StyledButton onClick={() => {
-            socketRef.current?.emit('joinQueue', { mode: 'special' });
-        }}>
-            Join Special Queue
-        </StyledButton>
-
-        <StyledButton onClick={() => {
-            socketRef.current?.emit('test-event', { mode: 'special' });
-        }}>
-            test Queue
-        </StyledButton>
-
-        {gameState === GameState.GAME_OVER ? (
+        <StyledButton onClick={() => handleJoinQueue('classic')}>Join Classic Queue</StyledButton>
+        <StyledButton onClick={() => handleJoinQueue('special')}>Join Special Queue</StyledButton>
+        <StyledButton onClick={handleTestQueue}>Test Queue</StyledButton>
+        {gameStatus === GameStatus.GAME_OVER ? (
           <>
             <WinningMessage>{determineWinner()} Won!</WinningMessage>
-            <StyledButton
-              onClick={() => {
-                resetGame();
-                setGameState(GameState.RUNNING);
-              }}
-            >
-              Rematch
-            </StyledButton>
           </>
         ) : (
-          <StyledButton
-            onClick={() => {
-              setGameState(
-                gameState === GameState.RUNNING
-                  ? GameState.PAUSED
-                  : GameState.RUNNING
-              );
-            }}
-          >
-            {gameState === GameState.RUNNING ? 'Pause' : 'Play'}
+          <StyledButton onClick={handleToggleGameStatus}>
+            {gameStatus === GameStatus.RUNNING ? 'Pause' : 'Play'}
           </StyledButton>
         )}
       </GameWrapper>

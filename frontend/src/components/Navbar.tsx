@@ -102,6 +102,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   // listening to socket change to limit React re renders
   useEffect(() => {
     socketRef.current = socket; // always keep the ref updated
+    console.log('socket changed', socketRef.current);
   }, [socket]);
 
   // listening to login/logout

@@ -1,26 +1,24 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import { Ball, Paddle } from './useGameLogic';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import { GameState } from "./gameState"
 import * as S from './Game.styles';
 
 type CanvasProps = React.DetailedHTMLProps<
   React.CanvasHTMLAttributes<HTMLCanvasElement>,
   HTMLCanvasElement
 > & {
-  ball: Ball;
-  leftPaddle: Paddle;
-  rightPaddle: Paddle;
+  gameState: GameState;
   draw?: (context: CanvasRenderingContext2D) => void;
 };
 
 const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
-  ({ draw, ball, leftPaddle, rightPaddle, ...props }, canvasRef) => {
+  ({ draw, gameState, ...props }, canvasRef) => {
 
     const [canvasDimensions, setCanvasDimensions] = useState({
         width: Number(CANVAS_WIDTH()),
         height: Number(CANVAS_HEIGHT()),
     });
-    console.log(CANVAS_HEIGHT(), CANVAS_WIDTH() );
 
     useEffect(() => {
         const updateDimensions = () => {
@@ -31,7 +29,6 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
         };
 
         updateDimensions();
-
         window.addEventListener('resize', updateDimensions);
 
         return () => {
@@ -40,9 +37,6 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
     }, []);
 
     useEffect(() => {
-        if (!canvasRef) {
-            return;
-        }
         const canvas = (canvasRef as React.RefObject<HTMLCanvasElement>).current;
         if (!canvas) {
             return;
@@ -58,7 +52,7 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
         }
 
         return () => context.clearRect(0, 0, window.innerWidth, 400);
-    }, [draw, canvasRef, ball, leftPaddle, rightPaddle]);
+    }, [draw, canvasRef, gameState]);
 
     return (
         <S.Canvas 
