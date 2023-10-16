@@ -110,10 +110,10 @@ export const StyledBall = styled.div<BallProps>`
     border-radius: 50%;
 `;
 
-export const Canvas = styled.canvas<{ canvasWidth: number, canvasHeight: number }>`
-  border: ${props => props.canvasWidth / 100}px solid black;
-  width: ${({ canvasWidth }) => canvasWidth}px;
-  height: ${({ canvasHeight }) => canvasHeight}px;
+export const Canvas = styled.canvas<{ width: number, height: number }>`
+  border: ${props => props.width / 100}px solid black;
+  width: ${({ width }) => width}px;
+  height: ${({ height }) => height}px;
   box-sizing: border-box;
   border-image-slice: 1;
   background-color: ${canvasBackgroundColor};

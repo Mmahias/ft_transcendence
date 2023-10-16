@@ -17,15 +17,16 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
   ({ draw, ball, leftPaddle, rightPaddle, ...props }, canvasRef) => {
 
     const [canvasDimensions, setCanvasDimensions] = useState({
-        width: CANVAS_WIDTH(),
-        height: CANVAS_HEIGHT(),
+        width: Number(CANVAS_WIDTH()),
+        height: Number(CANVAS_HEIGHT()),
     });
+    console.log(CANVAS_HEIGHT(), CANVAS_WIDTH() );
 
     useEffect(() => {
         const updateDimensions = () => {
             setCanvasDimensions({
-                width: CANVAS_WIDTH(),
-                height: CANVAS_HEIGHT(),
+                width: Number(CANVAS_WIDTH()),
+                height: Number(CANVAS_HEIGHT()),
             });
         };
 
@@ -61,12 +62,9 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
 
     return (
         <S.Canvas 
-            canvasWidth={canvasDimensions.width}
-            canvasHeight={canvasDimensions.height}
             width={canvasDimensions.width} 
             height={canvasDimensions.height} 
             ref={canvasRef as any} 
-            {...props} 
         />
     );
 });

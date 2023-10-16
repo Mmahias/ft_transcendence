@@ -3,90 +3,72 @@ import Canvas from '../components/GameElements/Canvas';
 import draw from '../components/GameElements/utils/draw';
 import { GameWrapper, Score, StyledButton, WinningMessage } from '../components/GameElements/Game.styles';
 import useGameLogic from '../components/GameElements/useGameLogic';
-import {
-    CANVAS_WIDTH, CANVAS_HEIGHT
-} from '../components/GameElements/constants';
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../components/GameElements/constants';
+import { Socket } from 'socket.io-client';
 import { useSocket } from '../hooks/useSocket';
 
 interface GameProps {}
 
 export enum GameState {
-    RUNNING,
-    PAUSED,
-    GAME_OVER,
-    WAITING,
+  RUNNING,
+  PAUSED,
+  GAME_OVER,
+  WAITING,
 }
 
 const Game: React.FC<GameProps> = () => {
-
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameWrapperRef = useRef<HTMLDivElement>(null);
   const [gameState, setGameState] = useState<GameState>(GameState.WAITING);
-  const onGameOver = () => setGameState(GameState.GAME_OVER);
-
+  const socketRef = useRef(useSocket());
   
   const {
     ball,
-    leftPaddle,
-    rightPaddle,
+    networkPlayerPaddle,
+    localPlayerPaddle,
     onKeyDownHandler,
     onKeyUpHandler,
     resetGame,
   } = useGameLogic({
-    canvasHeight: CANVAS_HEIGHT(),
-    canvasWidth: CANVAS_WIDTH(),
-    onGameOver,
+    height: Number(CANVAS_HEIGHT()),
+    width: Number(CANVAS_WIDTH()),
+    onGameOver: () => setGameState(GameState.GAME_OVER),
     gameState,
   });
-
+  
   const drawGame = (ctx: CanvasRenderingContext2D) => {
-    draw({ ctx, ball, leftPaddle, rightPaddle });
+    draw({ ctx, ball, leftPaddle: networkPlayerPaddle, rightPaddle: localPlayerPaddle });
   };
-  const socket = useSocket();
-  if (!socket) return null;
-
-  const [lobby, setLobby] = useState<any | null>(null);
-
-  const createLobbyHandler = () => {
-    console.log("join lobby clicked!");
-    const player = { /* your player data here */ }; 
-    socket.emit('createLobby', player);
-  };
-
-  const joinLobbyHandler = (lobbyID: string) => {
-    console.log("Joining lobby with ID:", lobbyID);
-    const player = { /* your player data here */ };
-    socket.emit('joinLobby', lobbyID, player);
-  };
-
-  const [lobbyID, setLobbyID] = useState<string>('');
-
+  
   useEffect(() => {
     if (gameWrapperRef && gameWrapperRef.current) {
       gameWrapperRef.current.focus(); // Sets focus on the div when the component mounts
     }
   }, []);
 
-  useEffect(() => {
-    // Listen for lobby updates
-    socket.on('lobbyUpdate', (updatedLobby) => {
-      setLobby(updatedLobby);
-      if(updatedLobby.players.length === 2) {
-        setGameState(GameState.RUNNING);
-      } else {
-        setGameState(GameState.WAITING);
-      }
-    });
 
-    // Cleanup when component unmounts
+  // Socket listeners
+  useEffect(() => {
+    const handleMatchFound = () => {
+      setGameState(GameState.RUNNING);
+    };
+    socketRef.current?.on('foundMatch', handleMatchFound);
+    socketRef.current?.on('connect_error', (error) => {
+      console.error("Socket connection error:", error);
+    });
+  
     return () => {
-      socket.off('lobbyUpdate');
+      socketRef.current?.off('foundMatch', handleMatchFound);
+      socketRef.current?.off('connect_error');
     };
   }, []);
 
+
+
   const determineWinner = () => {
-    if (leftPaddle.score > rightPaddle.score) return "Player 1";
-    if (leftPaddle.score < rightPaddle.score) return "Player 2";
+    if (networkPlayerPaddle.score > localPlayerPaddle.score) return "Player 1";
+    if (networkPlayerPaddle.score < localPlayerPaddle.score) return "Player 2";
     return "It's a tie"; // For equal scores
   };
 
@@ -94,21 +76,30 @@ const Game: React.FC<GameProps> = () => {
     <div tabIndex={0} onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler}>
       <GameWrapper ref={gameWrapperRef} tabIndex={0} onKeyDown={onKeyDownHandler} style={{ position: 'relative' }}>
         
-        {/* Display the lobby creation and joining UI if waiting for players */}
-        {gameState === GameState.WAITING && (
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-            <button onClick={createLobbyHandler}>join lobby</button>
-            <div style={{ marginTop: '20px' }}>
-              <input placeholder="Enter Lobby ID" value={lobbyID} onChange={(e) => joinLobbyHandler(e.target.value)} />
-              <button onClick={() => joinLobbyHandler(lobbyID)}>Join</button>
-            </div>
-          </div>
-        )}
-  
-        {/* Display the game's main content */}
-        <Score>{`${leftPaddle.score} - ${rightPaddle.score}`}</Score>
-        <Canvas ref={canvasRef} draw={drawGame} ball={ball} leftPaddle={leftPaddle} rightPaddle={rightPaddle} />
+        <Score>{`${networkPlayerPaddle.score} - ${localPlayerPaddle.score}`}</Score>
+        <Canvas ref={canvasRef} draw={drawGame} ball={ball} leftPaddle={networkPlayerPaddle} rightPaddle={localPlayerPaddle} />
         
+        {/* Join Classic Mode Queue */}
+        <StyledButton onClick={() => {
+            socketRef.current?.emit('joinQueue', { mode: 'classic' });
+            console.log("Joining queue");
+        }}>
+            Join Classic Queue
+        </StyledButton>
+
+        {/* Join Special Mode Queue */}
+        <StyledButton onClick={() => {
+            socketRef.current?.emit('joinQueue', { mode: 'special' });
+        }}>
+            Join Special Queue
+        </StyledButton>
+
+        <StyledButton onClick={() => {
+            socketRef.current?.emit('test-event', { mode: 'special' });
+        }}>
+            test Queue
+        </StyledButton>
+
         {gameState === GameState.GAME_OVER ? (
           <>
             <WinningMessage>{determineWinner()} Won!</WinningMessage>

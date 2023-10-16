@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Chat from './pages/Chat';
-// import Game from './pages/Game';
+import Game from './pages/Game';
 import MyProfile from './pages/MyProfile';
 import OtherProfile from './pages/OtherProfile';
 import Login from './pages/Login';
@@ -25,7 +25,7 @@ const MainContent: React.FC = () => {
     <MainContentWrapper>
       <Routes>
         <Route path="/" element={<Home/>} />
-        {/* <Route path="/game" element={<Game />} /> */}
+        <Route path="/game" element={<Game />} />
         <Route path="/user/profile" element={<MyProfile />} />
         <Route path="/user/profile/:reqUsername" element={<OtherProfile />} />
         <Route path="/chat" element={ <Chat/> } />

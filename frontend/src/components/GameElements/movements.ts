@@ -32,13 +32,13 @@ export const adjustBallVelocityAfterPaddleHit = (ball: Ball, paddle: Paddle): Ba
     let factor = 0;
 
     if (ballCenterY < paddleCenterY) {
-        factor = (paddleCenterY - ballCenterY) / stepSize;
-        ball.vy = -Math.round(factor * degrees);
+      factor = (paddleCenterY - ballCenterY) / stepSize;
+      ball.vy = -Math.round(factor * degrees);
     } else if (ballCenterY > paddleCenterY) {
-        factor = (ballCenterY - paddleCenterY) / stepSize;
-        ball.vy = Math.round(factor * degrees);
+      factor = (ballCenterY - paddleCenterY) / stepSize;
+      ball.vy = Math.round(factor * degrees);
     } else {
-        ball.vy = -ball.vy;
+      ball.vy = -ball.vy;
     }
     
     ball.vx *= (0.96 + factor / 10) * BALL_ACC_X();
@@ -48,34 +48,34 @@ export const adjustBallVelocityAfterPaddleHit = (ball: Ball, paddle: Paddle): Ba
     return ball;
 };
 
-export const adjustBallVelocityAfterCanvasHit = (ball: Ball, canvasHeight: number): Ball => {
-    if (ball.y + ball.size > canvasHeight || ball.y - ball.size < 0) {
+export const adjustBallVelocityAfterCanvasHit = (ball: Ball, height: number): Ball => {
+    if (ball.y + ball.size > height || ball.y - ball.size < 0) {
         ball.vy = -ball.vy;
     }
     return ball;
 };
 
-export const adjustBallVelocityAfterOutOfBounds = (ball: Ball, canvasWidth: number): Ball => {
-    if (ball.x + ball.size > canvasWidth || ball.x - ball.size < 0) {
+export const adjustBallVelocityAfterOutOfBounds = (ball: Ball, width: number): Ball => {
+    if (ball.x + ball.size > width || ball.x - ball.size < 0) {
         ball.vx = -ball.vx;
     }
     return ball;
 };
 
-export const willBallHitCanvas = (ball: Ball, canvasHeight: number, canvasWidth: number): boolean => {
-    return ball.y + ball.vy + ball.size > canvasHeight || ball.y + ball.vy - ball.size < 0;
+export const willBallHitCanvas = (ball: Ball, height: number, width: number): boolean => {
+    return ball.y + ball.vy + ball.size > height || ball.y + ball.vy - ball.size < 0;
 };
 
-export const willBallGetOutOfBounds = (ball: Ball, canvasHeight: number, canvasWidth: number): boolean => {
-    return ball.x + ball.vx + ball.size > canvasWidth || ball.x + ball.vx - ball.size < 0;
+export const willBallGetOutOfBounds = (ball: Ball, height: number, width: number): boolean => {
+    return ball.x + ball.vx + ball.size > width || ball.x + ball.vx - ball.size < 0;
 };
 
-export const movePaddle = (paddle: Paddle, direction: 'up' | 'down', canvasHeight: number): Paddle => {
+export const movePaddle = (paddle: Paddle, direction: 'up' | 'down', height: number): Paddle => {
   if (direction === 'up' && paddle.initialY - paddle.speed > 0) {
     return { ...paddle, initialY: paddle.initialY - paddle.speed };
   } else if (
     direction === 'down' &&
-    paddle.initialY + paddle.height + paddle.speed < canvasHeight
+    paddle.initialY + paddle.height + paddle.speed < height
   ) {
     return { ...paddle, initialY: paddle.initialY + paddle.speed };
   }

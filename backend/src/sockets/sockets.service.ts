@@ -16,11 +16,11 @@ export class MatchClass {
   started: number;
   mode: string;	// Classic ou Custom
 
-  player1: Player;
-  player2: Player;
+  networkPlayer: Player;
+  localPlayer: Player;
 
-  p1posY: number;
-  p2posY: number;
+  networkPosY: number;
+  localPosY: number;
 
   ballX: number;
   ballY: number;
@@ -56,11 +56,9 @@ export class SocketService {
   // FIX IT
   // Should be set to private, just set to public for test endpoint
   public currentActiveUsers: Map<number, Set<string>> = new Map();
-
+  public usersInGame: Map<number, string> = new Map();
   public queue: Player[] = [];
-
   public matchId = 0;
-
   public matches: MatchClass[] = [];
 
   public addActiveSocket(userId: number, socketId: string) {
@@ -100,12 +98,21 @@ export class SocketService {
     return await this.updateUserStatus(userId, UserStatus.ONLINE);
   }
 
-  public async goInGame(userId: number) {
+  public async goInGame(userId: number, socketId: string) {
+    this.usersInGame.set(userId, socketId);
     return await this.updateUserStatus(userId, UserStatus.IS_GAMING);
+  }
+
+  public leaveGame(userId: number) {
+    this.usersInGame.delete(userId);
   }
 
   public async goOffline(userId: number) {
     return await this.updateUserStatus(userId, UserStatus.OFFLINE);
+  }
+
+  public getSocketIdOfUserInGame(userId: number): string | undefined {
+    return this.usersInGame.get(userId);
   }
 
   createPlayer(userId: number, username: string, mode: string) {
@@ -131,19 +138,19 @@ export class SocketService {
     return this.queue.length - 1;
   }
 
-  addMatch(mode: string = "Classic", player1?: Player, player2?: Player): MatchClass {
+  addMatch(mode: string = "Classic", networkPlayer?: Player, localPlayer?: Player): MatchClass {
     const match = new MatchClass();
     match.matchId = this.matchId++;
     match.mode = mode;
 
-    match.player1 = player1 ?? this.queue.shift();
-    match.player2 = player2 ?? this.queue.shift();
+    match.networkPlayer = networkPlayer ?? this.queue.shift();
+    match.localPlayer = localPlayer ?? this.queue.shift();
 
-    match.player1.ready = false;
-    match.player2.ready = false;
+    match.networkPlayer.ready = false;
+    match.localPlayer.ready = false;
 
-    match.p1posY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
-    match.p2posY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
+    match.networkPosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
+    match.localPosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
 
     match.ballX = this.gameConstants.width / 2;
     match.ballY = this.gameConstants.height / 2;
@@ -181,11 +188,11 @@ export class SocketService {
   }
 
   private shouldDeleteDueToReadiness(match: MatchClass): boolean {
-    return (match.player1.ready === false || match.player2.ready === false) && (Date.now() - match.started > 10000);
+    return (match.networkPlayer.ready === false || match.localPlayer.ready === false) && (Date.now() - match.started > 10000);
   }
 
   private shouldDeleteDueToInactivity(match: MatchClass): boolean {
-    return (Date.now() - match.player1.lastUpdate > 3000) || (Date.now() - match.player2.lastUpdate > 3000);
+    return (Date.now() - match.networkPlayer.lastUpdate > 3000) || (Date.now() - match.localPlayer.lastUpdate > 3000);
   }
 
   public cleanupMatches() {
