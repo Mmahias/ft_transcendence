@@ -52,13 +52,13 @@ const Game: React.FC<GameProps> = () => {
       setGameStatus(GameStatus.RUNNING);
       console.log("Match found")
     };
-    socket?.on('foundMatch', handleMatchFound);
+    socket?.on('match found', handleMatchFound);
     socket?.on('connect_error', (error) => {
       console.error("Socket connection error:", error);
     });
   
     return () => {
-      socket?.off('foundMatch', handleMatchFound);
+      socket?.off('match found', handleMatchFound);
       socket?.off('connect_error');
     };
   }, []);
@@ -68,7 +68,7 @@ const Game: React.FC<GameProps> = () => {
       console.error("Socket is not defined.");
       return;
     }
-    socket.emit('joinQueue', { mode });
+    socket.emit('join queue', { mode });
     console.log(`Joining ${mode} queue`);
   };
 
@@ -100,7 +100,7 @@ const Game: React.FC<GameProps> = () => {
     <div tabIndex={0} onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler}>
       <GameWrapper ref={gameWrapperRef} tabIndex={0} onKeyDown={onKeyDownHandler} style={{ position: 'relative' }}>
         
-        <Score>{`${gameState.p1Score} - ${gameState.p1Score}`}</Score>
+        <Score>{`${gameState.p1Score} - ${gameState.p2Score}`}</Score>
         <Canvas ref={canvasRef} draw={drawGame} gameState={gameState} />
         
         <StyledButton onClick={() => handleJoinQueue('classic')}>Join Classic Queue</StyledButton>

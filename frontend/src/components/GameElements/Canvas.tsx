@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { Ball, Paddle } from './useGameLogic';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
 import { GameState } from "./gameState"
 import * as S from './Game.styles';

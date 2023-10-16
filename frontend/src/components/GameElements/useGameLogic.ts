@@ -89,12 +89,13 @@ const useGameLogic = ({ height, width, onGameOver, gameStatus }: UseGameLogicArg
   const [leftUser, setLeftUser] = useState(true);
   const [downKeyPressed, setDownKeyPressed] = useState(false);
   const [upKeyPressed, setUpKeyPressed] = useState(false);
+  const [keyPressed, setKeyPressed] = useState(false);
 
   const [gameState, setGameState] = useState({
     leftPaddleY: height / 2,
     rightPaddleY: height / 2,
-    ballX: width / 2,
-    ballY: height / 2,
+    ballX: CANVAS_WIDTH() / 2,
+    ballY: CANVAS_HEIGHT() / 2,
     ballSpeedX: 0,
     ballSpeedY: 0,
     p1Score: 0,
@@ -110,16 +111,22 @@ const useGameLogic = ({ height, width, onGameOver, gameStatus }: UseGameLogicArg
   };
   
   const onKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-      event.preventDefault(); // Prevents default browser behavior
+    event.preventDefault(); // Prevents default browser behavior
+    if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !keyPressed) {
+      setKeyPressed(true);
       console.log(event.key);
+      socketRef.current?.emit('game input', { key: event.key, type: 'down' });
     }
-    socketRef.current?.emit('keyPress', { key: event.key, type: 'down' });
   };
 
-  const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    socketRef.current?.emit('keyPress', { key: event.key, type: 'up' });
-  };
+const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  event.preventDefault(); // Prevents default browser behavior
+  if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && keyPressed) {
+    console.log("Socket Emit: keyPress (up) with key:", event.key);
+    socketRef.current?.emit('game input', { key: event.key, type: 'up' });
+    setKeyPressed(false);
+  }
+};
 
   useEffect(() => {
     if (!canvasDimensions.height || !canvasDimensions.width)
