@@ -1,7 +1,9 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { UserStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-
+import { CANVAS_HEIGHT, CANVAS_WIDTH, PADDLE_LENGTH,
+  PADDLE_WIDTH 
+  } from './game.constants'
 export class Player {
   userId: number;
   mode: string;
@@ -9,6 +11,7 @@ export class Player {
   score: number;
   ready: boolean;
   lastUpdate: number;
+  socketId: string;
 }
 
 export class MatchClass {
@@ -16,11 +19,11 @@ export class MatchClass {
   started: number;
   mode: string;	// Classic ou Custom
 
-  networkPlayer: Player;
-  localPlayer: Player;
+  player1: Player;
+  player2: Player;
 
-  networkPosY: number;
-  localPosY: number;
+  p1PosY: number;
+  p2PosY: number;
 
   ballX: number;
   ballY: number;
@@ -42,10 +45,10 @@ export class SocketService {
     private prisma: PrismaService,
   ) {}
   public gameConstants = {
-    width: 800, // in pixels
-    height: 600, // in pixels
-    paddleLength: 100, // in pixels
-    paddleWidth: 10, // in pixels
+    width: CANVAS_WIDTH(), // in pixels
+    height: CANVAS_HEIGHT(), // in pixels
+    paddleLength: PADDLE_LENGTH(), // in pixels
+    paddleWidth: PADDLE_WIDTH(), // in pixels
     ballRadius: 5, // in pixels
     maxBallSpeed: 1000, // in pixels per second
     winScore: 10, // in points
@@ -98,33 +101,48 @@ export class SocketService {
     return await this.updateUserStatus(userId, UserStatus.ONLINE);
   }
 
+  public async goOffline(userId: number) {
+    return await this.updateUserStatus(userId, UserStatus.OFFLINE);
+  }
+
   public async goInGame(userId: number, socketId: string) {
+    // Check if userId is already in the set
+    if (this.usersInGame.has(userId)) { return; }
+
+    // If not, add it to set
     this.usersInGame.set(userId, socketId);
     return await this.updateUserStatus(userId, UserStatus.IS_GAMING);
   }
 
   public leaveGame(userId: number) {
+    console.log("leaveGame", this.usersInGame);
     this.usersInGame.delete(userId);
-  }
-
-  public async goOffline(userId: number) {
-    return await this.updateUserStatus(userId, UserStatus.OFFLINE);
   }
 
   public getSocketIdOfUserInGame(userId: number): string | undefined {
     return this.usersInGame.get(userId);
   }
 
-  createPlayer(userId: number, username: string, mode: string) {
+  public getMatchByUserId(userId: number): MatchClass | undefined {
+    for (const match of this.matches) {
+      if (match.player1.userId === userId || match.player2.userId === userId) {
+        return match;
+      }
+    }
+    return undefined;
+  }
+
+  createPlayer(userId: number, username: string, mode: string, socketId: string) {
     const player = new Player;
     player.userId = userId;
+    player.socketId = socketId;
     player.mode = mode;
     player.username = username;
     player.score = 0;
     return player;
   }
 
-  addToQueue(userId: number, username: string, mode: string): number {
+  addToQueue(userId: number, username: string, mode: string, socketId: string): number {
 
     for (let i = 0; i < this.queue.length; i++) {
       if (this.queue[i].userId === userId) {
@@ -132,25 +150,34 @@ export class SocketService {
       }
     }
 
-    const player = this.createPlayer(userId, username, mode);
+    const player = this.createPlayer(userId, username, mode, socketId);
     this.queue.push(player);
 
     return this.queue.length - 1;
   }
 
-  addMatch(mode: string = "Classic", networkPlayer?: Player, localPlayer?: Player): MatchClass {
+  removeFromQueue(userId: number): void {
+    for (let i = 0; i < this.queue.length; i++) {
+      if (this.queue[i].userId === userId) {
+        this.queue.splice(i, 1);  // Remove the user from the queue
+        break;  // Exit the loop
+      }
+    }
+  }
+
+  addMatch(mode: string = "Classic", player1?: Player, player2?: Player): MatchClass {
     const match = new MatchClass();
     match.matchId = this.matchId++;
     match.mode = mode;
 
-    match.networkPlayer = networkPlayer ?? this.queue.shift();
-    match.localPlayer = localPlayer ?? this.queue.shift();
+    match.player1 = player1 ?? this.queue.shift();
+    match.player2 = player2 ?? this.queue.shift();
 
-    match.networkPlayer.ready = false;
-    match.localPlayer.ready = false;
+    match.player1.ready = false;
+    match.player2.ready = false;
 
-    match.networkPosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
-    match.localPosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
+    match.p1PosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
+    match.p2PosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
 
     match.ballX = this.gameConstants.width / 2;
     match.ballY = this.gameConstants.height / 2;
@@ -188,11 +215,11 @@ export class SocketService {
   }
 
   private shouldDeleteDueToReadiness(match: MatchClass): boolean {
-    return (match.networkPlayer.ready === false || match.localPlayer.ready === false) && (Date.now() - match.started > 10000);
+    return (match.player1.ready === false || match.player2.ready === false) && (Date.now() - match.started > 10000);
   }
 
   private shouldDeleteDueToInactivity(match: MatchClass): boolean {
-    return (Date.now() - match.networkPlayer.lastUpdate > 3000) || (Date.now() - match.localPlayer.lastUpdate > 3000);
+    return (Date.now() - match.player1.lastUpdate > 3000) || (Date.now() - match.player2.lastUpdate > 3000);
   }
 
   public cleanupMatches() {

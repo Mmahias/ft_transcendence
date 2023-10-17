@@ -1,19 +1,7 @@
 import { leftPaddleColor, rightPaddleColor, ballColor } from '../Game.styles';
+import { GameState } from '../gameState';
 
-interface GameState {
-  leftPaddleY: number;
-  rightPaddleY: number;
-  ballX: number;
-  ballY: number;
-  ballSpeedX: number;
-  ballSpeedY: number;
-  p1Score: number;
-  p2Score: number;
-  p1Username: string;
-  p2Username: string;
-}
-
-interface DrawArgs {
+export interface DrawArgs {
   ctx: CanvasRenderingContext2D;
   gameState: GameState;
 }

@@ -3,7 +3,6 @@ import {   willBallHitPaddle, adjustBallVelocityAfterPaddleHit,
   adjustBallVelocityAfterCanvasHit, adjustBallVelocityAfterOutOfBounds,
   willBallGetOutOfBounds, movePaddle, randomBallSpeed
   } from './movements';
-import { GameStatus } from '../../pages/Game';
 import useInterval from './utils/useInterval';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_SPEED, BALL_SPEED_X,
   BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE
@@ -35,103 +34,208 @@ export interface Paddle {
 interface UseGameLogicArgs {
   height: number;
   width: number;
-  onGameOver: () => void;
-  gameStatus: GameStatus;
 }
 
-const useGameLogic = ({ height, width, onGameOver, gameStatus }: UseGameLogicArgs) => {
+const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
 
-  const socketRef = useRef(useSocket());
+  const socket = useSocket()
   const navigate = useNavigate();
-  const PADDLE_WIDTH = () => Math.min(width / 55);
-  const PADDLE_HEIGHT = () => height / 4.3;
-  const BALL_SIZE = () => Math.pow(20 * width * height, 2/11);
-  const BORDER_PADDING = () => (30 * width) / (2 * height);
-
-  const initialLeftPaddle = {
-    initialX: BORDER_PADDING(),
-    initialY: (CANVAS_HEIGHT() - PADDLE_HEIGHT()) / 2,
-    width: PADDLE_WIDTH(),
-    height: PADDLE_HEIGHT(),
-    speed: PADDLE_SPEED(),
-    moveUpKey: 's',
-    moveDownKey: 'w',
-    score: 0,
-    side: 'left',
-  };
-
-  const initialRightPaddle = {
-    initialX: CANVAS_WIDTH() - PADDLE_WIDTH() - BORDER_PADDING(),
-    initialY: (CANVAS_HEIGHT() - PADDLE_HEIGHT()) / 2,
-    width: PADDLE_WIDTH(),
-    height: PADDLE_HEIGHT(),
-    speed: PADDLE_SPEED(),
-    moveUpKey: 'ArrowUp',
-    moveDownKey: 'ArrowDown',
-    score: 0,
-    side: 'right',
-  };
-
-  const initialBall = {
-    x: CANVAS_WIDTH() / 2,
-    y: CANVAS_HEIGHT() / 2,
-    vx: randomBallSpeed(0.6 * BALL_SPEED_X(), BALL_SPEED_X()),
-    vy: randomBallSpeed(0.8 * BALL_SPEED_Y(), BALL_SPEED_Y()),
-    size: BALL_SIZE(),
-  };
-  
-  const keysPressed = useRef<{ [key: string]: boolean }>({});
-  
-  const [ball, setBall] = useState<Ball>(initialBall);
-  const [canvasDimensions, setCanvasDimensions] = useState({ height: CANVAS_HEIGHT(), width: CANVAS_WIDTH() });
-  const [localPlayerPaddle, setLocalPlayerPaddle] = useState<Paddle>(initialRightPaddle);
-  const [networkPlayerPaddle, setNetworkPlayerPaddle] = useState<Paddle>(initialLeftPaddle);
-  const [leftUser, setLeftUser] = useState(true);
-  const [downKeyPressed, setDownKeyPressed] = useState(false);
-  const [upKeyPressed, setUpKeyPressed] = useState(false);
-  const [keyPressed, setKeyPressed] = useState(false);
 
   const [gameState, setGameState] = useState({
     leftPaddleY: height / 2,
     rightPaddleY: height / 2,
     ballX: CANVAS_WIDTH() / 2,
     ballY: CANVAS_HEIGHT() / 2,
-    ballSpeedX: 0,
-    ballSpeedY: 0,
+    ballSpeedX: randomBallSpeed(0.6 * BALL_SPEED_X(), BALL_SPEED_X()),
+    ballSpeedY: randomBallSpeed(0.8 * BALL_SPEED_Y(), BALL_SPEED_Y()),
     p1Score: 0,
     p2Score: 0,
     p1Username: "",
     p2Username: "",
   });
-
-  const resetGame = () => {
-    setBall(initialBall);
-    setNetworkPlayerPaddle(initialLeftPaddle);
-    setLocalPlayerPaddle(initialRightPaddle);
-  };
   
-  const onKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    event.preventDefault(); // Prevents default browser behavior
-    if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !keyPressed) {
-      setKeyPressed(true);
-      console.log(event.key);
-      socketRef.current?.emit('game input', { key: event.key, type: 'down' });
-    }
-  };
+  
+  const [canvasDimensions, setCanvasDimensions] = useState({ height: CANVAS_HEIGHT(), width: CANVAS_WIDTH() });
+  
+  const [leftUser, setLeftUser] = useState(true);
+  const [downKeyPressed, setDownKeyPressed] = useState(false);
+  const [upKeyPressed, setUpKeyPressed] = useState(false);
+  
+  useEffect(() => {
 
-const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
-  event.preventDefault(); // Prevents default browser behavior
-  if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && keyPressed) {
-    console.log("Socket Emit: keyPress (up) with key:", event.key);
-    socketRef.current?.emit('game input', { key: event.key, type: 'up' });
-    setKeyPressed(false);
-  }
-};
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setUpKeyPressed(true);
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setDownKeyPressed(true);
+      }
+    };
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === "ArrowUp") {
+        setUpKeyPressed(false);
+      } else if (event.key === "ArrowDown") {
+        setDownKeyPressed(false);
+      }
+    };
+
+    // Add event listeners for keydown and keyup
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    // Clean up event listeners on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+
+  }, [upKeyPressed, downKeyPressed] );
+
+	const fps = 60;
+	const sps = 10;
+	const paddleSpeed = 400;
+	const paddleLength = 100;
+	const paddleWidth = 10;
+	const ballRadius = 5;
+	const maxBallSpeed = 1000;
+	let lastTime = useRef(Date.now());
+	let lastCall = useRef(Date.now());
+
+  useEffect(() => {
+    let animationFrameId: number;
+
+    // Game update loop using requestAnimationFrame
+    const gameLoop = () => {
+      // Calculate delta time
+      const now = Date.now();
+      const delta = (now - lastTime.current) / 1000; // In seconds
+
+      // Update paddle position
+      switch (leftUser) {
+        case true:
+        {
+          if (upKeyPressed && gameState.leftPaddleY > 0) {
+            gameState.leftPaddleY -= (paddleSpeed * delta);
+          }
+
+          if (downKeyPressed && gameState.leftPaddleY < height - paddleLength) {
+            gameState.leftPaddleY += (paddleSpeed * delta);
+          }
+          break;
+        }
+        case false:
+        {
+          if (upKeyPressed && gameState.rightPaddleY > 0) {
+            gameState.rightPaddleY -= (paddleSpeed * delta);
+          }
+
+          if (downKeyPressed && gameState.rightPaddleY < height - paddleLength) {
+            gameState.rightPaddleY += (paddleSpeed * delta);
+          }
+          break;
+        }
+        default:
+          break;
+      }
+
+      // Check paddle bounds
+      if (gameState.leftPaddleY < 0) {
+        gameState.leftPaddleY = 0;
+      } else if (gameState.leftPaddleY > height - paddleLength) {
+        gameState.leftPaddleY = height - paddleLength;
+      }
+      if (gameState.rightPaddleY < 0) {
+        gameState.rightPaddleY = 0;
+      } else if (gameState.rightPaddleY > height - paddleLength) {
+        gameState.rightPaddleY = height - paddleLength;
+      }
+
+      // Actuate ball state here
+
+      // Check collisions first
+      if (gameState.ballY + (gameState.ballSpeedY * delta) - ballRadius < 0 || gameState.ballY + (gameState.ballSpeedY * delta) + ballRadius > height) {
+        gameState.ballSpeedY *= -1.05;
+      }
+      if (gameState.ballX + (gameState.ballSpeedX * delta) - ballRadius - paddleWidth < 0) {
+        if (gameState.ballY > gameState.leftPaddleY && gameState.ballY < gameState.leftPaddleY + paddleLength) {
+          // It bounces on the paddle
+          gameState.ballSpeedX *= -1.8;
+          gameState.ballSpeedY *= 1.2;
+        } else {
+          // Goal
+          gameState.ballSpeedX = 0;
+          gameState.ballSpeedY = 0;
+        }
+      }
+      else if (gameState.ballX + (gameState.ballSpeedX * delta) + ballRadius + paddleWidth > width) {
+        if (gameState.ballY > gameState.rightPaddleY && gameState.ballY < gameState.rightPaddleY + paddleLength) {
+          // It bounces on the paddle
+          gameState.ballSpeedX *= -1.8;
+          gameState.ballSpeedY *= 1.2;
+        } else {
+          // Goal
+          gameState.ballSpeedX = 0;
+          gameState.ballSpeedY = 0;
+        }
+      }
+
+      // Speed limits
+      if (gameState.ballSpeedX > maxBallSpeed) {
+        gameState.ballSpeedX = maxBallSpeed;
+      } else if (gameState.ballSpeedX < -maxBallSpeed) {
+        gameState.ballSpeedX = -maxBallSpeed;
+      }
+      if (gameState.ballSpeedY > maxBallSpeed) {
+        gameState.ballSpeedY = maxBallSpeed;
+      } else if (gameState.ballSpeedY < -maxBallSpeed) {
+        gameState.ballSpeedY = -maxBallSpeed;
+      }
+
+      gameState.ballX += gameState.ballSpeedX * delta;
+      gameState.ballY += gameState.ballSpeedY * delta;
+
+      // Send the game input to the backend every sps tick
+      if (now - lastCall.current >= 1 / sps)
+      {
+        switch (leftUser){
+          case true:
+            socket?.emit("game input", gameState.leftPaddleY);
+            break;
+          case false:
+            socket?.emit("game input", gameState.rightPaddleY);
+            break;
+          default:
+            break;
+        }
+        lastCall.current = now;
+      }
+
+      lastTime.current = now;
+
+      // Schedule the next game loop
+      animationFrameId = requestAnimationFrame(gameLoop);
+    };
+
+    // Start the game loop
+    if (Date.now() - lastTime.current > fps) {
+      gameLoop();
+    } else {
+      animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    // Clean up the game loop on component unmount
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [socket, leftUser, upKeyPressed, downKeyPressed, gameState]);
+
+
+
 
   useEffect(() => {
     if (!canvasDimensions.height || !canvasDimensions.width)
       return;
-    resetGame();
   }, [canvasDimensions.height, canvasDimensions.width]);
   
   useEffect(() => {
@@ -148,12 +252,24 @@ const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     };
   }, []);
 
+  // socket emits
   useEffect(() => {
-    socketRef.current?.emit('gameInput', { posY: localPlayerPaddle.initialY });
-  }, [localPlayerPaddle.initialY]);
+    socket?.emit('game input', { posY: gameState.rightPaddleY });
+  }, [gameState.rightPaddleY]);
 
+  // socket listeners
   useEffect(() => {
-    socketRef.current?.on("game state", (matchClass: any) => {
+
+    if (!socket || leftUser === undefined) return;
+
+    // listen for found matches
+    socket?.on('match found', (data) => {
+      socket?.emit('accept match');
+      console.log(data);
+    });
+
+    //listen for gameState changes
+    socket?.on("game state", (matchClass: any) => {
       // Update the game state and convert the data to the correct format
       setGameState({
         leftPaddleY: matchClass.p1posY,
@@ -167,10 +283,11 @@ const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
         p1Username: matchClass.player1.username,
         p2Username: matchClass.player2.username,
       });
+      console.log("game state RECEIVED !!", gameState);
     });
 
     // Log when the match starts and get payload
-    socketRef.current?.on("match started", (payload: boolean) => {
+    socket?.on("match started", (payload: boolean) => {
 
       setLeftUser(payload);
 
@@ -182,9 +299,7 @@ const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     });
 
     // Handle match cancellation
-    socketRef.current?.on("match canceled", () => {
-      // setRunning(false);
-
+    socket?.on("match canceled", () => {
       toast.error("Player disconnected.", {
         id: "matchmaking",
         icon: "❌",
@@ -199,7 +314,7 @@ const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     });
 
     // Handle match end
-    socketRef.current?.on("match win", (payload: string) => {
+    socket?.on("match win", (payload: string) => {
 
       setTimeout(() => {
         // Redirect to profile page
@@ -207,7 +322,7 @@ const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
       }, 2500);
     });
 
-    socketRef.current?.on("match lose", (payload: string) => {
+    socket?.on("match lose", (payload: string) => {
       toast.error("You lose.", {
         id: "matchmaking",
         icon: "❌",
@@ -220,38 +335,17 @@ const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
         navigate("/user/" + payload);
       }, 2500);
     });
-  }, [socketRef, navigate, leftUser]);
 
-  useEffect(() => {
-    // Emit local player's paddle position
-    socketRef.current?.emit('gameInput', { posY: localPlayerPaddle.initialY });
-
-    // Listen for game state updates from the server
-    socketRef.current?.on('gameInput', (data) => {
-        setNetworkPlayerPaddle(prev => ({ ...prev, initialY: data.p1posY }));
-        setBall(prevBall => ({
-            ...prevBall, 
-            x: data.ballX,
-            y: data.ballY
-        }));
+    socket?.on('connect_error', (error) => {
+      console.error("Socket connection error:", error);
     });
 
-    // Listen for key states from the server
-    socketRef.current?.on('keyState', (data) => {
-        keysPressed.current = data.keysPressed;
-    });
-
-    return () => {
-        socketRef.current?.off('gameInput');
-        socketRef.current?.off('keyState');
-    };
-}, []);
+  }, [leftUser, socket]);
 
   return {
     gameState,
     onKeyDownHandler,
     onKeyUpHandler,
-    resetGame,
   };
 };
 

@@ -18,25 +18,30 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { auth, logout } = useAuth();
 
   useEffect(() => {
+    
     let newSocket: Socket | null = null;
-  
     if (auth.accessToken) {  // If there's an access token, initialize the socket
-      // If you're using Vite's proxy feature, you can connect directly to your frontend origin
       newSocket = io('/', {  // or just '/' if your server setup serves socket.io at the root
         path: '/socket.io', // Ensure this path matches with your backend socket.io path setup
         auth: {
           token: auth.accessToken,
         },
       });
-      setSocket(newSocket);
+      newSocket.on("connect", () => {
+        setSocket(newSocket);
+        console.log('New socket created. Socket ID:', newSocket?.id || 'Not yet connected');
+      });
+      socket?.connect();
+      // setTimeout(() => {
+      // }, 500);
     }
-  
+    
     return () => {
       if (newSocket) {
         newSocket.close();
       }
     };
-  }, [auth]);
+  }, []);
 
   useEffect(() => {
     if (socket) {

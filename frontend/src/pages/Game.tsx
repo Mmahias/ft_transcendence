@@ -4,40 +4,24 @@ import draw from '../components/GameElements/utils/draw';
 import { GameWrapper, Score, StyledButton, WinningMessage } from '../components/GameElements/Game.styles';
 import useGameLogic from '../components/GameElements/useGameLogic';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../components/GameElements/constants';
-import { Socket } from 'socket.io-client';
 import { useSocket } from '../hooks/useSocket';
 
 interface GameProps {}
-
-export enum GameStatus {
-  RUNNING,
-  PAUSED,
-  GAME_OVER,
-  WAITING,
-}
 
 const Game: React.FC<GameProps> = () => {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameWrapperRef = useRef<HTMLDivElement>(null);
-  const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.WAITING);
   const socket = useSocket();
   
   const {
     gameState,
     onKeyDownHandler,
     onKeyUpHandler,
-    resetGame,
   } = useGameLogic({
     height: Number(CANVAS_HEIGHT()),
     width: Number(CANVAS_WIDTH()),
-    onGameOver: () => setGameStatus(GameStatus.GAME_OVER),
-    gameStatus,
   });
-  
-  const drawGame = (ctx: CanvasRenderingContext2D) => {
-    draw({ ctx, gameState });
-  };
   
   useEffect(() => {
     if (gameWrapperRef && gameWrapperRef.current) {
@@ -45,23 +29,7 @@ const Game: React.FC<GameProps> = () => {
     }
   }, []);
 
-
   // Socket listeners
-  useEffect(() => {
-    const handleMatchFound = () => {
-      setGameStatus(GameStatus.RUNNING);
-      console.log("Match found")
-    };
-    socket?.on('match found', handleMatchFound);
-    socket?.on('connect_error', (error) => {
-      console.error("Socket connection error:", error);
-    });
-  
-    return () => {
-      socket?.off('match found', handleMatchFound);
-      socket?.off('connect_error');
-    };
-  }, []);
 
   const handleJoinQueue = (mode: string) => {
     if (!socket) {
@@ -71,24 +39,7 @@ const Game: React.FC<GameProps> = () => {
     socket.emit('join queue', { mode });
     console.log(`Joining ${mode} queue`);
   };
-
-    // New function for testing the queue
-    const handleTestQueue = () => {
-      if (!socket) {
-        console.error("Socket is not defined.");
-        return;
-      }
-      socket.emit('test-event', { mode: 'special' });
-    };
   
-    // New function to toggle the game state between paused and running
-    const handleToggleGameStatus = () => {
-      setGameStatus(
-        gameStatus === GameStatus.RUNNING ? GameStatus.PAUSED : GameStatus.RUNNING
-      );
-    };
-
-
   const determineWinner = () => {
     if (gameState.p1Score > gameState.p2Score)
       return "You won";
@@ -101,20 +52,11 @@ const Game: React.FC<GameProps> = () => {
       <GameWrapper ref={gameWrapperRef} tabIndex={0} onKeyDown={onKeyDownHandler} style={{ position: 'relative' }}>
         
         <Score>{`${gameState.p1Score} - ${gameState.p2Score}`}</Score>
-        <Canvas ref={canvasRef} draw={drawGame} gameState={gameState} />
+        <Canvas ref={canvasRef} draw={draw} gameState={gameState} />
         
         <StyledButton onClick={() => handleJoinQueue('classic')}>Join Classic Queue</StyledButton>
         <StyledButton onClick={() => handleJoinQueue('special')}>Join Special Queue</StyledButton>
-        <StyledButton onClick={handleTestQueue}>Test Queue</StyledButton>
-        {gameStatus === GameStatus.GAME_OVER ? (
-          <>
-            <WinningMessage>{determineWinner()} Won!</WinningMessage>
-          </>
-        ) : (
-          <StyledButton onClick={handleToggleGameStatus}>
-            {gameStatus === GameStatus.RUNNING ? 'Pause' : 'Play'}
-          </StyledButton>
-        )}
+        {/* <StyledButton onClick={handleTestQueue}>Test Queue</StyledButton> */}
       </GameWrapper>
     </div>
   );

@@ -3,13 +3,8 @@
 const minCanvasWidth = 300;
 const minCanvasHeight = 300;
 export function CANVAS_WIDTH() {
-  if (typeof window !== 'undefined' && window.innerHeight > minCanvasHeight && window.innerWidth > minCanvasWidth) {
-      return 0.8 * window.innerWidth;
-  } else {
-      return 0;
-  }
+  return 1000;
 }
-
 
 export function CANVAS_HEIGHT() {
   return CANVAS_WIDTH() * 7 / 11;

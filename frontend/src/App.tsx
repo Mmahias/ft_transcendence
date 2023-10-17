@@ -18,16 +18,6 @@ import { useState } from 'react';
 import { MainContentWrapper, AppWrapper } from './App.styles';
 import { AuthProvider, SocketProvider, ChatStatusContext } from './contexts';
 import { Channel } from './api/types';
-import { AppProvider } from '@pixi/react';
-import * as PIXI from 'pixi.js';
-
-const app = new PIXI.Application({
-  width: 800,
-  height: 600,
-  backgroundColor: 0x1099bb,
-  //   resizeTo: window,
-});
-
 
 const MainContent: React.FC = () => {
   useAxiosPrivate();
@@ -38,7 +28,6 @@ const MainContent: React.FC = () => {
         <Route path="/" element={<Home/>} />
         <Route path="/game" element={<Game />} />
         <Route path="/user/profile" element={<MyProfile />} />
-        <Route path='/pong' element={<AppProvider value = {app}><Pong /></AppProvider>} />
         <Route path="/user/profile/:reqUsername" element={<OtherProfile />} />
         <Route path="/chat" element={ <Chat/> } />
         <Route path="/login" element={<Login />} />
