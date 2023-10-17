@@ -16,6 +16,8 @@ const MyProfile: React.FC = () => {
   const navigate = useNavigate();
 
   const [userName, setUserName] = useState<string>('');
+  const [userId, setUserId] = useState<number>(0);
+  const [userNick, setUserNick] = useState<string>('');
   const [userStatus, setUserStatus] = useState<string>('');
   const [userWins, setUserWins] = useState<number>(0);
   const [userLosses, setUserLosses] = useState<number>(0);
@@ -25,6 +27,7 @@ const MyProfile: React.FC = () => {
   const [userQrCodeData, setUserQrCodeData] = useState<string>('');
   const [userEnteredCode, setUserEnteredCode] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
+  const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
 
@@ -53,6 +56,10 @@ const MyProfile: React.FC = () => {
     if (userProfile) {
       if (userProfile.username) {
         setUserName(userProfile.username);
+      } if (userProfile.nickname) {
+        setUserNick(userProfile.nickname);
+      } if (userProfile.id) {
+        setUserId(userProfile.id);
       } if (userProfile.status) {
         setUserStatus(userProfile.status);
       } if (userProfile.wins) {
@@ -135,6 +142,62 @@ const MyProfile: React.FC = () => {
     verify2FACodeMutation.mutate(userEnteredCode);
   };
 
+  const handleSettingsClick = () => {
+    setShowEditProfile(!showEditProfile);
+  };
+
+  let editProfileForm = null;
+  if (showEditProfile) {
+    editProfileForm = (
+      
+      <div className="pl-lg-4">
+        <h6 className="heading-small text-muted mb-4">Edit Profile</h6>
+        <div className="row">
+          <div className="col-lg-6">
+            <div className="form-group focused">
+              <label className="form-control-label" htmlFor="input-file">Avatar</label>
+              <input className="form-control" type="file" id="formFile" accept="image/*" />
+            </div>
+          </div>
+          <div className="col-lg-6">
+            <div className="form-group">
+              <label className="form-control-label" htmlFor="input-username">NickName</label>
+              <input type="text" id="input-username" value={userNick} onChange={e => setUserNick(e.target.value)} className="form-control form-control-alternative" placeholder="new Username" />
+            </div>
+          </div>
+        </div>
+        <hr className="my-4" />
+        <h6 className="heading-small text-muted mb-4">2FA</h6>
+        <div className="pl-lg-4">
+          <div className="form-group focused">
+            <Checkbox size='md' type="checkbox"
+              checked={user2FAEnabled}
+              onChange={handle2FAToggle}
+              disabled={!!userQrCodeData}
+              className="form-control form-control-alternative">
+              Active 2FA
+            </Checkbox>
+            {userQrCodeData && (
+              <div className="pl-lg-4">
+                <label className="form-control-label">Veuillez scanner ce QR Code avec votre application d'authentification:</label>
+                <img className="img-qrcode" style={{ margin: "auto" }} src={userQrCodeData} />
+                <input
+                  type="text"
+                  value={userEnteredCode}
+                  onChange={(e) => setUserEnteredCode(e.target.value)}
+                  className="form-control form-control-alternative"
+                  placeholder="Enter the code"
+                  style={{ margin: "auto" }}
+                />
+                <a className="btn btn-sm btn-primary ghost" onClick={handleVerifyCode} style={{ marginTop: "10px" }}>Verify Code</a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const [gamesHistory, setGamesHistory] = React.useState([
     {
       id: 1,
@@ -153,7 +216,7 @@ const MyProfile: React.FC = () => {
       winner: 'WINNER_NAME'
     },
   ]);
-
+  
   return (
     <div className="profile-page">
 
@@ -201,9 +264,10 @@ const MyProfile: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-center">
-                    <h3>
+                    <h3 style={{textTransform: 'capitalize', color: '#3aafa9'}}>
                       {userName}
                     </h3>
+                    <h4 style={{color: '#2b7A78'}}>{userNick}</h4>
                     <div className="h5 font-weight-300">
                       <i style={{
                         color: userStatus === "ONLINE"
@@ -224,6 +288,12 @@ const MyProfile: React.FC = () => {
                       <i className="ni education_hat mr-2"></i>{userSubDate}
                     </div>
                     <hr className="my-4" />
+                    <h3>
+                      2FA:
+                      <p style={{ color: user2FAEnabled ? 'green' : 'red' }}>
+                        {user2FAEnabled ? ' activated' : ' disabled'}
+                      </p>
+                    </h3>
                   </div>
                 </div>
               </div>
@@ -236,57 +306,13 @@ const MyProfile: React.FC = () => {
                       <h3 className="mb-0">My Profile</h3>
                     </div>
                     <div className="col-4 text-right">
-                      <a href="#!" className="btn btn-sm btn-primary ghost">Save</a>
+                    <a className="btn btn-sm btn-primary ghost" onClick={handleSettingsClick}>Settings</a>
                     </div>
                   </div>
                 </div>
                 <div className="card-body">
                   <form>
-                    <h6 className="heading-small text-muted mb-4">Edit Profile</h6>
-                    <div className="pl-lg-4">
-                      <div className="row">
-                        <div className="col-lg-6">
-                          <div className="form-group focused">
-                            <label className="form-control-label" htmlFor="input-file">Avatar</label>
-                            <input className="form-control" type="file" id="formFile" accept="image/*" />
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="form-group">
-                            <label className="form-control-label" htmlFor="input-username">UserName</label>
-                            <input type="text" id="input-username" value={userName} onChange={e => setUserName(e.target.value)} className="form-control form-control-alternative" placeholder="new Username" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <hr className="my-4" />
-                    <h6 className="heading-small text-muted mb-4">2FA</h6>
-                    <div className="pl-lg-4">
-                      <div className="form-group focused">
-                        <Checkbox size='md' type="checkbox"
-                          checked={user2FAEnabled}
-                          onChange={handle2FAToggle}
-                          disabled={!!userQrCodeData}
-                          className="form-control form-control-alternative">
-                          Active 2FA
-                        </Checkbox>
-                        {userQrCodeData && (
-                          <div className="pl-lg-4">
-                            <label className="form-control-label">Veuillez scanner ce QR Code avec votre application d'authentification:</label>
-                            <img className="img-qrcode" style={{ margin: "auto" }} src={userQrCodeData} />
-                            <input
-                              type="text"
-                              value={userEnteredCode}
-                              onChange={(e) => setUserEnteredCode(e.target.value)}
-                              className="form-control form-control-alternative"
-                              placeholder="Enter the code"
-                              style={{ margin: "auto" }}
-                            />
-                            <a className="btn btn-sm btn-primary ghost" onClick={handleVerifyCode} style={{ marginTop: "10px" }}>Verify Code</a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    {editProfileForm}
                   </form>
                   <div className="tab-container">
                     <div className="tabs-profile">
