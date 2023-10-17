@@ -16,6 +16,7 @@ import { TwoFaAuth } from '@app/auth/dto/two-fa-auth';
 import { User } from '@app/user/decorator';
 import { LocalAuthGuard } from '@app/auth/strategies/local/local-auth.guard';
 import { Jwt2faAuthGuard } from '@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard';
+import { InternalServerErrorException } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
@@ -84,6 +85,21 @@ export class AuthController {
     return { isAuthenticationEnabled: authenticationEnabled };
   }
 
+  // @Post('2fa/turn-on')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async turnOnTwoFactorAuthentication(@User() user, @Body() body: TwoFaAuth) {
+  //   const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
+  //     body.twoFactorAuthenticationCode,
+  //     user
+  //   );
+
+  //   if (!isCodeValid) {
+  //     throw new UnauthorizedException('Wrong authentication code');
+  //   }
+
+  //   await this.userService.turnOnTwoFactorAuthentication(user.id);
+  // }
+
   @Post('2fa/turn-on')
   @UseGuards(Jwt2faAuthGuard)
   async turnOnTwoFactorAuthentication(@User() user, @Body() body: TwoFaAuth) {
@@ -96,8 +112,14 @@ export class AuthController {
       throw new UnauthorizedException('Wrong authentication code');
     }
 
-    await this.userService.turnOnTwoFactorAuthentication(user.id);
+    try {
+      await this.userService.turnOnTwoFactorAuthentication(user.id);
+      return { message: "2FA activated successfully" };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to activate 2FA');
+    }
   }
+
 
   @Post('2fa/turn-off')
   @UseGuards(Jwt2faAuthGuard)

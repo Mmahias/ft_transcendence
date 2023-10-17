@@ -126,9 +126,9 @@ const Navbar: React.FC<NavbarProps> = () => {
   return (
     <>
       <nav className="navbar-container">
-        <div className="dropbtn">
+        {/* <div className="dropbtn">
           <p> {myDetails?.username}</p>
-        </div>
+        </div> */}
         <a href="/">
           <img className="logo" src={logo} alt="App Logo" />
         </a>

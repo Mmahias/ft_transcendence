@@ -57,23 +57,6 @@ class AuthService {
         }
     }
 
-
-    // 2FA
-    // static async enable2FA() {
-    //     try {
-    //       const response = await axiosPrivate.post(`${AUTH_API}/2fa/turn-on`);
-    //       return response.data;
-    //     } catch (error) {
-    //       if (axios.isAxiosError(error)) {
-    //         if (error.response && error.response.data && error.response.data.message) {
-    //           // Utilisez le message d'erreur du backend
-    //           throw new Error(error.response.data.message);
-    //         }
-    //       }
-    //       throw new Error('Failed to enable 2FA');
-    //     }
-    //   }
-
     static async enable2FA(code: string) {
       try {
           const response = await axiosPrivate.post(`${AUTH_API}/2fa/turn-on`, { twoFactorAuthenticationCode: code });
@@ -109,6 +92,24 @@ class AuthService {
           throw new Error('Failed verify 2FA QRCode');
         }
       }
-}
+
+      static async checkTwoFactorAuthentication(userId: number) {
+        try {
+          // Effectuez une requête GET vers la route backend pour vérifier le statut de 2FA
+          const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`, {
+            params: { userId }, // Incluez l'identifiant de l'utilisateur comme paramètre de requête
+          });
+      
+          // Renvoyer le statut de 2FA sous forme de booléen
+          return response.data.isAuthenticationEnabled;
+        } catch (error) {
+          // Gérer les erreurs, par exemple, afficher un message d'erreur à l'utilisateur
+          console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
+          // En cas d'erreur, vous pouvez également renvoyer false ou gérer l'erreur de manière appropriée
+          return false;
+        }
+      };
+
+    }
 
 export default AuthService;
