@@ -19,7 +19,7 @@ model User {
   nickname               String          @unique
   createdAt              DateTime        @default(now())
   updatedAt              DateTime        @default(now())
-  avatar                 String?
+  avatar                 String          @default("")
   bio                    String?
   status                 UserStatus      @default(ONLINE)
   wins                   Int             @default(0)
@@ -27,15 +27,15 @@ model User {
   level                  Int             @default(1)
   achievements           Achievement[]
   // 2FA
-  authenticationSecret   String?      
+  authenticationSecret   String?
   authenticationEnabled  Boolean         @default(false)
   // friends relations
   friends                User[]          @relation("friendship")
   friendedBy             User[]          @relation("friendship")
   friendsRequestSent     FriendRequest[] @relation("sentRequests")
   friendsRequestReceived FriendRequest[] @relation("receivedRequests")
-  blockedList            User[] @relation("blocked")
-  blockedBy              User[] @relation("blocked")
+  blockedList            User[]          @relation("blocked")
+  blockedBy              User[]          @relation("blocked")
   // channels relations
   ownerChans             Channel[]       @relation("owner") // channels that the user owns
   adminChans             Channel[]       @relation("admins") // channels that the user can manage
@@ -46,8 +46,8 @@ model User {
   // messages relations
   sentMessages           Message[]       @relation("messages") // messages that the user sent
   // matches Relations
-  matchesWon             Match[] @relation("winner")
-  matchesLost            Match[] @relation("loser")
+  matchesWon             Match[]         @relation("winner")
+  matchesLost            Match[]         @relation("loser")
 
   @@map("users")
 }

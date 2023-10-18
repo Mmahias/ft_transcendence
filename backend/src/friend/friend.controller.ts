@@ -5,11 +5,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from '@app/user/decorator';
 
 @UseGuards(AuthGuard('jwt'))
-@Controller('friend')
+@Controller('friends')
 export class FriendController {
   constructor(private friendService: FriendService) {}
   @Post('/request')
   async friendRequest(@User('id') id: number, @Body() body: FriendRequestDto) {
-    return this.friendService.createRequest(id, body.friendNickname);
+    return this.friendService.createRequest(id, body.username);
   }
 }

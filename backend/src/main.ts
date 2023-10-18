@@ -10,15 +10,14 @@ async function bootstrap() {
   app.enableCors({
     origin: '*', // replace with your front-end domain/port
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
+    credentials: true
   });
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3030);
   console.log('Server running on http://localhost:3030');
 }
 
 bootstrap();
-
-
 
 // // HTTPS version
 
@@ -45,7 +44,6 @@ bootstrap();
 //   app.enableCors();  // This allows any origin. Be cautious in production!
 //   app.setGlobalPrefix('api');
 //   app.use(LoggerMiddleware);
-
 
 //   // Instead of app.listen, use https server
 //   https.createServer(httpsOptions, server)

@@ -11,12 +11,15 @@ import {
   UseInterceptors,
   UploadedFile,
   Next,
-  Param
+  Param,
+  Put,
+  Body
 } from '@nestjs/common';
 import { User } from './decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '@app/user/validator';
 import { JwtAuthGuard } from '@app/auth/strategies/jwt/jwt-auth.guard';
+import { UserUpdateDto } from '@app/user/dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -25,21 +28,32 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('me')
-  async userInformation(@User('id') id: number) {
-    return this.userService.getUserById(id);
+  async userInformation(@User('id') userId: number) {
+    const user = await this.userService.getUserById(userId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, password, authenticationSecret, ...otherUserFields } = user;
+    return otherUserFields;
   }
 
   @Get()
   async userByUsername(@Query('username') username: string) {
-    console.log("BACK username: ", username)
-    return this.userService.getUserByUsername(username);
+    const user = await this.userService.getUserByUsername(username || '');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, password, authenticationSecret, ...otherUserFields } = user;
+    return otherUserFields;
   }
 
-  @Get()
-  async userByNickname(@Query('nickname') nickname: string) {
-    console.log("BACK nickname: ", nickname)
-    return this.userService.getUserByNickname(nickname);
+  @Put('update')
+  async updateNickname(@User('id') userId: number, @Body() userUpdate: UserUpdateDto) {
+    return this.userService.updateUser(userId, userUpdate);
   }
+
+  // This is a redundant method, I think
+  /*  @Get()
+  async userByNickname(@Query('nickname') nickname: string) {
+    console.log('BACK nickname: ', nickname);
+    return this.userService.getUserByNickname(nickname);
+  }*/
 
   @Post('avatar')
   @UseInterceptors(FileInterceptor('avatar', multerOptions))
@@ -66,13 +80,13 @@ export class UserController {
     return await this.userService.searchUsers(searchTerm, nbUsers);
   }
 
-  @Get('avatar/:nickname')
+  @Get('avatar/:username')
   async userAvatarByNickname(
-    @Param('nickname') nickname,
+    @Param('username') username,
     @Res() res: Response,
     @Next() next
   ) {
-    const { avatar } = await this.userService.getAvatarFilenameByNickname(nickname);
+    const { avatar } = await this.userService.getAvatarFilenameByUsername(username);
     return res.sendFile(`${avatar}`, { root: 'avatars' }, (err) => {
       if (err) {
         this.logger.error(err.message);

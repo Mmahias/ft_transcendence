@@ -8,13 +8,14 @@ import { GameGateway } from './game/game.gateway';
 import { TestModule } from './test/test.module';
 import { SocketModule } from './sockets/sockets.module';
 import { LoggerMiddleware } from './middlewares/logger-middleware';
-
+import { FriendModule } from '@app/friend/friend.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     UserModule,
+    FriendModule,
     ChatModule,
     AuthModule,
     TestModule,
@@ -24,8 +25,6 @@ import { LoggerMiddleware } from './middlewares/logger-middleware';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes('*');  // This applies the middleware to all routes
+    consumer.apply(LoggerMiddleware).forRoutes('*'); // This applies the middleware to all routes
   }
 }

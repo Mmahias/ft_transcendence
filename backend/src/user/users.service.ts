@@ -30,7 +30,11 @@ export class UserService {
           id
         },
         include: {
-          blockedList: true
+          blockedList: true,
+          matchesWon: true,
+          matchesLost: true,
+          friends: true,
+          friendsRequestReceived: true
         }
       })
       .catch((error) => {
@@ -68,7 +72,9 @@ export class UserService {
           username
         },
         include: {
-          blockedList: true
+          blockedList: true,
+          matchesWon: true,
+          matchesLost: true
         }
       })
       .catch((error) => {
@@ -151,11 +157,11 @@ export class UserService {
       });
   }
 
-  async getAvatarFilenameByNickname(nickname: string) {
+  async getAvatarFilenameByUsername(username: string) {
     return this.prisma.user
       .findUniqueOrThrow({
         where: {
-          nickname
+          username
         },
         select: {
           avatar: true
@@ -163,8 +169,8 @@ export class UserService {
       })
       .catch((error) => {
         if (error instanceof PrismaClientKnownRequestError) {
-          this.logger.log(`Nickname [${nickname}] is not found`);
-          throw new NotFoundException(`Nickname [${nickname}] is not found`);
+          this.logger.log(`Nickname [${username}] is not found`);
+          throw new NotFoundException(`Nickname [${username}] is not found`);
         }
         throw error;
       });
