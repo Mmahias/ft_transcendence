@@ -1,31 +1,40 @@
-import { leftPaddleColor, rightPaddleColor, ballColor } from '../Game.styles';
+import { ballColor, leftPaddleColor, rightPaddleColor } from '../Game.styles';
 import { GameState } from '../gameState';
+import { BACKEND_WIDTH, BACKEND_HEIGHT, PADDLE_LENGTH, PADDLE_WIDTH, PADDLE_PAD } from '../Canvas';
 
 export interface DrawArgs {
   ctx: CanvasRenderingContext2D;
   gameState: GameState;
+  canvasDimensions: { width: number; height: number };
 }
 
-const draw = ({ ctx, gameState }: DrawArgs) => {
+const draw = ({ ctx, gameState, canvasDimensions }: DrawArgs) => {
   // Clear the canvas for new drawings
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+  const scaleFactor = canvasDimensions.width / BACKEND_WIDTH;
+
   // Draw the ball
+  const ballSize = 10 * scaleFactor; // Assuming the ball size is 10 in backend coordinates
   ctx.fillStyle = ballColor;
   ctx.beginPath();
-  ctx.arc(gameState.ballX, gameState.ballY, /* Assuming ball.size is standardized, e.g. 10 */ 10 / 2, 0, Math.PI * 2);
+  ctx.arc(gameState.ballX * scaleFactor , gameState.ballY * scaleFactor, ballSize / 2, 0, Math.PI * 2);
   ctx.fill();
   ctx.closePath();
 
   // Draw the left paddle
+  const paddlePad = PADDLE_PAD * scaleFactor;
+  const leftPaddleY = (gameState.leftPaddleY - PADDLE_LENGTH / 2)* scaleFactor;
+  const rightPaddleY = (gameState.rightPaddleY  - PADDLE_LENGTH / 2) * scaleFactor;
+  const paddleLength = PADDLE_LENGTH * scaleFactor;
+  const paddleWidth = PADDLE_WIDTH * scaleFactor;
+
   ctx.fillStyle = leftPaddleColor;
-  // Assuming a standard width for paddles, e.g. 15, and using the Y position from gameState
-  ctx.fillRect(0 /* assuming left paddle always starts from x=0 */, gameState.leftPaddleY, 15, /* Assuming a standard height for paddles, e.g. 50 */ 50);
+  ctx.fillRect(paddlePad, leftPaddleY, paddleWidth, paddleLength);
   
   // Draw the right paddle
   ctx.fillStyle = rightPaddleColor;
-  // Assuming a standard width for paddles, e.g. 15, and the canvas width minus the paddle width for the x position
-  ctx.fillRect(ctx.canvas.width - 15, gameState.rightPaddleY, 15, /* Assuming a standard height for paddles, e.g. 50 */ 50);
+  ctx.fillRect(ctx.canvas.width - paddleWidth - paddlePad, rightPaddleY, paddleWidth, paddleLength);
 };
 
 export default draw;

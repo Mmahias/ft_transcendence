@@ -5,6 +5,7 @@ import { GameWrapper, Score, StyledButton, WinningMessage } from '../components/
 import useGameLogic from '../components/GameElements/useGameLogic';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../components/GameElements/constants';
 import { useSocket } from '../hooks/useSocket';
+import toast from 'react-hot-toast';
 
 interface GameProps {}
 
@@ -16,8 +17,6 @@ const Game: React.FC<GameProps> = () => {
   
   const {
     gameState,
-    onKeyDownHandler,
-    onKeyUpHandler,
   } = useGameLogic({
     height: Number(CANVAS_HEIGHT()),
     width: Number(CANVAS_WIDTH()),
@@ -33,30 +32,29 @@ const Game: React.FC<GameProps> = () => {
 
   const handleJoinQueue = (mode: string) => {
     if (!socket) {
-      console.error("Socket is not defined.");
+      toast.error("Failed to join queue...", {
+        id: "matchmaking",
+        icon: "❌",
+        duration: 3000,
+      });
       return;
     }
     socket.emit('join queue', { mode });
-    console.log(`Joining ${mode} queue`);
-  };
-  
-  const determineWinner = () => {
-    if (gameState.p1Score > gameState.p2Score)
-      return "You won";
-    else
-      return "You lost"; // For equal scores
+    toast.success("Waiting for an opponent...", {
+      id: "matchmaking",
+      icon: "🎮⌛",
+      duration: 3000,
+    });
   };
 
   return (
-    <div tabIndex={0} onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler}>
-      <GameWrapper ref={gameWrapperRef} tabIndex={0} onKeyDown={onKeyDownHandler} style={{ position: 'relative' }}>
-        
+    <div tabIndex={0}>
+      <GameWrapper ref={gameWrapperRef} tabIndex={0} style={{ position: 'relative' }}>
         <Score>{`${gameState.p1Score} - ${gameState.p2Score}`}</Score>
         <Canvas ref={canvasRef} draw={draw} gameState={gameState} />
         
         <StyledButton onClick={() => handleJoinQueue('classic')}>Join Classic Queue</StyledButton>
         <StyledButton onClick={() => handleJoinQueue('special')}>Join Special Queue</StyledButton>
-        {/* <StyledButton onClick={handleTestQueue}>Test Queue</StyledButton> */}
       </GameWrapper>
     </div>
   );

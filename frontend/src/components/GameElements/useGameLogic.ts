@@ -1,12 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {   willBallHitPaddle, adjustBallVelocityAfterPaddleHit,
-  adjustBallVelocityAfterCanvasHit, adjustBallVelocityAfterOutOfBounds,
-  willBallGetOutOfBounds, movePaddle, randomBallSpeed
-  } from './movements';
-import useInterval from './utils/useInterval';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_SPEED, BALL_SPEED_X,
-  BALL_SPEED_Y, TICKS_PER_SEC, MAX_SCORE
-  } from './constants';
+import { useState, useEffect, useRef } from 'react';
+import { randomBallSpeed } from './movements';
+import { BALL_SPEED_X, BALL_SPEED_Y } from './constants';
 import { useSocket } from '../../hooks/useSocket';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -44,10 +38,10 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
   const [gameState, setGameState] = useState({
     leftPaddleY: height / 2,
     rightPaddleY: height / 2,
-    ballX: CANVAS_WIDTH() / 2,
-    ballY: CANVAS_HEIGHT() / 2,
-    ballSpeedX: randomBallSpeed(0.6 * BALL_SPEED_X(), BALL_SPEED_X()),
-    ballSpeedY: randomBallSpeed(0.8 * BALL_SPEED_Y(), BALL_SPEED_Y()),
+    ballX: width / 2,
+    ballY: height / 2,
+    ballSpeedX: randomBallSpeed( BALL_SPEED_X(), BALL_SPEED_X()),
+    ballSpeedY: randomBallSpeed( BALL_SPEED_Y(), BALL_SPEED_Y()),
     p1Score: 0,
     p2Score: 0,
     p1Username: "",
@@ -55,12 +49,12 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
   });
   
   
-  const [canvasDimensions, setCanvasDimensions] = useState({ height: CANVAS_HEIGHT(), width: CANVAS_WIDTH() });
-  
-  const [leftUser, setLeftUser] = useState(true);
+  const [canvasDimensions, setCanvasDimensions] = useState({ height, width });
+  const [leftUser, setLeftUser] = useState(false);
   const [downKeyPressed, setDownKeyPressed] = useState(false);
   const [upKeyPressed, setUpKeyPressed] = useState(false);
-  
+  const [isMatchStarted, setIsMatchStarted] = useState(false);
+
   useEffect(() => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -154,9 +148,15 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
       // Actuate ball state here
 
       // Check collisions first
+      setTimeout(() => {
+        console.log("ball y", gameState.ballY, height)
+      }, 3000);
       if (gameState.ballY + (gameState.ballSpeedY * delta) - ballRadius < 0 || gameState.ballY + (gameState.ballSpeedY * delta) + ballRadius > height) {
-        gameState.ballSpeedY *= -1.05;
+      gameState.ballSpeedY *= -1.05;
       }
+      setTimeout(() => {
+        console.log("ball x", gameState.ballX, width)
+      }, 3000);
       if (gameState.ballX + (gameState.ballSpeedX * delta) - ballRadius - paddleWidth < 0) {
         if (gameState.ballY > gameState.leftPaddleY && gameState.ballY < gameState.leftPaddleY + paddleLength) {
           // It bounces on the paddle
@@ -218,10 +218,12 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
     };
 
     // Start the game loop
-    if (Date.now() - lastTime.current > fps) {
-      gameLoop();
-    } else {
-      animationFrameId = requestAnimationFrame(gameLoop);
+    if (isMatchStarted) {
+      if (Date.now() - lastTime.current > fps) {
+          gameLoop();
+      } else {
+          animationFrameId = requestAnimationFrame(gameLoop);
+      }
     }
 
     // Clean up the game loop on component unmount
@@ -237,20 +239,6 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
     if (!canvasDimensions.height || !canvasDimensions.width)
       return;
   }, [canvasDimensions.height, canvasDimensions.width]);
-  
-  useEffect(() => {
-    const updateDimensions = () => {
-      setCanvasDimensions({
-        height: CANVAS_HEIGHT(),
-        width: CANVAS_WIDTH(),
-      });
-    };
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, []);
 
   // socket emits
   useEffect(() => {
@@ -283,13 +271,13 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
         p1Username: matchClass.player1.username,
         p2Username: matchClass.player2.username,
       });
-      console.log("game state RECEIVED !!", gameState);
+      console.log("ball: ", matchClass.ballX, matchClass.ballY);
     });
 
     // Log when the match starts and get payload
     socket?.on("match started", (payload: boolean) => {
-
       setLeftUser(payload);
+      setIsMatchStarted(true);
 
       toast.success("FIGHT ON!", {
         id: "matchmaking",
@@ -315,24 +303,28 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
 
     // Handle match end
     socket?.on("match win", (payload: string) => {
-
+      toast.success("VICTORY !!", {
+        id: "matchmaking",
+        icon: "🌟",
+        duration: 3000,
+      });
       setTimeout(() => {
         // Redirect to profile page
-        navigate("/user/" + payload);
+        navigate("/user/profile/" + payload);
       }, 2500);
     });
 
     socket?.on("match lose", (payload: string) => {
-      toast.error("You lose.", {
+      toast.success("DEFEAT !!", {
         id: "matchmaking",
-        icon: "❌",
+        icon: "😢",
         duration: 3000,
       });
 
       setTimeout(() => {
         // Redirect to profile page
         toast.dismiss("matchmaking");
-        navigate("/user/" + payload);
+        navigate("/user/profile/" + payload);
       }, 2500);
     });
 
@@ -342,11 +334,7 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
 
   }, [leftUser, socket]);
 
-  return {
-    gameState,
-    onKeyDownHandler,
-    onKeyUpHandler,
-  };
+  return { gameState };
 };
 
 export default useGameLogic;
