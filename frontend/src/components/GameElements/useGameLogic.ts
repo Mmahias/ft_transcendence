@@ -35,20 +35,16 @@ const useGameLogic = () => {
       if (event.key === "ArrowUp") {
         event.preventDefault();
         setUpKeyPressed(true);
-        console.log("DOWN", event.key)
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
         setDownKeyPressed(true);
-        console.log("DOWN", event.key)
       }
     };
     const handleKeyUp = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         setUpKeyPressed(false);
-        console.log("UP", event.key)
       } else if (event.key === "ArrowDown") {
         setDownKeyPressed(false);
-        console.log("UP", event.key)
       }
     };
 
@@ -65,7 +61,7 @@ const useGameLogic = () => {
   }, [] );
 
   const fps = 60;
-  const sps = 10;
+  const sps = 3;
   const ballRadius = 5;
   const maxBallSpeed = 1000;
   let lastTime = useRef(Date.now());
@@ -84,22 +80,22 @@ const useGameLogic = () => {
       switch (leftUser) {
         case true:
         {
-          if (upKeyPressed && gameState.p1PosY > 0) {
+          if (upKeyPressed && gameState.p1PosY > BORDER_WIDTH) {
             gameState.p1PosY -= (PADDLE_SPEED * delta);
           }
 
-          if (downKeyPressed && gameState.p1PosY < BACKEND_HEIGHT - PADDLE_LENGTH) {
+          if (downKeyPressed && gameState.p1PosY < BACKEND_HEIGHT - PADDLE_LENGTH - BORDER_WIDTH) {
             gameState.p1PosY += (PADDLE_SPEED * delta);
           }
           break;
         }
         case false:
         {
-          if (upKeyPressed && gameState.p2PosY > 0) {
+          if (upKeyPressed && gameState.p2PosY > BORDER_WIDTH) {
             gameState.p2PosY -= (PADDLE_SPEED * delta);
           }
 
-          if (downKeyPressed && gameState.p2PosY < BACKEND_HEIGHT - PADDLE_LENGTH) {
+          if (downKeyPressed && gameState.p2PosY < BACKEND_HEIGHT - PADDLE_LENGTH - BORDER_WIDTH) {
             gameState.p2PosY += (PADDLE_SPEED * delta);
           }
           break;
@@ -204,6 +200,7 @@ const useGameLogic = () => {
 
     // Start the game loop
     if (isMatchStarted) {
+      lastTime.current = Date.now();
       if (Date.now() - lastTime.current > fps) {
           gameLoop();
       } else {
@@ -226,7 +223,6 @@ const useGameLogic = () => {
     };
 
     const handleGameState = (matchClass: any) => {
-      // console.log("Received match data:", matchClass.p1PosY, matchClass.p2PosY);
       // Update the game state and convert the data to the correct format
       setGameState({
         p1PosY: matchClass.p1PosY,

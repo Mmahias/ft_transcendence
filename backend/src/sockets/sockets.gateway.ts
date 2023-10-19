@@ -12,7 +12,7 @@ import { usernameMiddleware } from './middleware/username.middleware';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { MatchClass, Player, GameService } from './game.service';
-import { HEIGHT, WIDTH, PADDLE_LENGTH, PADDLE_PADDING, PADDLE_SPEED, PADDLE_WIDTH, BALL_RADIUS } from './game.constants';
+import { HEIGHT, WIDTH, PADDLE_LENGTH, PADDLE_PADDING, WIN_SCORE, PADDLE_WIDTH, BALL_RADIUS } from './game.constants';
 const corsConfig = {
   origin: '*', // replace with your front-end domain/port
   credentials: true,
@@ -328,7 +328,7 @@ export class SocketsGateway
         // GOAL!
         match.player2.score += 1;
         this.resetMatch(match);
-        if (match.player2.score >= this.gameService.gameConstants.winScore) {
+        if (match.player2.score >= WIN_SCORE) {
           match.ballSpeedX = 0;
           match.ballSpeedY = 0;
           this.endMatch(match);
@@ -346,7 +346,7 @@ export class SocketsGateway
         // GOAL!
         match.player1.score += 1;
         this.resetMatch(match);
-        if (match.player1.score >= this.gameService.gameConstants.winScore) {
+        if (match.player1.score >= WIN_SCORE) {
           match.ballSpeedX = 0;
           match.ballSpeedY = 0;
           this.endMatch(match);
@@ -451,10 +451,10 @@ export class SocketsGateway
         return;
       }
 
-      if (match.player1.score > match.player2.score && match.player1.score >= this.gameService.gameConstants.winScore) {
+      if (match.player1.score > match.player2.score && match.player1.score >= WIN_SCORE) {
         socket1.emit('match win', match.player1.username);
         socket2.emit('match lose', match.player2.username);
-      } else if (match.player2.score > match.player1.score && match.player2.score >= this.gameService.gameConstants.winScore) {
+      } else if (match.player2.score > match.player1.score && match.player2.score >= WIN_SCORE) {
         socket1.emit('match lose', match.player1.username);
         socket2.emit('match win', match.player2.username);
       } else {

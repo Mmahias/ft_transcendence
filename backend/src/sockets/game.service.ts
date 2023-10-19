@@ -50,7 +50,6 @@ export class GameService extends SocketService {
 
   public gameConstants = {
     maxBallSpeed: 1000,
-    winScore: 5,
     powerUpRadius: 20,
   };
 
