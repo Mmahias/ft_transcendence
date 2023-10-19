@@ -29,8 +29,6 @@ const Login = () => {
     setRightPanelActive(true);
   }
   
-
-
   const validateUsername = (value: string): string | null => {
     if (!value) return "Username is required";
     if (value.length < 4 || value.length > 20) return "Username must be between 4 and 20 characters";

@@ -25,6 +25,10 @@ export interface User {
   authenticationEnabled: boolean;
 }
 
+export interface UserUpdateDto {
+  nickname: string;
+}
+
 export interface Channel {
   id:          number;
   ownerId:     number;

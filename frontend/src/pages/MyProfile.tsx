@@ -10,6 +10,8 @@ import { useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
 
+
+
 const MyProfile: React.FC = () => {
 
   const { auth } = useAuth();
@@ -28,6 +30,10 @@ const MyProfile: React.FC = () => {
   const [userEnteredCode, setUserEnteredCode] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
+  const [showEditNickname, setShowEditNickname] = useState(false);
+  const [showEditAvatar, setShowEditAvatar] = useState(false);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null); // État pour l'avatar
+
 
   const queryClient = useQueryClient();
 
@@ -81,6 +87,18 @@ const MyProfile: React.FC = () => {
     }
   }, [userProfile]);
 
+  useEffect(() => {
+    // Utilisez une fonction asynchrone pour obtenir l'avatar de l'utilisateur
+    async function fetchUserAvatar() {
+      if (userProfile) {
+        const avatar = await UserService.getUserAvatar(userProfile.id);
+        setUserAvatar(avatar);
+      }
+    }
+
+    fetchUserAvatar(); // Appelez la fonction
+  }, [userProfile]);
+
   const enable2FAMutation = useMutation(async () => {
     return await AuthService.request2FAQrCode();
   }, {
@@ -117,30 +135,58 @@ const MyProfile: React.FC = () => {
   };
 
   const verify2FACodeMutation = useMutation(async (code: string) => {
-    const verificationResponse = await AuthService.verify2FACode(code);
-    if (verificationResponse && verificationResponse.accessToken) {
-      await AuthService.enable2FA(code);
-      return true; // Signal success
-    }
-    return false; // Signal verification failed
+    const response = await AuthService.enable2FA(code);
+    return response; 
   }, {
-    onSuccess: (isVerified) => {
-      if (isVerified) {
-        setUser2FAEnabled(isVerified);
-        setUserQrCodeData('');  // Hide the QR code
-        alert('2FA verified and enabled successfully!');
-      } else {
-        console.log("Verification failed.");
-      }
+    onSuccess: () => {
+      setUser2FAEnabled(true);
+      setUserQrCodeData('');  // Hide the QR code
+      alert('2FA verified and enabled successfully!');
     },
     onError: () => {
       alert('Failed to verify or enable 2FA. Please try again.');
     }
   });
+  
 
   const handleVerifyCode = () => {
     verify2FACodeMutation.mutate(userEnteredCode);
   };
+  
+
+  // UPDATE AVATAR & NICKNAME
+  const handleNicknameSave = async () => {
+    try {
+      await UserService.updateNickname(userId, { nickname: userNick });
+      queryClient.invalidateQueries(['user']);
+    } catch (error) {
+      console.error('Failed to update nickname:', error);
+    }
+  };
+  
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileInput = event.target;
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      try {
+        // Code pour télécharger le fichier avatar ici
+        await UserService.uploadAvatar(userId, file);
+        // Mettez à jour les données de l'utilisateur après le téléchargement de l'avatar
+        queryClient.invalidateQueries(['user']);
+      } catch (error) {
+        console.error('Failed to upload avatar:', error);
+      }
+    }
+  };
+  
+  const handleAvatarSave = async () => {
+    try {
+      queryClient.invalidateQueries(['user']);
+    } catch (error) {
+      console.error('Failed to update avatar:', error);
+    }
+  };
+  
 
   const handleSettingsClick = () => {
     setShowEditProfile(!showEditProfile);
@@ -156,14 +202,16 @@ const MyProfile: React.FC = () => {
           <div className="col-lg-6">
             <div className="form-group focused">
               <label className="form-control-label" htmlFor="input-file">Avatar</label>
-              <input className="form-control" type="file" id="formFile" accept="image/*" />
+              <input className="form-control" type="file" accept="image/*" onChange={handleAvatarUpload} id="formFile"/>
             </div>
+            <button className="btn btn-sm btn-primary ghost" onClick={handleAvatarSave}>Save</button>
           </div>
           <div className="col-lg-6">
             <div className="form-group">
               <label className="form-control-label" htmlFor="input-username">NickName</label>
               <input type="text" id="input-username" value={userNick} onChange={e => setUserNick(e.target.value)} className="form-control form-control-alternative" placeholder="new Username" />
             </div>
+            <button className="btn btn-sm btn-primary ghost" onClick={handleNicknameSave}>Save</button>
           </div>
         </div>
         <hr className="my-4" />
@@ -237,7 +285,7 @@ const MyProfile: React.FC = () => {
                   <div className="col-lg-3 order-lg-2">
                     <div className="card-profile-image">
                       <a href="#">
-                        <img src={userImage} className="rounded-circle" />
+                      {userAvatar && <img src={userAvatar} alt={`Avatar de ${userName}`} className="rounded-circle" />}
                       </a>
                     </div>
                   </div>

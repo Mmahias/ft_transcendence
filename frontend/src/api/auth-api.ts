@@ -95,20 +95,13 @@ class AuthService {
 
       static async checkTwoFactorAuthentication(userId: number) {
         try {
-          // Effectuez une requête GET vers la route backend pour vérifier le statut de 2FA
-          const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`, {
-            params: { userId }, // Incluez l'identifiant de l'utilisateur comme paramètre de requête
-          });
-      
-          // Renvoyer le statut de 2FA sous forme de booléen
+          const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`, { params: userId});
           return response.data.isAuthenticationEnabled;
         } catch (error) {
-          // Gérer les erreurs, par exemple, afficher un message d'erreur à l'utilisateur
           console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
-          // En cas d'erreur, vous pouvez également renvoyer false ou gérer l'erreur de manière appropriée
           return false;
         }
-      };
+      };    
 
     }
 
