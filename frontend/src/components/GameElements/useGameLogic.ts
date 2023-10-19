@@ -1,76 +1,54 @@
 import { useState, useEffect, useRef } from 'react';
-import { randomBallSpeed } from './movements';
-import { BALL_SPEED_X, BALL_SPEED_Y } from './constants';
 import { useSocket } from '../../hooks/useSocket';
 import { useNavigate } from 'react-router-dom';
+import { BACKEND_WIDTH, BACKEND_HEIGHT, PADDLE_LENGTH,
+  PADDLE_SPEED, PADDLE_WIDTH, BORDER_WIDTH, PADDLE_PADDING } from './constants';
 import toast from 'react-hot-toast';
 
-export interface Ball {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-}
-
-export interface Paddle {
-  initialX: number;
-  initialY: number;
-  width: number;
-  height: number;
-  speed: number;
-  moveUpKey: string;
-  moveDownKey: string;
-  score: number;
-  side: string;
-}
-
-interface UseGameLogicArgs {
-  height: number;
-  width: number;
-}
-
-const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
+const useGameLogic = () => {
 
   const socket = useSocket()
   const navigate = useNavigate();
 
-  const [gameState, setGameState] = useState({
-    leftPaddleY: height / 2,
-    rightPaddleY: height / 2,
-    ballX: width / 2,
-    ballY: height / 2,
-    ballSpeedX: randomBallSpeed( BALL_SPEED_X(), BALL_SPEED_X()),
-    ballSpeedY: randomBallSpeed( BALL_SPEED_Y(), BALL_SPEED_Y()),
+  const initialGameState = {
+    p1PosY: BACKEND_HEIGHT / 2 - PADDLE_LENGTH / 2,
+    p2PosY: BACKEND_HEIGHT / 2 - PADDLE_LENGTH / 2,
+    ballX: BACKEND_WIDTH / 2,
+    ballY: BACKEND_HEIGHT / 2,
+    ballSpeedX: 0,
+    ballSpeedY: 0,
     p1Score: 0,
     p2Score: 0,
     p1Username: "",
     p2Username: "",
-  });
-  
-  
-  const [canvasDimensions, setCanvasDimensions] = useState({ height, width });
+  };
+
+  const [gameState, setGameState] = useState(initialGameState);
   const [leftUser, setLeftUser] = useState(false);
   const [downKeyPressed, setDownKeyPressed] = useState(false);
   const [upKeyPressed, setUpKeyPressed] = useState(false);
   const [isMatchStarted, setIsMatchStarted] = useState(false);
 
+  // keys listeners
   useEffect(() => {
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         event.preventDefault();
         setUpKeyPressed(true);
+        console.log("DOWN", event.key)
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
         setDownKeyPressed(true);
+        console.log("DOWN", event.key)
       }
     };
     const handleKeyUp = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         setUpKeyPressed(false);
+        console.log("UP", event.key)
       } else if (event.key === "ArrowDown") {
         setDownKeyPressed(false);
+        console.log("UP", event.key)
       }
     };
 
@@ -84,17 +62,14 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
       window.removeEventListener("keyup", handleKeyUp);
     };
 
-  }, [upKeyPressed, downKeyPressed] );
+  }, [] );
 
-	const fps = 60;
-	const sps = 10;
-	const paddleSpeed = 400;
-	const paddleLength = 100;
-	const paddleWidth = 10;
-	const ballRadius = 5;
-	const maxBallSpeed = 1000;
-	let lastTime = useRef(Date.now());
-	let lastCall = useRef(Date.now());
+  const fps = 60;
+  const sps = 10;
+  const ballRadius = 5;
+  const maxBallSpeed = 1000;
+  let lastTime = useRef(Date.now());
+  let lastCall = useRef(Date.now());
 
   useEffect(() => {
     let animationFrameId: number;
@@ -109,23 +84,23 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
       switch (leftUser) {
         case true:
         {
-          if (upKeyPressed && gameState.leftPaddleY > 0) {
-            gameState.leftPaddleY -= (paddleSpeed * delta);
+          if (upKeyPressed && gameState.p1PosY > 0) {
+            gameState.p1PosY -= (PADDLE_SPEED * delta);
           }
 
-          if (downKeyPressed && gameState.leftPaddleY < height - paddleLength) {
-            gameState.leftPaddleY += (paddleSpeed * delta);
+          if (downKeyPressed && gameState.p1PosY < BACKEND_HEIGHT - PADDLE_LENGTH) {
+            gameState.p1PosY += (PADDLE_SPEED * delta);
           }
           break;
         }
         case false:
         {
-          if (upKeyPressed && gameState.rightPaddleY > 0) {
-            gameState.rightPaddleY -= (paddleSpeed * delta);
+          if (upKeyPressed && gameState.p2PosY > 0) {
+            gameState.p2PosY -= (PADDLE_SPEED * delta);
           }
 
-          if (downKeyPressed && gameState.rightPaddleY < height - paddleLength) {
-            gameState.rightPaddleY += (paddleSpeed * delta);
+          if (downKeyPressed && gameState.p2PosY < BACKEND_HEIGHT - PADDLE_LENGTH) {
+            gameState.p2PosY += (PADDLE_SPEED * delta);
           }
           break;
         }
@@ -134,51 +109,61 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
       }
 
       // Check paddle bounds
-      if (gameState.leftPaddleY < 0) {
-        gameState.leftPaddleY = 0;
-      } else if (gameState.leftPaddleY > height - paddleLength) {
-        gameState.leftPaddleY = height - paddleLength;
+      if (gameState.p1PosY < BORDER_WIDTH) {
+        gameState.p1PosY = BORDER_WIDTH;
+      } else if (gameState.p1PosY > BACKEND_HEIGHT - PADDLE_LENGTH - BORDER_WIDTH) {
+        gameState.p1PosY = BACKEND_HEIGHT - PADDLE_LENGTH - BORDER_WIDTH;
       }
-      if (gameState.rightPaddleY < 0) {
-        gameState.rightPaddleY = 0;
-      } else if (gameState.rightPaddleY > height - paddleLength) {
-        gameState.rightPaddleY = height - paddleLength;
+      if (gameState.p2PosY < BORDER_WIDTH) {
+        gameState.p2PosY = BORDER_WIDTH;
+      } else if (gameState.p2PosY > BACKEND_HEIGHT - PADDLE_LENGTH - BORDER_WIDTH) {
+        gameState.p2PosY = BACKEND_HEIGHT - PADDLE_LENGTH - BORDER_WIDTH;
       }
 
       // Actuate ball state here
 
       // Check collisions first
-      setTimeout(() => {
-        console.log("ball y", gameState.ballY, height)
-      }, 3000);
-      if (gameState.ballY + (gameState.ballSpeedY * delta) - ballRadius < 0 || gameState.ballY + (gameState.ballSpeedY * delta) + ballRadius > height) {
-      gameState.ballSpeedY *= -1.05;
+      if (
+        gameState.ballY + (gameState.ballSpeedY * delta) - ballRadius < 0 || 
+        gameState.ballY + (gameState.ballSpeedY * delta) + ballRadius > BACKEND_HEIGHT
+      ) {
+        gameState.ballSpeedY *= -1.05;
       }
-      setTimeout(() => {
-        console.log("ball x", gameState.ballX, width)
-      }, 3000);
-      if (gameState.ballX + (gameState.ballSpeedX * delta) - ballRadius - paddleWidth < 0) {
-        if (gameState.ballY > gameState.leftPaddleY && gameState.ballY < gameState.leftPaddleY + paddleLength) {
+      
+      // Left paddle collision
+      if (gameState.ballX + (gameState.ballSpeedX * delta) - ballRadius - PADDLE_WIDTH - PADDLE_PADDING < 0) {
+        if (
+          gameState.ballY > gameState.p1PosY && 
+          gameState.ballY < gameState.p1PosY + PADDLE_LENGTH
+        ) {
           // It bounces on the paddle
           gameState.ballSpeedX *= -1.8;
           gameState.ballSpeedY *= 1.2;
         } else {
-          // Goal
+          // Goal for player 2
           gameState.ballSpeedX = 0;
           gameState.ballSpeedY = 0;
+          // Handle scoring and other necessary logic here.
         }
       }
-      else if (gameState.ballX + (gameState.ballSpeedX * delta) + ballRadius + paddleWidth > width) {
-        if (gameState.ballY > gameState.rightPaddleY && gameState.ballY < gameState.rightPaddleY + paddleLength) {
+      
+      // Right paddle collision
+      else if (gameState.ballX + (gameState.ballSpeedX * delta) + ballRadius + PADDLE_WIDTH + PADDLE_PADDING > BACKEND_WIDTH) {
+        if (
+          gameState.ballY > gameState.p2PosY && 
+          gameState.ballY < gameState.p2PosY + PADDLE_LENGTH
+        ) {
           // It bounces on the paddle
           gameState.ballSpeedX *= -1.8;
           gameState.ballSpeedY *= 1.2;
         } else {
-          // Goal
+          // Goal for player 1
           gameState.ballSpeedX = 0;
           gameState.ballSpeedY = 0;
+          // Handle scoring and other necessary logic here.
         }
       }
+      
 
       // Speed limits
       if (gameState.ballSpeedX > maxBallSpeed) {
@@ -200,10 +185,10 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
       {
         switch (leftUser){
           case true:
-            socket?.emit("game input", gameState.leftPaddleY);
+            socket?.emit("game input", gameState.p1PosY);
             break;
           case false:
-            socket?.emit("game input", gameState.rightPaddleY);
+            socket?.emit("game input", gameState.p2PosY);
             break;
           default:
             break;
@@ -230,38 +215,22 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [socket, leftUser, upKeyPressed, downKeyPressed, gameState]);
-
-
-
-
-  useEffect(() => {
-    if (!canvasDimensions.height || !canvasDimensions.width)
-      return;
-  }, [canvasDimensions.height, canvasDimensions.width]);
-
-  // socket emits
-  useEffect(() => {
-    socket?.emit('game input', { posY: gameState.rightPaddleY });
-  }, [gameState.rightPaddleY]);
+  }, [socket, leftUser, upKeyPressed, downKeyPressed]);
 
   // socket listeners
   useEffect(() => {
-
     if (!socket || leftUser === undefined) return;
 
-    // listen for found matches
-    socket?.on('match found', (data) => {
-      socket?.emit('accept match');
-      console.log(data);
-    });
+    const handleMatchFound = (data: any) => {
+        socket?.emit('accept match');
+    };
 
-    //listen for gameState changes
-    socket?.on("game state", (matchClass: any) => {
+    const handleGameState = (matchClass: any) => {
+      // console.log("Received match data:", matchClass.p1PosY, matchClass.p2PosY);
       // Update the game state and convert the data to the correct format
       setGameState({
-        leftPaddleY: matchClass.p1posY,
-        rightPaddleY: matchClass.p2posY,
+        p1PosY: matchClass.p1PosY,
+        p2PosY: matchClass.p2PosY,
         ballX: matchClass.ballX,
         ballY: matchClass.ballY,
         ballSpeedX: matchClass.ballSpeedX,
@@ -271,11 +240,9 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
         p1Username: matchClass.player1.username,
         p2Username: matchClass.player2.username,
       });
-      console.log("ball: ", matchClass.ballX, matchClass.ballY);
-    });
+    };
 
-    // Log when the match starts and get payload
-    socket?.on("match started", (payload: boolean) => {
+    const handleMatchStarted = (payload: boolean) => {
       setLeftUser(payload);
       setIsMatchStarted(true);
 
@@ -284,54 +251,81 @@ const useGameLogic = ({ height, width }: UseGameLogicArgs) => {
         icon: "🎉",
         duration: 3000,
       });
-    });
+    };
 
-    // Handle match cancellation
-    socket?.on("match canceled", () => {
+    const handleMatchCanceled = () => {
+      setIsMatchStarted(false);
       toast.error("Player disconnected.", {
         id: "matchmaking",
         icon: "❌",
         duration: 2000,
       });
 
+      setGameState(initialGameState);
+
       setTimeout(() => {
         // Redirect to the home page
         toast.dismiss("matchmaking");
         navigate("/");
       }, 2500);
-    });
+    };
 
-    // Handle match end
-    socket?.on("match win", (payload: string) => {
+    const handleMatchWin = (payload: string) => {
+      setIsMatchStarted(false);
       toast.success("VICTORY !!", {
         id: "matchmaking",
         icon: "🌟",
         duration: 3000,
       });
+
+      setGameState(initialGameState);
+
       setTimeout(() => {
         // Redirect to profile page
         navigate("/user/profile/" + payload);
       }, 2500);
-    });
+    };
 
-    socket?.on("match lose", (payload: string) => {
+    const handleMatchLose = (payload: string) => {
+      setIsMatchStarted(false);
       toast.success("DEFEAT !!", {
         id: "matchmaking",
         icon: "😢",
         duration: 3000,
       });
 
+      setGameState(initialGameState);
+
       setTimeout(() => {
         // Redirect to profile page
         toast.dismiss("matchmaking");
         navigate("/user/profile/" + payload);
       }, 2500);
-    });
+    };
 
-    socket?.on('connect_error', (error) => {
-      console.error("Socket connection error:", error);
-    });
+    const handleConnectError = (error: any) => {
+        console.error("Socket connection error:", error);
+    };
 
+    // Register the listeners
+    socket.on('match found', handleMatchFound);
+    socket.on("game state", handleGameState);
+    socket.on("match started", handleMatchStarted);
+    socket.on("match canceled", handleMatchCanceled);
+    socket.on("match win", handleMatchWin);
+    socket.on("match lose", handleMatchLose);
+    socket.on('connect_error', handleConnectError);
+
+    // Return a cleanup function
+    return () => {
+        socket.off('match found', handleMatchFound);
+        socket.off("game state", handleGameState);
+        socket.off("match started", handleMatchStarted);
+        socket.off("match canceled", handleMatchCanceled);
+        socket.off("match win", handleMatchWin);
+        socket.off("match lose", handleMatchLose);
+        socket.off('connect_error', handleConnectError);
+    };
   }, [leftUser, socket]);
 
   return { gameState };

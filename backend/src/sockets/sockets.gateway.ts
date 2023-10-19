@@ -12,7 +12,7 @@ import { usernameMiddleware } from './middleware/username.middleware';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { MatchClass, Player, GameService } from './game.service';
-
+import { HEIGHT, WIDTH, PADDLE_LENGTH, PADDLE_PADDING, PADDLE_SPEED, PADDLE_WIDTH, BALL_RADIUS } from './game.constants';
 const corsConfig = {
   origin: '*', // replace with your front-end domain/port
   credentials: true,
@@ -156,6 +156,7 @@ export class SocketsGateway
     const username = client.data.username;
     const socketId = client.id;
   
+    if (this.gameService.usersInGame.has(userId)) { return; }
     const userIndex = this.gameService.addToQueue(userId, username, mode, socketId);
     this.gameService.cleanupMatches();
   
@@ -286,47 +287,23 @@ export class SocketsGateway
     if (!match) {
       return;
     }
-    console.log("player1", match.player1)
-
-    // const handlePlayerInactivity = (player: Player) => {
-    //   console.log("handlePlayerInactivity", player);
-    //   this.server.to(match.matchId.toString()).emit('match canceled');
-
-    //   if (this.getSocketOfUserInGame(player.userId)) {
-    //     this.gameService.leaveGame(player.userId);  // Removing player from usersInGame
-    //     this.socketService.addActiveSocket(player.userId, client.id);  // Marking player's socket as active
-    //   } else {
-    //     this.socketService.removeActiveSocket(player.userId, client.id);  // Removing player's socket if no active game
-    //   }
-
-    //   this.gameService.deleteMatch(match.matchId);
-    // };
-
-    // // Check if one of the players has disconnected for more than 3 seconds
-    // if (Date.now() - match.player1.lastUpdate > 3000) {
-    //     handlePlayerInactivity(match.player1);
-    //     return;
-    // }
-    // if (Date.now() - match.player2.lastUpdate > 3000) {
-    //     handlePlayerInactivity(match.player2);
-    //     return;
-    // }
 
     const delta = (Date.now() - match.lastUpdate) / 1000; // in seconds
 
     // If payload is not empty, actuate user state
-    if (payload) {
-      console.log("payload", payload)
+    if (payload && typeof payload === 'number') {
       switch (userId) {
         case match.player1.userId:
           {
             // Set player 1 paddle position
+            console.log("sending p1 posY", payload)
             match.p1PosY = payload;
             break;
           }
         case match.player2.userId:
           {
             // Set player 2 paddle position
+            console.log("sending p2 posY", payload)
             match.p2PosY = payload;
             break;
           }
@@ -335,20 +312,19 @@ export class SocketsGateway
       }
     }
 
-    // Actuate ball state here
-
-    // Check collisions first
-    if (match.ballY + (match.ballSpeedY * delta) - this.gameService.gameConstants.ballRadius < 0
-      || match.ballY + (match.ballSpeedY * delta) + this.gameService.gameConstants.ballRadius > this.gameService.gameConstants.height) {
+    // Collision with top or bottom of the canvas
+    if (match.ballY + (match.ballSpeedY * delta) - BALL_RADIUS < 0 
+        || match.ballY + (match.ballSpeedY * delta) + BALL_RADIUS > HEIGHT) {
       match.ballSpeedY *= -1.05;
     }
-    if (match.ballX + (match.ballSpeedX * delta) - this.gameService.gameConstants.ballRadius - this.gameService.gameConstants.paddleWidth < 0) {
-      if (match.ballY > match.p1PosY && match.ballY < match.p1PosY + this.gameService.gameConstants.paddleLength) {
-        // It bounces on the paddle
+
+    // Collision with left side or paddle
+    if (match.ballX + (match.ballSpeedX * delta) - BALL_RADIUS < PADDLE_WIDTH + PADDLE_PADDING) {
+      if (match.ballY > match.p1PosY && match.ballY < match.p1PosY + PADDLE_LENGTH) {
+        // Bounces on the paddle
         match.ballSpeedX *= -1.8;
         match.ballSpeedY *= 1.2;
-      }
-      else {
+      } else {
         // GOAL!
         match.player2.score += 1;
         this.resetMatch(match);
@@ -359,13 +335,14 @@ export class SocketsGateway
         }
       }
     }
-    else if (match.ballX + (match.ballSpeedX * delta) + this.gameService.gameConstants.ballRadius + this.gameService.gameConstants.paddleWidth > this.gameService.gameConstants.width) {
-      if (match.ballY > match.p2PosY && match.ballY < match.p2PosY + this.gameService.gameConstants.paddleLength) {
-        // It bounces on the paddle
+
+    // Collision with right side or paddle
+    else if (match.ballX + (match.ballSpeedX * delta) + BALL_RADIUS > WIDTH - (PADDLE_WIDTH + PADDLE_PADDING)) {
+      if (match.ballY > match.p2PosY && match.ballY < match.p2PosY + PADDLE_LENGTH) {
+        // Bounces on the paddle
         match.ballSpeedX *= -1.8;
         match.ballSpeedY *= 1.2;
-      }
-      else {
+      } else {
         // GOAL!
         match.player1.score += 1;
         this.resetMatch(match);
@@ -395,7 +372,7 @@ export class SocketsGateway
     // Check if powerup is recovered
     if (match.powerUp) {
       const distance = Math.sqrt(Math.pow(match.powerUpX - match.ballX, 2) + Math.pow(match.powerUpY - match.ballY, 2));
-      if (distance < this.gameService.gameConstants.ballRadius + this.gameService.gameConstants.powerUpRadius) {
+      if (distance < BALL_RADIUS + this.gameService.gameConstants.powerUpRadius) {
         match.powerUp = false;
         match.powerUpOn = true;
         match.powerUpDate = Date.now();
@@ -421,8 +398,8 @@ export class SocketsGateway
 
   private resetMatch(match: MatchClass): void {
 
-    match.ballX = this.gameService.gameConstants.width / 2;
-    match.ballY = this.gameService.gameConstants.height / 2;
+    match.ballX = WIDTH / 2;
+    match.ballY = HEIGHT / 2;
 
     // Horizontal ball speed is non null
     match.ballSpeedX = this.gameService.randomBallSpeed(200, 250);
@@ -439,8 +416,8 @@ export class SocketsGateway
     // Regenerate powerup
     const scoreTotal = match.player1.score + match.player2.score;
     if (match.powerUp === false && scoreTotal % 3 === 0) {
-      match.powerUpX = Math.random() * (this.gameService.gameConstants.width / 2) + (this.gameService.gameConstants.width / 4);
-      match.powerUpY = Math.random() * this.gameService.gameConstants.height;
+      match.powerUpX = Math.random() * (WIDTH / 2) + (WIDTH / 4);
+      match.powerUpY = Math.random() * HEIGHT;
       match.powerUp = true;
     }
 

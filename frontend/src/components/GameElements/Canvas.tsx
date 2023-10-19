@@ -1,14 +1,8 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
 import { GameState } from "./gameState"
 import { DrawArgs } from "./utils/draw"
+import { BACKEND_WIDTH, BACKEND_HEIGHT, RESIZE_FACTOR } from './constants';
 import * as S from './Game.styles';
-
-export const BACKEND_WIDTH = 1000;
-export const BACKEND_HEIGHT = BACKEND_WIDTH * 7 / 11;
-export const PADDLE_LENGTH = BACKEND_HEIGHT / 5;
-export const PADDLE_WIDTH = PADDLE_LENGTH / 20;
-export const PADDLE_PAD = PADDLE_WIDTH * 2;
 
 type CanvasProps = React.DetailedHTMLProps<
   React.CanvasHTMLAttributes<HTMLCanvasElement>,
@@ -22,24 +16,22 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
   ({ draw, gameState }, canvasRef) => {
     
   const [canvasDimensions, setCanvasDimensions] = useState({
-    width: Number(window.innerWidth / 1.5),
-    height: Number(window.innerHeight / 1.5),
+    width: Number(window.innerWidth / RESIZE_FACTOR),
+    height: Number(window.innerHeight / RESIZE_FACTOR),
   });
   
   const getResponsiveSize = () => {
-    // const newWidth = window.innerWidth / 1.5;
-    // const newHeight = newWidth * 7 / 11;
     const windowRatio = window.innerWidth / window.innerHeight;
     const gameRatio = BACKEND_WIDTH / BACKEND_HEIGHT;
-  
+
     let newWidth, newHeight;
-  
+
     if (windowRatio > gameRatio) {
-      newHeight = window.innerHeight / 1.5;
-      newWidth = newHeight * gameRatio / 1.5;
+      newHeight = window.innerHeight / RESIZE_FACTOR;
+      newWidth = newHeight * gameRatio;
     } else {
-      newWidth = window.innerWidth / 1.5;
-      newHeight = newWidth / (gameRatio * 1.5);
+      newWidth = window.innerWidth / RESIZE_FACTOR;
+      newHeight = newWidth / gameRatio;
     }
     return { width: newWidth, height: newHeight };
   };

@@ -3,7 +3,6 @@ import Canvas from '../components/GameElements/Canvas';
 import draw from '../components/GameElements/utils/draw';
 import { GameWrapper, Score, StyledButton, WinningMessage } from '../components/GameElements/Game.styles';
 import useGameLogic from '../components/GameElements/useGameLogic';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../components/GameElements/constants';
 import { useSocket } from '../hooks/useSocket';
 import toast from 'react-hot-toast';
 
@@ -17,10 +16,7 @@ const Game: React.FC<GameProps> = () => {
   
   const {
     gameState,
-  } = useGameLogic({
-    height: Number(CANVAS_HEIGHT()),
-    width: Number(CANVAS_WIDTH()),
-  });
+  } = useGameLogic();
   
   useEffect(() => {
     if (gameWrapperRef && gameWrapperRef.current) {

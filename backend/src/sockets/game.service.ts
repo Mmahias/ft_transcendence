@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { UserStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SocketService } from './sockets.service';
+import { HEIGHT, PADDLE_LENGTH, WIDTH } from './game.constants';
 
 export class Player {
   userId: number;
@@ -46,20 +47,10 @@ export class GameService extends SocketService {
     super(prismaService);
   }
 
-  static readonly CANVAS_WIDTH = 1000;
-  static readonly CANVAS_HEIGHT = GameService.CANVAS_WIDTH * 7 / 11;
-  static readonly PADDLE_LENGTH = GameService.CANVAS_HEIGHT / 5;
-  static readonly PADDLE_WIDTH = GameService.PADDLE_LENGTH / 20;
 
   public gameConstants = {
-    width: GameService.CANVAS_WIDTH,
-    height: GameService.CANVAS_HEIGHT,
-    paddleLength: GameService.PADDLE_LENGTH,
-    paddleWidth: GameService.PADDLE_WIDTH,
-    paddleSpeed: 400,
-    ballRadius: 5,
     maxBallSpeed: 1000,
-    winScore: 2,
+    winScore: 5,
     powerUpRadius: 20,
   };
 
@@ -153,11 +144,11 @@ export class GameService extends SocketService {
     match.player1.ready = false;
     match.player2.ready = false;
 
-    match.p1PosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
-    match.p2PosY = (this.gameConstants.height / 2) - (this.gameConstants.paddleLength / 2);
+    match.p1PosY = (HEIGHT / 2) - (PADDLE_LENGTH / 2);
+    match.p2PosY = (HEIGHT / 2) - (PADDLE_LENGTH / 2);
 
-    match.ballX = this.gameConstants.width / 2;
-    match.ballY = this.gameConstants.height / 2;
+    match.ballX = WIDTH / 2;
+    match.ballY = HEIGHT / 2;
 
     match.powerUpOn = false;
     match.powerUpDate = 0;
@@ -165,8 +156,8 @@ export class GameService extends SocketService {
     // Power up config
     match.powerUp = mode === "Classic" ? false : true;
 
-    match.powerUpX = Math.random() * (this.gameConstants.width / 2) + (this.gameConstants.width / 4);
-    match.powerUpY = Math.random() * this.gameConstants.height;
+    match.powerUpX = Math.random() * (WIDTH / 2) + (WIDTH / 4);
+    match.powerUpY = Math.random() * HEIGHT;
 
     match.ballSpeedX = this.randomBallSpeed(200, 250);
     match.ballSpeedY = this.randomBallSpeed(160, 200);
