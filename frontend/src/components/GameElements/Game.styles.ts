@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 // Paddles and ball colors
-export const ballColor = 'rgb(0, 0, 0)';
-export const rightPaddleColor = 'rgb(220, 220, 40)';
-export const leftPaddleColor = 'rgb(220, 220, 40)';
+export const ballColor = { r: 0, g: 0, b: 0 };
+export const rightPaddleColor = { r: 220, g: 220, b: 40 };
+export const leftPaddleColor = { r: 220, g: 220, b: 40 };
 
 // Game colors
 export const scoreCardColor = 'rgb(195, 195, 80)';

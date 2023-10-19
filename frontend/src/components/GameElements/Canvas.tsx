@@ -10,10 +10,11 @@ type CanvasProps = React.DetailedHTMLProps<
 > & {
   gameState: GameState;
   draw?: (args: DrawArgs) => void;
+  mode: 'classic' | 'special';
 };
 
 const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
-  ({ draw, gameState }, canvasRef) => {
+  ({ draw, gameState, mode }, canvasRef) => {
     
   const [canvasDimensions, setCanvasDimensions] = useState({
     width: Number(window.innerWidth / RESIZE_FACTOR),
@@ -63,7 +64,7 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
     // Clear the canvas first before drawing the new frame.
     context.clearRect(0, 0, canvasDimensions.width, canvasDimensions.height);
     if (draw) {
-      draw({ ctx: context, gameState, canvasDimensions });
+      draw({ ctx: context, gameState, canvasDimensions, mode });
     }
     // Removed the cleanup function because we already cleared the canvas above.
   }, [draw, canvasRef, gameState, canvasDimensions.width, canvasDimensions.height]);

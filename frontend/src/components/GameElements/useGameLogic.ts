@@ -139,7 +139,6 @@ const useGameLogic = () => {
           // Goal for player 2
           gameState.ballSpeedX = 0;
           gameState.ballSpeedY = 0;
-          // Handle scoring and other necessary logic here.
         }
       }
       
@@ -156,7 +155,6 @@ const useGameLogic = () => {
           // Goal for player 1
           gameState.ballSpeedX = 0;
           gameState.ballSpeedY = 0;
-          // Handle scoring and other necessary logic here.
         }
       }
       

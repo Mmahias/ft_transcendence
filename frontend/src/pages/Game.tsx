@@ -17,16 +17,18 @@ const Game: React.FC<GameProps> = () => {
   const {
     gameState,
   } = useGameLogic();
+
+  const [selectedMode, setSelectedMode] = useState<'classic' | 'special'>('classic'); 
   
   useEffect(() => {
     if (gameWrapperRef && gameWrapperRef.current) {
-      gameWrapperRef.current.focus(); // Sets focus on the div when the component mounts
+      gameWrapperRef.current.focus();
     }
   }, []);
 
   // Socket listeners
 
-  const handleJoinQueue = (mode: string) => {
+  const handleJoinQueue = (mode: 'classic' | 'special') => {
     if (!socket) {
       toast.error("Failed to join queue...", {
         id: "matchmaking",
@@ -35,6 +37,8 @@ const Game: React.FC<GameProps> = () => {
       });
       return;
     }
+    setSelectedMode(mode);
+    console.log(`Joining ${mode} queue...`)
     socket.emit('join queue', { mode });
     toast.success("Waiting for an opponent...", {
       id: "matchmaking",
@@ -47,7 +51,7 @@ const Game: React.FC<GameProps> = () => {
     <div tabIndex={0}>
       <GameWrapper ref={gameWrapperRef} tabIndex={0} style={{ position: 'relative' }}>
         <Score>{`${gameState.p1Score} - ${gameState.p2Score}`}</Score>
-        <Canvas ref={canvasRef} draw={draw} gameState={gameState} />
+        <Canvas ref={canvasRef} draw={draw} gameState={gameState} mode={selectedMode} />
         
         <StyledButton onClick={() => handleJoinQueue('classic')}>Join Classic Queue</StyledButton>
         <StyledButton onClick={() => handleJoinQueue('special')}>Join Special Queue</StyledButton>

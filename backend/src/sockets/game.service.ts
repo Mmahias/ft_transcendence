@@ -117,6 +117,7 @@ export class GameService extends SocketService {
 
   // Finds and returns a player matching the same mode and removes both players from the queue.
   public findMatchFromQueue(userId: number, mode: string): number | null {
+    console.log("findMatchFromQueue", this.queue)
     const userIndex = this.queue.findIndex(player => player.userId === userId);
     if (userIndex !== -1) {
       const matchIndex = this.queue.findIndex((player) => player.mode === mode && player.userId !== userId);

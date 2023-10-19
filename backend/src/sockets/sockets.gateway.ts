@@ -151,6 +151,7 @@ export class SocketsGateway
 
   @SubscribeMessage('join queue')
   async handleJoinQueue(client: Socket, data: { mode: string }): Promise<void> {
+    console.log("data",data)
     const { mode } = data;
     const userId = client.data.userId;
     const username = client.data.username;
@@ -167,8 +168,6 @@ export class SocketsGateway
       const player1 = this.gameService.removeFromQueue(userIndex);
       const player2 = this.gameService.removeFromQueue(matchedPlayerIndex);
   
-      console.log("player1", player1);
-      console.log("player2", player2);
       const match = this.gameService.addMatch(mode, player1, player2);
   
       const socket1: Socket = this.getSocketBySocketId(player1.socketId);
@@ -205,7 +204,6 @@ export class SocketsGateway
 
       const socket1: Socket = this.getSocketOfUserInGame(match.player1.userId);
       const socket2: Socket = this.getSocketOfUserInGame(match.player2.userId);
-      console.log("socket1", socket1);
       socket1.emit('match started', true);
       socket2.emit('match started', false);
       match.lastUpdate = Date.now();
@@ -296,14 +294,12 @@ export class SocketsGateway
         case match.player1.userId:
           {
             // Set player 1 paddle position
-            console.log("sending p1 posY", payload)
             match.p1PosY = payload;
             break;
           }
         case match.player2.userId:
           {
             // Set player 2 paddle position
-            console.log("sending p2 posY", payload)
             match.p2PosY = payload;
             break;
           }
@@ -430,11 +426,6 @@ export class SocketsGateway
     try {
       const socket1 = this.getSocketBySocketId(match.player1.socketId);
       const socket2 = this.getSocketBySocketId(match.player2.socketId);
-
-      console.log("match", match);
-      console.log("matchwegwlehfowie");
-      console.log("1", socket1);
-      console.log("2", socket2);
 
       if (socket1)
         this.socketService.goOnline(match.player1.userId);
