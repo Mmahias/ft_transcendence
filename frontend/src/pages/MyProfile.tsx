@@ -21,7 +21,6 @@ const MyProfile: React.FC = () => {
   const [userName, setUserName] = useState<string>('');
   const [userId, setUserId] = useState<number>(0);
   const [userNick, setUserNick] = useState<string>('');
-  const [userStatus, setUserStatus] = useState<string>('');
   const [userWins, setUserWins] = useState<number>(0);
   const [userLosses, setUserLosses] = useState<number>(0);
   const [userLevel, setUserLevel] = useState<number>(1);
@@ -39,10 +38,13 @@ const MyProfile: React.FC = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: userProfile, status: statusProfile } = useQuery({
-    queryKey: ['user'],
+  const { data: userProfile } = useQuery({
+    queryKey: ['me'],
     queryFn: UserService.getMe,
     enabled: isLoggedIn ? true : false,
+    onSuccess: (user) => {
+      console.log("user", user)
+    },
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('user not connected');
@@ -61,6 +63,7 @@ const MyProfile: React.FC = () => {
   }, [auth]);
 
   useEffect(() => {
+    console.log("UP", userProfile?.status)
     if (userProfile) {
       if (userProfile.username) {
         setUserName(userProfile.username);
@@ -68,8 +71,6 @@ const MyProfile: React.FC = () => {
         setUserNick(userProfile.nickname);
       } if (userProfile.id) {
         setUserId(userProfile.id);
-      } if (userProfile.status) {
-        setUserStatus(userProfile.status);
       } if (userProfile.wins) {
         setUserWins(userProfile.wins);
       } if (userProfile.losses) {
@@ -96,10 +97,9 @@ const MyProfile: React.FC = () => {
               console.error("Failed to fetch match history", error);
             });
         }
-        
       }
     }
-  }, [userProfile]);
+  }, [userProfile, isLoggedIn]);
 
   useEffect(() => {
     // Utilisez une fonction asynchrone pour obtenir l'avatar de l'utilisateur
@@ -313,15 +313,15 @@ const MyProfile: React.FC = () => {
                     <h4 style={{color: '#2b7A78'}}>{userNick}</h4>
                     <div className="h5 font-weight-300">
                       <i style={{
-                        color: userStatus === "ONLINE"
+                        color: userProfile?.status === "ONLINE"
                           ? '#006400'
-                          : userStatus === "INGAME"
+                          : userProfile?.status === "INGAME"
                             ? '#FFD700'
-                            : userStatus === "OFFLINE"
+                            : userProfile?.status === "OFFLINE"
                               ? '#8B0000'
                               : 'black'
                       }}>
-                        {userStatus}
+                        {userProfile?.status}
                       </i>
                     </div>
                     <div className="h5 mt-4">

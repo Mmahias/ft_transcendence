@@ -1,61 +1,61 @@
 // AuthService.ts
 import axios, {AxiosError} from 'axios';
+import UserService from './users-api';
 import { axiosPrivate, axiosPublic } from './axios-config';
 
 const AUTH_API = `/auth`;
 
 class AuthService {
-    static async signUp(newUsername: string, password: string, newNickname: string) {
-        try {
-            console.log('signup: ', newUsername, password, newNickname);
-            const response = await axiosPublic.post(`${AUTH_API}/signup`, {
-                username: newUsername,
-                password: password,
-                nickname: newNickname
-            });
-            console.log('signfghrtup: ', response.data);
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response && error.response.data && error.response.data.message) {
-                    // Use the error message from the backend
-                    throw new Error(error.response.data.message);
-                }
-            }
-            throw new Error('A user with this nickname already exists');
-        }
+  static async signUp(newUsername: string, password: string, newNickname: string) {
+    try {
+    const response = await axiosPublic.post(`${AUTH_API}/signup`, {
+      username: newUsername,
+      password: password,
+      nickname: newNickname
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response && error.response.data && error.response.data.message) {
+        // Use the error message from the backend
+        throw new Error(error.response.data.message);
+      }
     }
+    throw new Error('A user with this nickname already exists');
+    }
+  }
 
-    static async login(username: string, password: string) {
-        try {
-            const response = await axiosPublic.post(`${AUTH_API}/login`, {
-                username: username,
-                password: password
-            });
-            console.log('login: ', response.data);
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response && error.response.data && error.response.data.message) {
-                    // Use the error message from the backend
-                    throw new Error(error.response.data.message);
-                }
-            }
-            throw new Error('Invalid credentials');
+  static async login(username: string, password: string) {
+    try {
+      const response = await axiosPublic.post(`${AUTH_API}/login`, {
+        username: username,
+        password: password
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.data && error.response.data.message) {
+          // Use the error message from the backend
+          throw new Error(error.response.data.message);
         }
+      }
+      throw new Error('Invalid credentials');
     }
+  }
 
-    static async logout() {
-        try {
-            await axiosPrivate.post(`${AUTH_API}/logout`);
-        }  catch (error) {
-            if (axios.isAxiosError(error) && error.response && error.response.data) {
-                console.error('Error logging out:', error.response.data);
-            } else {
-                console.error('Error logging out:', error);
-            }
-        }
+  static async logout() {
+    try {
+      const me = await UserService.getMe();
+      console.log("me", me.id)
+      await axiosPrivate.post(`${AUTH_API}/logout`, { userId: me.id });
+    }  catch (error) {
+      if (axios.isAxiosError(error) && error.response && error.response.data) {
+        console.error('Error logging out:', error.response.data);
+      } else {
+        console.error('Error logging out:', error);
+      }
     }
+  }
 
     static async enable2FA(code: string) {
       try {

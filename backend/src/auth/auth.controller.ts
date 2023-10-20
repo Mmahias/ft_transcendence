@@ -36,7 +36,7 @@ export class AuthController {
   @UseGuards(Oauth42Guard)
   @Get('42/redirect')
   async oauthRedirect(@User() user) {
-    return this.authService.login(user, false);
+    return await this.authService.login(user, false);
   }
 
   /*
@@ -46,7 +46,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('login')
   async login(@User() user) {
-    return this.authService.login(user, false);
+    return await this.authService.login(user, false);
   }
 
   /*
@@ -54,13 +54,12 @@ export class AuthController {
    */
   @Post('signup')
   async signup(@Body() body: RegisterDto) {
-    console.log('signup: ', body);
     const user = await this.userService.createUser(
       body.username,
       body.password,
       body.nickname
     );
-    return this.authService.login(user, false);
+    return await this.authService.login(user, false);
   }
 
   /*
@@ -97,7 +96,7 @@ export class AuthController {
     }
 
     await this.userService.turnOnTwoFactorAuthentication(user.id);
-    return this.authService.login(user, true);
+    return await this.authService.login(user, true);
   }
 
   @Post('2fa/turn-off')
@@ -123,7 +122,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@User() user) {
-    return this.authService.logout(user);
-  }
+  async logout(@Body('userId') userId: number) {
+    return this.authService.logout(userId);
+  };
 }

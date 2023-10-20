@@ -45,7 +45,7 @@ To use it, just add some types or shared data you may need.
 
 *GENERAL:*
 
-* quand on se login pour la premiere fois, on apparait offline
+* OK: quand on se login pour la premiere fois, on apparait offline
 
 *CHAT:*
 

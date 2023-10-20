@@ -7,6 +7,8 @@ import { User } from '@prisma/client';
 import { toDataURL } from 'qrcode';
 import { JwtPayload } from '@app/auth/entities/jwt-payload';
 import { SocketService } from '@app/sockets/sockets.service';
+import { PrismaService } from '@app/prisma/prisma.service';
+import { UserStatus } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +16,7 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private readonly socketService: SocketService
+    private prismaService: PrismaService,
   ) {}
 
   async signToken(payload: JwtPayload) {
@@ -53,11 +55,28 @@ export class AuthService {
       sub: user.id,
       isTwoFactorAuthenticated: twoFAActivated
     };
+    await this.prismaService.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        status: UserStatus.ONLINE
+      }
+    });
     return this.signToken(payload);
   }
 
-  async logout(user: Partial<User>) {
-    // FIX IT
-    // Fix the user status to offline in the database
+  async logout(id: number) {
+    console.log("logout", id);
+    if (id) {
+      await this.prismaService.user.update({
+        where: {
+          id: id
+        },
+        data: {
+          status: UserStatus.OFFLINE
+        }
+      });
+    }
   }
 }

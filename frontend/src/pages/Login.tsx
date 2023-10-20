@@ -72,18 +72,18 @@ const Login = () => {
         toast.success("Successfully signed up!", {
           id: "signup",
           icon: "🎮⌛",
-          duration: 3000,
+          duration: 2000,
         });
         setTimeout(() => {
           navigate('/user/profile');
-        }, 2000);
+        }, 500);
       }
     } catch (error) {
       setSuccessMsg('');
       toast.error("Error while signing up!", {
         id: "signup",
         icon: "🎮⌛",
-        duration: 3000,
+        duration: 2000,
       });
       if (error instanceof Error) {
         setErrorMsg(error.message);
@@ -116,18 +116,18 @@ const Login = () => {
         toast.success("Successfully logged in!", {
           id: "login",
           icon: "🎮⌛",
-          duration: 3000,
+          duration: 2000,
         });
         setTimeout(() => {
           navigate('/user/profile');
-        }, 2000);
+        }, 500);
       }
     } catch (error) {
       setSuccessMsg('');
       toast.error("Error while logging in !", {
         id: "login",
         icon: "🎮⌛",
-        duration: 3000,
+        duration: 2000,
       });
       if (error instanceof Error) {
         setErrorMsg(error.message);
