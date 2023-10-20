@@ -31,7 +31,7 @@ export class UserController {
   async userInformation(@User('id') userId: number) {
     const user = await this.userService.getUserById(userId);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, password, authenticationSecret, ...otherUserFields } = user;
+    const { password, authenticationSecret, ...otherUserFields } = user;
     return otherUserFields;
   }
 
@@ -93,5 +93,10 @@ export class UserController {
         next();
       }
     });
+  }
+
+  @Get('getMatchHistory')
+  async getMatchHistory(@Query('userId') userId: number) {
+      return await this.userService.getMatchHistory(userId);
   }
 }

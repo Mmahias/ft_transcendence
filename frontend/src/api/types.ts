@@ -69,3 +69,16 @@ export interface Achievement {
   user:        User;
   userId:      number;
 }
+
+export interface Match {
+  id          : number;
+  date        : Date;
+  mode        : String;
+  duration    : number;
+  winner      : User;
+  winnerId    : number;
+  scoreWinner : number;
+  loser       : User;
+  loserId     : number;
+  scoreLoser  : number;
+}

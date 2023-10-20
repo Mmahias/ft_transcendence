@@ -45,35 +45,18 @@ To use it, just add some types or shared data you may need.
 
 *GENERAL:*
 
-* passer en https (faire un ctrl+f sur le projet et adapter les cors en fonction (cors sur socket + cors sur le back + peut etre quil faut mettre un cors sur le front ?))
-* regler toutes les 401 (cf console) lors du rechargement des pages, cest pas beau
-* revoir un peu l'UX de la search bar ?
-* faire une homepage pour quand on se login (sobre)
-* FIXED: quand on recherche des utilisateurs la fenetre de dropdown est degueulasse
-* FIXED: quand on clique sur un user dans la dropdown, ca nous redirige vers la page profile de lutilisateur mais ca ne ferme pas la dropdown
+* quand on se login pour la premiere fois, on apparait offline
 
 *USER:*
 
-* Le bouton d'edit sur la page profile renvoie sur une page edit qui sert a rien. Mieux vaut creer un modal pour editer le profil ou mettre un state editProfile set a false de base et qui passe a true quand on clique sur le bouton edit pour donner acces a un display d'edit.
-* un peu differencier la page mon profil de la page profil dun random
-* imaginer + implementer des achievemnts pour les users (model achievement deja cree en bdd)
-* FIXED: faire passer lutilisateur offline quand il se deconnecte (via socket)
-* FIXED: faire passer lutilisateur online quand il se connecte (via socket)
-* FIXED: si le user se conencte sur 2 sessions, le deconnecter de lautre ?
+* rajouter une info: ladder level
 
 *CHAT:*
 
-* gerer les dm correctement (faire un systeme de rooms pour les dms)
-* FIXED: pouvoir acceder au profil si on  clique dessus
-* FIXED: si on est admin, pouvoir acceder au panel admin pour kick, ban(page prete, bouton pas relie)
-* FIXED: regler cette histoire de barre d'input qui prend la moitie de la fenetre dans un chat
+* gerer linvitation a une game via le chat
 
 *GAME:*
 
-* foutre les sockets
-* faire un systeme de rooms pour les games (via socket)
-* refaire le jeu avec phaser ?
 * faire un systeme de classement elo
 * reperer les achievements quand ils sont debloques
-* garder un historique des games
-* mettre des features de chat dans les games
+* regler lhistoire des join queue qui marchebt ps defsois

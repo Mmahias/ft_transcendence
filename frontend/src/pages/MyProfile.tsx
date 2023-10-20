@@ -5,6 +5,7 @@ import userImage from '../assets/user2.png'
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import UserService from "../api/users-api";
 import AuthService from "../api/auth-api";
+import { Match } from "../api/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
@@ -30,6 +31,7 @@ const MyProfile: React.FC = () => {
   const [userEnteredCode, setUserEnteredCode] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
+  const [matchHistory, setMatchHistory] = useState<Match[]>([]);
   const [showEditNickname, setShowEditNickname] = useState(false);
   const [showEditAvatar, setShowEditAvatar] = useState(false);
   const [userAvatar, setUserAvatar] = useState<string | null>(null); // État pour l'avatar
@@ -83,6 +85,18 @@ const MyProfile: React.FC = () => {
         const year = date.getFullYear();
         const formattedDate = `${day}/${month}/${year}`;
         setUserSubDate(formattedDate);
+      }
+      if (userProfile.id) {
+        if (userProfile.id) {
+          UserService.getMatchHistory(userProfile.id)
+            .then(matchHistory => {
+              setMatchHistory(matchHistory);
+            })
+            .catch(error => {
+              console.error("Failed to fetch match history", error);
+            });
+        }
+        
       }
     }
   }, [userProfile]);
@@ -246,25 +260,6 @@ const MyProfile: React.FC = () => {
     );
   }
 
-  const [gamesHistory, setGamesHistory] = React.useState([
-    {
-      id: 1,
-      opponent: 'FRIEND_1',
-      opponentRank: 5,
-      opponentLevel: 10,
-      score: "3/2",
-      winner: 'WINNER_NAME'
-    },
-    {
-      id: 2,
-      opponent: 'FRIEND_1',
-      opponentRank: 5,
-      opponentLevel: 10,
-      score: "1/3",
-      winner: 'WINNER_NAME'
-    },
-  ]);
-  
   return (
     <div className="profile-page">
 
@@ -424,14 +419,13 @@ const MyProfile: React.FC = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {gamesHistory.map(game => (
+                                {matchHistory.map(game => (
                                   <tr key={game.id}>
                                     <td>{game.id}</td>
-                                    <td>{game.opponent}</td>
-                                    <td>{game.opponentRank}</td>
-                                    <td>{game.opponentLevel}</td>
-                                    <td>{game.score}</td>
-                                    <td>{game.winner}</td>
+                                    <td>{game.winnerId}</td>
+                                    <td>{game.loserId}</td>
+                                    <td>{game.scoreWinner}</td>
+                                    <td>{game.scoreLoser}</td>
                                   </tr>
                                 ))}
                               </tbody>

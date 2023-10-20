@@ -265,4 +265,30 @@ export class UserService {
       throw error;
     }
   }
+
+  async getMatchHistory(userIdRaw: number | string) {
+    try {
+      const userId = parseInt(userIdRaw as string);
+
+      console.log('userId: ', userId);
+      const matches = await this.prisma.match.findMany({
+        where: { 
+          OR: [
+            { winnerId: userId },
+            { loserId: userId },
+          ]
+        }
+      });
+      console.log('matches: ', matches);
+      return matches;
+    }
+
+    catch (error) {
+      this.logger.error(error.message);
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new NotFoundException(`No user found`);
+      }
+      throw error;
+    }
+  }
 }

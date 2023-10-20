@@ -151,7 +151,6 @@ export class SocketsGateway
 
   @SubscribeMessage('join queue')
   async handleJoinQueue(client: Socket, data: { mode: string }): Promise<void> {
-    console.log("data",data)
     const { mode } = data;
     const userId = client.data.userId;
     const username = client.data.username;
@@ -163,7 +162,7 @@ export class SocketsGateway
   
     const matchedPlayerIndex = this.gameService.findMatchFromQueue(userId, mode);
   
-    console.log("queue", this.gameService.queue);
+    console.log("JOIN QUEUE", this.gameService.queue);
     if (typeof matchedPlayerIndex === "number") {
       const player1 = this.gameService.removeFromQueue(userIndex);
       const player2 = this.gameService.removeFromQueue(matchedPlayerIndex);
@@ -217,6 +216,7 @@ export class SocketsGateway
     void (payload);
     const userId = client.data.userId;
     this.gameService.removeUserIdFromQueue(userId);
+    console.log("LEAVE QUEUE", this.gameService.queue);
   }
 
   @SubscribeMessage('invite match')
@@ -318,7 +318,7 @@ export class SocketsGateway
     if (match.ballX + (match.ballSpeedX * delta) - BALL_RADIUS < PADDLE_WIDTH + PADDLE_PADDING) {
       if (match.ballY > match.p1PosY && match.ballY < match.p1PosY + PADDLE_LENGTH) {
         // Bounces on the paddle
-        match.ballSpeedX *= -1.8;
+        match.ballSpeedX *= -1.4;
         match.ballSpeedY *= 1.2;
       } else {
         // GOAL!
@@ -336,7 +336,7 @@ export class SocketsGateway
     else if (match.ballX + (match.ballSpeedX * delta) + BALL_RADIUS > WIDTH - (PADDLE_WIDTH + PADDLE_PADDING)) {
       if (match.ballY > match.p2PosY && match.ballY < match.p2PosY + PADDLE_LENGTH) {
         // Bounces on the paddle
-        match.ballSpeedX *= -1.8;
+        match.ballSpeedX *= -1.4;
         match.ballSpeedY *= 1.2;
       } else {
         // GOAL!
@@ -454,64 +454,61 @@ export class SocketsGateway
         return;
       }
 
-      // Check if it is an ace
-      let isAce = false;
-      if (match.player1.score === 10 && match.player2.score === 0) {
-        isAce = true;
-      } else if (match.player1.score === 0 && match.player2.score === 10) {
-        isAce = true;
-      }
+      const winner = await this.prisma.user.findUnique({
+      	where: {
+      		id: match.player1.score > match.player2.score ? match.player1.userId : match.player2.userId
+      	}
+      });
 
-      // // Update the winner's score
-      // const winner = await this.prisma.user.update({
-      // 	where: {
-      // 		id: match.player1.score > match.player2.score ? match.player1.userId : match.player2.userId
-      // 	},
-      // 	data: {
-      // 		aces: {
-      // 			increment: isAce ? 1 : 0,
-      // 		},
-      // 		score: {
-      // 			increment: isAce ? 20 : 10,
-      // 		},
-      // 	}
-      // });
+      const loser = await this.prisma.user.findUnique({
+      	where: {
+      		id: match.player1.score < match.player2.score ? match.player1.userId : match.player2.userId
+      	}
+      });
 
-      // const loser = await this.prisma.user.findUnique({
-      // 	where: {
-      // 		id: match.player1.score < match.player2.score ? match.player1.userId : match.player2.userId
-      // 	}
-      // });
+      const { winnerChange, loserChange } = this.gameService.getLadderPointsChange(winner.level, loser.level);
 
-      // // Store the match result in db
-      // const matchDb = await this.prisma.match.create({
-      // 	data: {
-      // 		mode: match.mode,
-      // 		duration: Date.now() - match.started,
-      // 		winnerId: winner.id,
-      // 		loserId: loser.id,
-      // 		scoreWinner: match.player1.score > match.player2.score ? match.player1.score : match.player2.score,
-      // 		scoreLoser: match.player1.score < match.player2.score ? match.player1.score : match.player2.score,
-      // 	}
-      // });
-      // await this.prisma.match.update({
-      // 	where: {
-      // 		id: matchDb.id,
-      // 	},
-      // 	data: {
-      // 		winner: {
-      // 			connect: {
-      // 				id: winner.id,
-      // 			},
-      // 		},
-      // 		loser: {
-      // 			connect: {
-      // 				id: loser.id,
-      // 			},
-      // 		},
-      // 	}
-      // });
+      // Update winner's ladder level
+      await this.prisma.user.update({
+        where: { id: winner.id },
+        data: { level: winner.level + winnerChange },
+      });
+    
+      // Update loser's ladder level
+      await this.prisma.user.update({
+        where: { id: loser.id },
+        data: { level: loser.level - loserChange },
+      });
 
+      // Store the match result in db
+      const matchDb = await this.prisma.match.create({
+      	data: {
+      		mode: match.mode,
+      		duration: Date.now() - match.started,
+      		winnerId: winner.id,
+      		loserId: loser.id,
+      		scoreWinner: match.player1.score > match.player2.score ? match.player1.score : match.player2.score,
+      		scoreLoser: match.player1.score < match.player2.score ? match.player1.score : match.player2.score,
+      	}
+      });
+      await this.prisma.match.update({
+      	where: {
+      		id: matchDb.id,
+      	},
+      	data: {
+      		winner: {
+      			connect: {
+      				id: winner.id,
+      			},
+      		},
+      		loser: {
+      			connect: {
+      				id: loser.id,
+      			},
+      		},
+      	}
+      });
+      console.log("matchDb", matchDb);
     } catch (error) {
       console.log(error);
     }

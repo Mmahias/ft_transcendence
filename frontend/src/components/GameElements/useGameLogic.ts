@@ -118,7 +118,7 @@ const useGameLogic = () => {
 
       // Actuate ball state here
 
-      // Check collisions first
+      // Check top/bottom collisions first
       if (
         gameState.ballY + (gameState.ballSpeedY * delta) - ballRadius < 0 || 
         gameState.ballY + (gameState.ballSpeedY * delta) + ballRadius > BACKEND_HEIGHT
@@ -126,33 +126,29 @@ const useGameLogic = () => {
         gameState.ballSpeedY *= -1.05;
       }
       
-      // Left paddle collision
+      // Left border/paddle collision
       if (gameState.ballX + (gameState.ballSpeedX * delta) - ballRadius - PADDLE_WIDTH - PADDLE_PADDING < 0) {
         if (
           gameState.ballY > gameState.p1PosY && 
           gameState.ballY < gameState.p1PosY + PADDLE_LENGTH
         ) {
-          // It bounces on the paddle
-          gameState.ballSpeedX *= -1.8;
+          gameState.ballSpeedX *= -1.4;
           gameState.ballSpeedY *= 1.2;
         } else {
-          // Goal for player 2
           gameState.ballSpeedX = 0;
           gameState.ballSpeedY = 0;
         }
       }
       
-      // Right paddle collision
+      // Right border/paddle collision
       else if (gameState.ballX + (gameState.ballSpeedX * delta) + ballRadius + PADDLE_WIDTH + PADDLE_PADDING > BACKEND_WIDTH) {
         if (
           gameState.ballY > gameState.p2PosY && 
           gameState.ballY < gameState.p2PosY + PADDLE_LENGTH
         ) {
-          // It bounces on the paddle
-          gameState.ballSpeedX *= -1.8;
+          gameState.ballSpeedX *= -1.4;
           gameState.ballSpeedY *= 1.2;
         } else {
-          // Goal for player 1
           gameState.ballSpeedX = 0;
           gameState.ballSpeedY = 0;
         }

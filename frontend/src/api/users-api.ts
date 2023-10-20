@@ -1,5 +1,5 @@
 import { axiosPrivate } from './axios-config';
-import { User, UserUpdateDto } from './types';
+import { User, UserUpdateDto, Match } from './types';
 
 const USERS_API = `/users`
 
@@ -52,9 +52,20 @@ class UserService{
   }
 
   static async getUserAvatar(userId: number): Promise<string> {
-    const response = await axiosPrivate.get<string>(`${USERS_API}/avatar`, {
-      params: { userId },
-    });
+    try {
+      const response = await axiosPrivate.get<string>(`${USERS_API}/avatar`, {
+        params: { userId },
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to get user avatar');
+      throw error;  // or handle it in another way, for example, returning a default avatar
+    }
+  }
+  
+
+  static async getMatchHistory(userId: number): Promise< Match[] > {
+    const response = await axiosPrivate.get<Match[]>(`${USERS_API}/getMatchHistory?userId=${userId}`);
     return response.data;
   }
 }
