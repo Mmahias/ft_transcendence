@@ -31,7 +31,7 @@ export class UserController {
   async userInformation(@User('id') userId: number) {
     const user = await this.userService.getUserById(userId);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, password, authenticationSecret, ...otherUserFields } = user;
+    const { password, authenticationSecret, ...otherUserFields } = user;
     return otherUserFields;
   }
 
@@ -39,7 +39,7 @@ export class UserController {
   async userByUsername(@Query('username') username: string) {
     const user = await this.userService.getUserByUsername(username || '');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, password, authenticationSecret, ...otherUserFields } = user;
+    const { password, authenticationSecret, ...otherUserFields } = user;
     return otherUserFields;
   }
 

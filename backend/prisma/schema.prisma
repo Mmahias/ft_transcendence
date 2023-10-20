@@ -19,7 +19,7 @@ model User {
   nickname               String          @unique
   createdAt              DateTime        @default(now())
   updatedAt              DateTime        @default(now())
-  avatar                 String          @default("")
+  avatar                 String
   bio                    String?
   status                 UserStatus      @default(ONLINE)
   wins                   Int             @default(0)
