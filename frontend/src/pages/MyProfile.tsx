@@ -293,7 +293,7 @@ const MyProfile: React.FC = () => {
                       <div className="card-profile-stats d-flex justify-content-center mt-md-5">
                         <div>
                           <span className="heading">{userLevel}</span>
-                          <span className="description">Level</span>
+                          <span className="description">Elo</span>
                         </div>
                         <div>
                           <span className="heading">{userWins}</span>
@@ -413,7 +413,7 @@ const MyProfile: React.FC = () => {
                                   <th>GAME_ID</th>
                                   <th>OPPONENT</th>
                                   <th>RANK</th>
-                                  <th>LEVEL</th>
+                                  <th>ELO</th>
                                   <th>SCORE</th>
                                   <th>WINNER</th>
                                 </tr>

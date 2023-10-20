@@ -180,11 +180,11 @@ export class GameService extends SocketService {
 
     // Since the winner actually scored 1 and the loser scored 0:
     const newWinnerRating = winnerRating + K * (1 - expectedScoreWinner);
-    const newLoserRating = loserRating + K * (0 - expectedScoreLoser);
+    const newLoserRating = loserRating - K * (0 - expectedScoreLoser);
 
     return {
-        winnerChange: newWinnerRating - winnerRating,
-        loserChange: newLoserRating - loserRating, // This will be a negative number
+      winnerChange: newWinnerRating - winnerRating,
+      loserChange: newLoserRating - loserRating,
     };
   };
 

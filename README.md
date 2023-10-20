@@ -47,16 +47,12 @@ To use it, just add some types or shared data you may need.
 
 * quand on se login pour la premiere fois, on apparait offline
 
-*USER:*
-
-* rajouter une info: ladder level
-
 *CHAT:*
 
 * gerer linvitation a une game via le chat
 
 *GAME:*
 
-* faire un systeme de classement elo
+* OK: faire un systeme de classement elo
 * reperer les achievements quand ils sont debloques
 * regler lhistoire des join queue qui marchebt ps defsois

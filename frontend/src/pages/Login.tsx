@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 const Login = () => {
 
   const navigate = useNavigate();
-  const { auth, login } = useAuth();
+  const { login } = useAuth();
   
   const [nickname, setNickname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
