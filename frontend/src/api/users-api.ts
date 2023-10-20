@@ -51,12 +51,31 @@ class UserService{
     });
   }
 
+  // static async getUserAvatar(userId: number): Promise<string> {
+  //   const response = await axiosPrivate.get<string>(`${USERS_API}/avatar`, {
+  //     params: { userId },
+  //   });
+  //   return response.data;
+  // }
   static async getUserAvatar(userId: number): Promise<string> {
-    const response = await axiosPrivate.get<string>(`${USERS_API}/avatar`, {
+    const response = await axiosPrivate.get<Blob>(`${USERS_API}/avatar`, {
       params: { userId },
+      responseType: 'blob'
     });
-    return response.data;
+    const imageUrl = URL.createObjectURL(response.data);
+
+    return imageUrl;
   }
+
+  static async getUserAvatarByUsername(username: string): Promise<string> {
+    const response = await axiosPrivate.get<Blob>(`${USERS_API}/avatar/${username}`, {
+      responseType: 'blob'
+    });
+    const imageUrl = URL.createObjectURL(response.data);
+    return imageUrl;
+  }
+  
+
 }
 
 export default UserService;

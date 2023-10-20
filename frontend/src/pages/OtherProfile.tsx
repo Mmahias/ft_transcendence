@@ -15,10 +15,11 @@ type RouteParams = {
 const OtherProfile: React.FC = () => {
 
   const { auth } = useAuth();
-
-  const { reqUsername } = useParams<RouteParams>();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const { reqUsername } = useParams<RouteParams>();
+
   
   if (!isLoggedIn || !reqUsername) {
     navigate("/error");
@@ -30,6 +31,16 @@ const OtherProfile: React.FC = () => {
     console.log('isLoggedIn: ', isLoggedIn );
     setIsLoggedIn(!!auth?.accessToken);
   }, [auth]);
+
+  const userProfileQuery = useQuery(['user', reqUsername], 
+  () => {
+    return UserService.getUserByUsername(reqUsername);
+  }, 
+  {
+    refetchOnWindowFocus: false,
+    enabled: isLoggedIn && !!reqUsername,
+  }
+);
 
   // need my name to compare with the one in the url
   const myProfileQuery = useQuery(
@@ -46,16 +57,6 @@ const OtherProfile: React.FC = () => {
     }
   });
 
-  // need the user profile to display it
-  const userProfileQuery = useQuery(['user', reqUsername], 
-    () => {
-      return UserService.getUserByUsername(reqUsername);
-    }, 
-    {
-      refetchOnWindowFocus: false,
-      enabled: isLoggedIn && !!reqUsername,
-    }
-  );
 
   const userProfile = userProfileQuery.data;
 
@@ -75,58 +76,22 @@ const OtherProfile: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
+  if (reqUsername && userProfile) {
+    const fetchUserAvatar = async () => {
+      try {
+        const avatarUrl = await UserService.getUserAvatarByUsername(reqUsername);
+        setUserAvatar(avatarUrl);
+      } catch (error) {
+        console.error("Error fetching user avatar:", error);
+      }
+    };
+  
+    fetchUserAvatar();
+  }
+  
+
   return (
     <div className="profile-page">
-      {/* <div className="profile-card js-profile-card" style={{ marginTop: '25px' }}>
-        <div className="profile-card__img">
-          <img src={userImage} alt="profile card" />
-        </div>
-        <div className="profile-card__cnt js-profile-cnt">
-          <div className="profile-card__name">{userProfile?.username}</div>
-          <div className="profile-card-loc">
-            <p style={{
-              color: userProfile?.status === "ONLINE" 
-                ? '#006400'  
-                : userProfile?.status === "INGAME"
-                ? '#FFD700'
-                : userProfile?.status === "OFFLINE"
-                ? '#CB0000'
-                : 'black'
-            }}>
-              {userProfile?.status}
-            </p>
-          </div>
-          <div className="profile-card-stats">
-            <div className="profile-card-stats__item">
-              <div className="profile-card-stats__title">Level</div>
-              <div className="profile-card-stats__value">{userProfile?.level}</div>
-            </div>
-            <div className="profile-card-stats__item">
-              <div className="profile-card-stats__title">Wins</div>
-              <div className="profile-card-stats__value">{userProfile?.wins}</div>
-            </div>
-            <div className="profile-card-stats__item">
-              <div className="profile-card-stats__title">Losses</div>
-              <div className="profile-card-stats__value">{userProfile?.losses}</div>
-            </div>
-            <div className="profile-card-stats__item">
-              <div className="profile-card-stats__title">Joined</div>
-              <div className="profile-card-inf__txt">
-                {userProfile?.createdAt && formatDate(String(userProfile.createdAt))}
-              </div>
-            </div>
-          </div>
-          <div className="profile-card-inf">
-            <div className="button-container">
-              <RouterLink to='/user/request'><button className="button-32">Add as friend</button></RouterLink>
-              <RouterLink to='/game'><button className="button-32">Play Game</button></RouterLink>
-              <RouterLink to='/user/history'><button className="button-32">Game history</button></RouterLink>
-              <RouterLink to='/user/friends'><button className="button-32">Friends</button></RouterLink>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
       <div className="main-content">
         <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style={{ backgroundSize: "cover", backgroundPosition: "center top" }} >
           <span className="mask bg-gradient-default opacity-8"></span>
@@ -143,9 +108,7 @@ const OtherProfile: React.FC = () => {
                 <div className="row justify-content-center">
                   <div className="col-lg-3 order-lg-2">
                     <div className="card-profile-image">
-                      <a href="#">
-                        <img src={userImage} className="rounded-circle" />
-                      </a>
+                      <img src={userAvatar || userImage} alt={'userAvatar'} className="rounded-circle" />
                     </div>
                   </div>
                 </div>
