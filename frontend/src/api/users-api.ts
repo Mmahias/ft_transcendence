@@ -51,16 +51,20 @@ class UserService{
     });
   }
 
+  // static async getUserAvatar(userId: number): Promise<string> {
+  //   const response = await axiosPrivate.get<string>(`${USERS_API}/avatar`, {
+  //     params: { userId },
+  //   });
+  //   return response.data;
+  // }
   static async getUserAvatar(userId: number): Promise<string> {
-    try {
-      const response = await axiosPrivate.get<string>(`${USERS_API}/avatar`, {
-        params: { userId },
-      });
-      return response.data;
-    } catch (error: any) {
-      console.error('Failed to get user avatar');
-      throw error;  // or handle it in another way, for example, returning a default avatar
-    }
+    const response = await axiosPrivate.get<Blob>(`${USERS_API}/avatar`, {
+      params: { userId },
+      responseType: 'blob'
+    });
+    const imageUrl = URL.createObjectURL(response.data);
+
+    return imageUrl;
   }
   
 
@@ -68,6 +72,16 @@ class UserService{
     const response = await axiosPrivate.get<Match[]>(`${USERS_API}/getMatchHistory?userId=${userId}`);
     return response.data;
   }
+
+  static async getUserAvatarByUsername(username: string): Promise<string> {
+    const response = await axiosPrivate.get<Blob>(`${USERS_API}/avatar/${username}`, {
+      responseType: 'blob'
+    });
+    const imageUrl = URL.createObjectURL(response.data);
+    return imageUrl;
+  }
+  
+
 }
 
 export default UserService;

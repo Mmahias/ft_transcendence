@@ -17,7 +17,8 @@ export interface User {
   updatedAt:    Date;
   ownerChans:   User[];
   adminChans:   User[];
-  friendsList:  User[];
+  friends:  User[];
+  friendsRequestReceived: User[];
   blockedList:  User[];
   waitingList:  User[];
 

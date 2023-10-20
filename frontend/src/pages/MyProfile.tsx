@@ -10,7 +10,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
-
+import { User } from '../api/types';
 
 
 const MyProfile: React.FC = () => {
@@ -30,10 +30,12 @@ const MyProfile: React.FC = () => {
   const [userEnteredCode, setUserEnteredCode] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
+  // const [showEditNickname, setShowEditNickname] = useState(false);
+  // const [showEditAvatar, setShowEditAvatar] = useState(false);
+  const [userAvatar, setUserAvatar] = useState('');
+  const [userFriends, setUserFriends] = useState<User[]>([]);
+  const [userRequestFriends, setUserRequestFriends] = useState<User[]>([]);
   const [matchHistory, setMatchHistory] = useState<Match[]>([]);
-  const [showEditNickname, setShowEditNickname] = useState(false);
-  const [showEditAvatar, setShowEditAvatar] = useState(false);
-  const [userAvatar, setUserAvatar] = useState<string | null>(null); // État pour l'avatar
 
 
   const queryClient = useQueryClient();
@@ -86,6 +88,10 @@ const MyProfile: React.FC = () => {
         const year = date.getFullYear();
         const formattedDate = `${day}/${month}/${year}`;
         setUserSubDate(formattedDate);
+      } if (userProfile.friends) {
+        setUserFriends(userProfile.friends);
+      } if (userProfile.friendsRequestReceived) {
+        setUserRequestFriends(userProfile.friendsRequestReceived);
       }
       if (userProfile.id) {
         if (userProfile.id) {
@@ -101,17 +107,18 @@ const MyProfile: React.FC = () => {
     }
   }, [userProfile, isLoggedIn]);
 
+  // MY AVATAR
   useEffect(() => {
-    // Utilisez une fonction asynchrone pour obtenir l'avatar de l'utilisateur
     async function fetchUserAvatar() {
       if (userProfile) {
-        const avatar = await UserService.getUserAvatar(userProfile.id);
+        const avatar = await UserService.getUserAvatar(userId);
         setUserAvatar(avatar);
       }
     }
-
     fetchUserAvatar(); // Appelez la fonction
   }, [userProfile]);
+
+  // 2FA
 
   const enable2FAMutation = useMutation(async () => {
     return await AuthService.request2FAQrCode();
@@ -259,7 +266,7 @@ const MyProfile: React.FC = () => {
       </div>
     );
   }
-
+  
   return (
     <div className="profile-page">
 
@@ -279,9 +286,7 @@ const MyProfile: React.FC = () => {
                 <div className="row justify-content-center">
                   <div className="col-lg-3 order-lg-2">
                     <div className="card-profile-image">
-                      <a href="#">
-                      {userAvatar && <img src={userAvatar} alt={`Avatar de ${userName}`} className="rounded-circle" />}
-                      </a>
+                      <img src={userAvatar} alt={'userAvatar'} className="rounded-circle" />
                     </div>
                   </div>
                 </div>
@@ -364,19 +369,27 @@ const MyProfile: React.FC = () => {
                         <input id="tab2-1" name="tabs-two" type="radio" />
                         <div>
                           <div className="friends-content">
-                          <ul className="team">
-                              {/* Ici, vous pouvez répliquer le code pour chaque list d'ami */}
-                              <li className="member">
-                                <div className="thumb"><img src={userImage} alt="friend_img" /></div>
-                                <div className="description">
-                                  <h3>Friend UserName</h3>
-                                  <p>You can send a chat message, play game or visit this friend's profile and more &#128521;</p>
-                                  <a href="/" className="btn btn-sm btn-primary ghost">Profile</a>
-                                  <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
-                                  <a href="/game" className="btn btn-sm btn-primary ghost">Invit Game</a>
-                                  <button className="btn btn-sm btn-no ghost">Delete</button>
-                                </div>
-                              </li>
+                            <ul className="team">
+                              {userFriends && userFriends.map((friend) => (
+                                <li className="member" key={friend.id}>
+                                  <div className="thumb">
+                                    {friend.username && (
+                                      <img
+                                        src={friend.avatar}
+                                        alt={`${friend.username}'s avatar`}
+                                      />
+                                    )}
+                                  </div>
+                                  <div className="description">
+                                    <h3>{friend.username}</h3>
+                                    <p>You can send a chat message, play games, or visit this friend's profile and more &#128521;</p>
+                                    <a href={`/profile/${friend.id}`} className="btn btn-sm btn-primary ghost">Profile</a>
+                                    <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
+                                    <a href="/game" className="btn btn-sm btn-primary ghost">Invite to Game</a>
+                                    <button className="btn btn-sm btn-no ghost">Delete</button>
+                                  </div>
+                                </li>
+                              ))}
                             </ul>
                           </div>
                         </div>
@@ -387,16 +400,17 @@ const MyProfile: React.FC = () => {
                         <div>
                           <div className="request-content">
                             <ul className="team">
-                              {/* Ici, vous pouvez répliquer le code pour chaque demande d'ami */}
-                              <li className="member">
-                                <div className="thumb"><img src={userImage} alt="friend_img" /></div>
+                            {userRequestFriends && userRequestFriends.map((requestFriend) => (
+                              <li className="member" key={requestFriend.id}>
+                                <div className="thumb"><img src={requestFriend.avatar} alt={`${requestFriend.username}'s avatar`} /></div>
                                 <div className="description">
-                                  <h3>Friend UserName</h3>
+                                  <h3>{requestFriend.username}</h3>
                                   <p>You sent a friend request</p>
                                   <button className="btn btn-sm btn-primary ghost">Accept</button>
                                   <button className="btn btn-sm btn-no ghost">Refuse</button>
                                 </div>
                               </li>
+                            ))}
                             </ul>
                           </div>
                         </div>
