@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 
 // Paddles and ball colors
-export const ballColor = { r: 0, g: 0, b: 0 };
-export const rightPaddleColor = { r: 220, g: 220, b: 40 };
-export const leftPaddleColor = { r: 220, g: 220, b: 40 };
+export const ballColor = { r: 222, g: 242, b: 241 };
+export const rightPaddleColor = { r: 58, g: 175, b: 169 };
+export const leftPaddleColor = { r: 58, g: 175, b: 169 };
+export const canvasBackgroundColor = { r: 23, g: 37, b: 42 };
 
 // Game colors
 export const scoreCardColor = 'rgb(195, 195, 80)';
 export const borderColor = 'rgb(195, 195, 80)';
-export const canvasBackgroundColor = 'rgb(160, 160, 160)';
 export const gameBackgroundColor = 'rgb(60, 60, 60)';
 
 // Button colors
@@ -35,6 +35,11 @@ export const GameWrapper = styled.div`
     background-color: ${gameBackgroundColor};
 `;
 
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+`;
 
 export const Score = styled.h1`
     background: linear-gradient(45deg, ${scoreCardColor}, rgba(255,255,255,0.8)); // subtle gradient

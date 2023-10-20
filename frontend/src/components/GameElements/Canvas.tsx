@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { GameState } from "./gameState"
-import { DrawArgs } from "./utils/draw"
+import { GameState } from "./gameState";
+import { DrawArgs } from "./utils/draw";
 import { BACKEND_WIDTH, BACKEND_HEIGHT, RESIZE_FACTOR } from './constants';
 import * as S from './Game.styles';
 
@@ -21,6 +21,8 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
     height: Number(window.innerHeight / RESIZE_FACTOR),
   });
   
+  const [colorShiftFactor, setColorShiftFactor] = useState(1); // Initialize to 1
+
   const getResponsiveSize = () => {
     const windowRatio = window.innerWidth / window.innerHeight;
     const gameRatio = BACKEND_WIDTH / BACKEND_HEIGHT;
@@ -50,6 +52,19 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
     };
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'c') {
+        setColorShiftFactor(prev => prev * 1.1); // Increase shift factor by 1.1 each time
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   // draw on canvas
   useEffect(() => {
@@ -61,12 +76,10 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
     if (!context) {
       return;
     }
-    // Clear the canvas first before drawing the new frame.
     context.clearRect(0, 0, canvasDimensions.width, canvasDimensions.height);
     if (draw) {
-      draw({ ctx: context, gameState, canvasDimensions, mode });
+      draw({ ctx: context, gameState, canvasDimensions, mode, colorShiftFactor });
     }
-    // Removed the cleanup function because we already cleared the canvas above.
   }, [draw, canvasRef, gameState, canvasDimensions.width, canvasDimensions.height]);
 
   return (

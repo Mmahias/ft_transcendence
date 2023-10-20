@@ -4,11 +4,12 @@ import React, { useState }  from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from "../api/auth-api";
 import { useAuth } from '../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const Login = () => {
 
   const navigate = useNavigate();
-  const { auth, login } = useAuth();
+  const { login } = useAuth();
   
   const [nickname, setNickname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -65,16 +66,25 @@ const Login = () => {
     try {
       const response = await AuthService.signUp(username.toLowerCase(), password, nickname.toLowerCase());
       if (response) {
-        console.log("OK S: ", response);
         login(response);
         setSuccessMsg("Successfully signed up! ");
         setErrorMsg('');
+        toast.success("Successfully signed up!", {
+          id: "signup",
+          icon: "🎮⌛",
+          duration: 2000,
+        });
         setTimeout(() => {
           navigate('/user/profile');
-        }, 2000);
+        }, 500);
       }
     } catch (error) {
       setSuccessMsg('');
+      toast.error("Error while signing up!", {
+        id: "signup",
+        icon: "🎮⌛",
+        duration: 2000,
+      });
       if (error instanceof Error) {
         setErrorMsg(error.message);
       } else {
@@ -86,6 +96,7 @@ const Login = () => {
   
   const handleLogin = async (event: React.MouseEvent<HTMLElement>) => {
 
+    event.preventDefault();
     const usernameValidationError = validateLoginUsername(username);
     const passwordValidationError = validateLoginPassword(password);
 
@@ -96,20 +107,28 @@ const Login = () => {
         return;
     }
 
-    event.preventDefault();
     try {
       const response = await AuthService.login(username.toLowerCase(), password);
       if (response) {
-        console.log("Logged in");
         login(response);
         setSuccessMsg("Successfully logged in!");
         setErrorMsg('');
+        toast.success("Successfully logged in!", {
+          id: "login",
+          icon: "🎮⌛",
+          duration: 2000,
+        });
         setTimeout(() => {
           navigate('/user/profile');
-        }, 2000);
+        }, 500);
       }
     } catch (error) {
       setSuccessMsg('');
+      toast.error("Error while logging in !", {
+        id: "login",
+        icon: "🎮⌛",
+        duration: 2000,
+      });
       if (error instanceof Error) {
         setErrorMsg(error.message);
       } else {

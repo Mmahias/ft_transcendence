@@ -2,7 +2,8 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { UserStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SocketService } from './sockets.service';
-import { HEIGHT, PADDLE_LENGTH, WIDTH } from './game.constants';
+import { HEIGHT, PADDLE_LENGTH, WIDTH, LADDER_POINTS_BASE_LOSS,
+  LADDER_POINTS_BASE_WIN, LADDER_POINTS_BONUS } from './game.constants';
 
 export class Player {
   userId: number;
@@ -117,7 +118,6 @@ export class GameService extends SocketService {
 
   // Finds and returns a player matching the same mode and removes both players from the queue.
   public findMatchFromQueue(userId: number, mode: string): number | null {
-    console.log("findMatchFromQueue", this.queue)
     const userIndex = this.queue.findIndex(player => player.userId === userId);
     if (userIndex !== -1) {
       const matchIndex = this.queue.findIndex((player) => player.mode === mode && player.userId !== userId);
@@ -171,7 +171,22 @@ export class GameService extends SocketService {
 
     return match;
   }
+  
+  public getLadderPointsChange = (winnerRating: number, loserRating: number) => {
+    const K = 32;  // This is a constant factor. Common values are 16, 24, 32. Higher values make ratings more volatile.
 
+    const expectedScoreWinner = 1 / (1 + Math.pow(10, (loserRating - winnerRating) / 400));
+    const expectedScoreLoser = 1 / (1 + Math.pow(10, (winnerRating - loserRating) / 400));
+
+    // Since the winner actually scored 1 and the loser scored 0:
+    const newWinnerRating = winnerRating + K * (1 - expectedScoreWinner);
+    const newLoserRating = loserRating - K * (0 - expectedScoreLoser);
+
+    return {
+      winnerChange: newWinnerRating - winnerRating,
+      loserChange: newLoserRating - loserRating,
+    };
+  };
 
   public deleteMatch(matchId: number) {
     const matchIndex = this.matches.findIndex(match => match.matchId === matchId);

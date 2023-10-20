@@ -94,4 +94,9 @@ export class UserController {
       }
     });
   }
+
+  @Get('getMatchHistory')
+  async getMatchHistory(@Query('userId') userId: number) {
+      return await this.userService.getMatchHistory(userId);
+  }
 }

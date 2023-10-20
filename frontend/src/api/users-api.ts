@@ -1,5 +1,5 @@
 import { axiosPrivate } from './axios-config';
-import { User, UserUpdateDto } from './types';
+import { User, UserUpdateDto, Match } from './types';
 
 const USERS_API = `/users`
 
@@ -65,6 +65,12 @@ class UserService{
     const imageUrl = URL.createObjectURL(response.data);
 
     return imageUrl;
+  }
+  
+
+  static async getMatchHistory(userId: number): Promise< Match[] > {
+    const response = await axiosPrivate.get<Match[]>(`${USERS_API}/getMatchHistory?userId=${userId}`);
+    return response.data;
   }
 
   static async getUserAvatarByUsername(username: string): Promise<string> {

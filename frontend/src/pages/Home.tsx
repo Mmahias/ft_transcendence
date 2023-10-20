@@ -83,6 +83,20 @@ const Home: React.FC = () => {
     }
   };
 
+  const testMatchHistory = () => {
+      UserService.getMe().then((res) => {
+        console.log(res, typeof res.id);
+        UserService.getMatchHistory(res.id).then((res) => {
+          console.log(res);
+        }
+        ).catch(() => {
+          console.log("Error while fetching user data");
+        });
+    }).catch(() => {
+      console.log("Error while fetching user data");
+    });
+  }
+
   return (
     <div className="home-container">
       <h1 className="home-title" data-shadow='FT_TRANSCENDENCE'>FT_TRANSCENDENCE</h1>
@@ -106,6 +120,7 @@ const Home: React.FC = () => {
         <button onClick={() => testToken(auth)}>Test Token</button>
         <button onClick={() => testConnected(auth)}>Am i connected ?</button>
         <button onClick={() => testSocketConnection(socket)}>Test Socket Connection</button>
+        <button onClick={() => testMatchHistory()}>Test Match History</button>
       </div>
     </div>
   );

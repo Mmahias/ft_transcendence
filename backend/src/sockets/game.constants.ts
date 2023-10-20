@@ -5,4 +5,8 @@ export const PADDLE_WIDTH = PADDLE_LENGTH / 10;
 export const PADDLE_PADDING = PADDLE_WIDTH * 1.5;
 export const PADDLE_SPEED = 600;
 export const BALL_RADIUS = 5;
-export const WIN_SCORE = 5;
+export const WIN_SCORE = 1;
+
+export const LADDER_POINTS_BASE_WIN = 10;
+export const LADDER_POINTS_BASE_LOSS = 10;
+export const LADDER_POINTS_BONUS = 10;

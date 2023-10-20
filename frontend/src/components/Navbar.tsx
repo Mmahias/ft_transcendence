@@ -89,9 +89,8 @@ const Navbar: React.FC<NavbarProps> = () => {
   // logout function
   const handleLogout = async () => {
     try {
-      console.log("logout");
-      socketRef.current?.emit('forceDisconnectAll');
       await AuthService.logout();
+      socketRef.current?.emit('forceDisconnectAll');
       logout();
       navigate("/");
     } catch (error) {

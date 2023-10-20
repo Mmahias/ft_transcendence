@@ -24,7 +24,7 @@ model User {
   status                 UserStatus      @default(ONLINE)
   wins                   Int             @default(0)
   losses                 Int             @default(0)
-  level                  Int             @default(1)
+  level                  Int             @default(1200)
   achievements           Achievement[]
   // 2FA
   authenticationSecret   String?
