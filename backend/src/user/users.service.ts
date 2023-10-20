@@ -94,7 +94,8 @@ export class UserService {
         data: {
           username,
           password: hashPassword,
-          nickname: nickname || username
+          nickname: nickname || username,
+          avatar: 'default_avatar.png'
         }
       })
       .catch((error) => {
