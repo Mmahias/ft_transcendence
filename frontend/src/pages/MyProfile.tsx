@@ -126,36 +126,36 @@ const MyProfile: React.FC = () => {
     fetchUserAvatar();
   }, [userProfile]);
   
-  useEffect(() => {  
-    async function fetchFriendsAvatars() {
-      if (userFriends.length > 0) {
-        const avatarUserFriends = await Promise.all(
-          userFriends.map(async (friend) => {
-            const avatar = await UserService.getUserAvatarByUsername(friend.username);
-            return { ...friend, avatar };
-          })
-        );
+  // useEffect(() => {  
+  //   async function fetchFriendsAvatars() {
+  //     if (userFriends.length > 0) {
+  //       const avatarUserFriends = await Promise.all(
+  //         userFriends.map(async (friend) => {
+  //           const avatar = await UserService.getUserAvatarByUsername(friend.username);
+  //           return { ...friend, avatar };
+  //         })
+  //       );
     
-        setUserFriends(avatarUserFriends);
-      }
-    }
-    fetchFriendsAvatars();
-  }, [userFriends, userProfile]); 
+  //       setUserFriends(avatarUserFriends);
+  //     }
+  //   }
+  //   fetchFriendsAvatars();
+  // }, [userFriends, userProfile]); 
 
-  useEffect(() => {
-    async function fetchRequestFriendsAvatars() {
-      if (userRequestFriends.length > 0) {
-        const avatarRequestFriends = await Promise.all(
-          userRequestFriends.map(async (requestFriend) => {
-            const avatar = await UserService.getUserAvatarByUsername(requestFriend.username);
-            return { ...requestFriend, avatar };
-          })
-        );
-        setUserRequestFriends(avatarRequestFriends);
-      }
-    }
-    fetchRequestFriendsAvatars();
-  }, [userRequestFriends, userProfile]);
+  // useEffect(() => {
+  //   async function fetchRequestFriendsAvatars() {
+  //     if (userRequestFriends.length > 0) {
+  //       const avatarRequestFriends = await Promise.all(
+  //         userRequestFriends.map(async (requestFriend) => {
+  //           const avatar = await UserService.getUserAvatarByUsername(requestFriend.username);
+  //           return { ...requestFriend, avatar };
+  //         })
+  //       );
+  //       setUserRequestFriends(avatarRequestFriends);
+  //     }
+  //   }
+  //   fetchRequestFriendsAvatars();
+  // }, [userRequestFriends, userProfile]);
   
 
   // 2FA
@@ -413,22 +413,21 @@ const MyProfile: React.FC = () => {
                               {userFriends && userFriends.map((friend) => (
                                 <li className="member" key={friend.id}>
                                   <div className="thumb">
-                                    {friend.username && (
+                                    {/* {friend.username && (
                                       <img
                                         src={friend.avatar}
                                         alt={`${friend.username}'s avatar`}
                                       />
-                                    )}
+                                    )} */}
                                   </div>
                                   <div className="description">
                                     <h3>{friend.username}</h3>
                                     <p>You can send a chat message, play games, or visit this friend's profile and more &#128521;</p>
-                                    <Link to={`/user/profile/${friend.username}`} className="btn btn-sm btn-primary ghost">
+                                    <a href={`/user/profile/${friend.username}`} className="btn btn-sm btn-primary ghost">
                                       Profile
-                                    </Link>
+                                    </a>
                                     <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
                                     <a href="/game" className="btn btn-sm btn-primary ghost">Invite to Game</a>
-                                    <button className="btn btn-sm btn-no ghost">Delete</button>
                                   </div>
                                 </li>
                               ))}

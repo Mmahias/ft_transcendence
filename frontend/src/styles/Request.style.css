@@ -49,7 +49,7 @@
   }
 
 
-  /* .friends-content .member {
+  .friends-content .member {
     border: 3px solid #3aafa9;
     padding: 20px;
     border-radius: 5px;
@@ -57,45 +57,32 @@
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-  } */
-
-  .friends-content .member {
-    border: 3px solid #3aafa9;
-    padding: 10px; /* Réduisez la valeur de padding */
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px 0px #aaa;
-    margin-bottom: 10px; /* Réduisez la valeur de margin-bottom */
-    display: flex;
-    align-items: center;
   }
   
   
   .friends-content h3 {
     color: #3aafa9;
-    margin: 0; /* Ajoutez cette ligne pour éviter les marges par défaut */
+    /* margin: 0; */
   }
   
   .friends-content p {
     color: #17252a;
-    margin: 0; /* Ajoutez cette ligne pour éviter les marges par défaut */
+    /* margin: 0; */
   }
   
-  /* Style pour la vignette de l'ami */
-  .friends-content .thumb {
-    flex: 0 0 30%; /* Ajustez la largeur de la vignette en pourcentage */
-    padding-right: 20px; /* Ajoutez un espace à droite de la vignette */
-  }
+  /* .friends-content .thumb {
+    flex: 0 0 30%;
+    padding-right: 20px;
+  } */
   
   .friends-content .thumb img {
     border-radius: 50%;
-    max-width: 40%; /* Assurez-vous que l'image ne dépasse pas sa largeur maximale */
-    margin-left: 20%;
-    height: auto; /* Permet à la hauteur de s'ajuster automatiquement */
+    width: 70%;
+    height: 60%;
   }
   
-  /* Style pour la description de la liste d'amis */
   .friends-content .description {
-    flex: 1; /* Faites en sorte que la description occupe tout l'espace restant */
+    flex: 1; 
   }
   
 
