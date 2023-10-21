@@ -85,7 +85,7 @@ span {
   display: flex;
   align-items: center;
   border-bottom: 2px solid #e5e5e5; /* Optional: adds a line after each item */
-  padding: 4% 4%;
+  padding: 2% 2%;
   background-color: #3aafa9;
   cursor: pointer;
   transition: filter 0.1s ease-in-out, background-color 0.1s ease-in-out; /* This adds a smooth transition effect */

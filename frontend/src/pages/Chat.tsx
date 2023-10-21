@@ -56,7 +56,7 @@ const Chat = () => {
             //   key={index}
             //   className={`tab ${index === activeTab ? 'active' : ''}`}
             //   onClick={() => handleTabClick(index)}>
-              <li className='status' key={index} onClick={() => handleTabClick(index)}>
+              <li className={`tab ${index === activeTab ? 'active' : ''}`} key={index} onClick={() => handleTabClick(index)}>
                 <div>
                   <h2>{tab.label}</h2>
                 </div>
