@@ -155,10 +155,13 @@ export class SocketsGateway
     const userId = client.data.userId;
     const username = client.data.username;
     const socketId = client.id;
-  
-    if (this.gameService.usersInGame.has(userId)) { return; }
-    const userIndex = this.gameService.addToQueue(userId, username, mode, socketId);
+    
     this.gameService.cleanupMatches();
+    console.log("JOIN QUEUE 1", this.gameService.queue);
+    if (this.gameService.usersInGame.has(userId)) { return; }
+    console.log("JOIN QUEUE 2", this.gameService.queue);
+    const userIndex = this.gameService.addToQueue(userId, username, mode, socketId);
+    console.log("JOIN QUEUE 3", this.gameService.queue);
   
     const matchedPlayerIndex = this.gameService.findMatchFromQueue(userId, mode);
   
@@ -217,6 +220,50 @@ export class SocketsGateway
     const userId = client.data.userId;
     this.gameService.removeUserIdFromQueue(userId);
     console.log("LEAVE QUEUE", this.gameService.queue);
+  }
+
+  @SubscribeMessage('accept match invitation')
+  async handleAcceptMatchInvitation(client: Socket, username2: string): Promise<void> {
+
+    try {
+      const userId1 = client.data.userId;
+      const username1 = client.data.username;
+
+      const socketId1 = this.socketService.getActiveSockets(userId1).values().next().value;
+      const socket1 = this.getSocketBySocketId(socketId1);
+      if (socket1 === undefined) {
+        return;
+      }
+
+      const user2 = await this.prisma.user.findUnique({
+        where: {
+          username: username2
+        }
+      });
+      if (!user2) {
+        return;
+      }
+
+      const userId2 = user2.id;
+      const socketId2 = this.socketService.getActiveSockets(userId2).values().next().value;
+      const socket2 = this.getSocketBySocketId(socketId2);
+      if (socket2 === undefined) {
+        return;
+      }
+      console.log("socket1", socket1);
+      console.log("socket2", socket2);
+      // Create a match with the two players
+      const player1 = this.gameService.createPlayer(userId1, username1, "Classic", socket1.id);
+      const player2 = this.gameService.createPlayer(userId2, username2, "Classic", socket2.id);
+
+      const match = this.gameService.addMatch("Classic", player1, player2);
+      socket1.join(match.matchId.toString());
+      socket2.join(match.matchId.toString());
+      this.server.to(match.matchId.toString()).emit('match invite ready', match.mode);
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @SubscribeMessage('invite match')
@@ -455,15 +502,15 @@ export class SocketsGateway
       }
 
       const winner = await this.prisma.user.findUnique({
-      	where: {
-      		id: match.player1.score > match.player2.score ? match.player1.userId : match.player2.userId
-      	}
+        where: {
+          id: match.player1.score > match.player2.score ? match.player1.userId : match.player2.userId
+        }
       });
 
       const loser = await this.prisma.user.findUnique({
-      	where: {
-      		id: match.player1.score < match.player2.score ? match.player1.userId : match.player2.userId
-      	}
+        where: {
+          id: match.player1.score < match.player2.score ? match.player1.userId : match.player2.userId
+        }
       });
 
       const { winnerChange, loserChange } = this.gameService.getLadderPointsChange(winner.level, loser.level);
@@ -482,31 +529,31 @@ export class SocketsGateway
 
       // Store the match result in db
       const matchDb = await this.prisma.match.create({
-      	data: {
-      		mode: match.mode,
-      		duration: Date.now() - match.started,
-      		winnerId: winner.id,
-      		loserId: loser.id,
-      		scoreWinner: match.player1.score > match.player2.score ? match.player1.score : match.player2.score,
-      		scoreLoser: match.player1.score < match.player2.score ? match.player1.score : match.player2.score,
-      	}
+        data: {
+          mode: match.mode,
+          duration: Date.now() - match.started,
+          winnerId: winner.id,
+          loserId: loser.id,
+          scoreWinner: match.player1.score > match.player2.score ? match.player1.score : match.player2.score,
+          scoreLoser: match.player1.score < match.player2.score ? match.player1.score : match.player2.score,
+        }
       });
       await this.prisma.match.update({
-      	where: {
-      		id: matchDb.id,
-      	},
-      	data: {
-      		winner: {
-      			connect: {
-      				id: winner.id,
-      			},
-      		},
-      		loser: {
-      			connect: {
-      				id: loser.id,
-      			},
-      		},
-      	}
+        where: {
+          id: matchDb.id,
+        },
+        data: {
+          winner: {
+            connect: {
+              id: winner.id,
+            },
+          },
+          loser: {
+            connect: {
+              id: loser.id,
+            },
+          },
+        }
       });
       console.log("matchDb", matchDb);
     } catch (error) {

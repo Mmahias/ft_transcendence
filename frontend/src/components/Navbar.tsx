@@ -9,6 +9,7 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth, useSocket } from '../hooks';
 import '../styles/Navbar.css';
 import logo from '../assets/school_42.jpeg';
+import toast from 'react-hot-toast';
 
 interface NavbarProps {
   theme: string;
@@ -120,6 +121,71 @@ const Navbar: React.FC<NavbarProps> = () => {
         socketRef.current?.off('forceLogout', handleForceLogout); // Cleanup on unmount
     }
   }, [socketRef, handleLogout]);
+
+  socket?.on('match invitation', (inviter: string) => {
+    toast(
+      <div>
+        <p>{inviter} has invited you to a match!</p>
+        <button
+          className="button3"
+          style={{ marginRight: '30%' }}
+          onClick={() => {
+            socket?.emit('accept match invitation', inviter);
+            toast.dismiss('match invitation');
+          }}>
+          Accept
+        </button>
+        <button
+          className="button3"
+          onClick={() => {
+            socket?.emit('decline match invitation', inviter);
+            toast.dismiss('match invitation');
+          }}>
+          Decline
+        </button>
+      </div>,
+      {
+        id: 'match invitation',
+        duration: 10000,
+        icon: '🎾',
+      }
+    );
+  });
+
+  socket?.on('match invitation', (inviter: string) => {
+    toast(
+      <div>
+        <p>{inviter} has invited you to a match!</p>
+        <button
+          className="button3"
+          style={{ marginRight: '30%' }}
+          onClick={() => {
+            socket?.emit('accept match invitation', inviter);
+            toast.dismiss('match invitation');
+          }}>
+          Accept
+        </button>
+        <button
+          className="button3"
+          onClick={() => {
+            socket?.emit('decline match invitation', inviter);
+            toast.dismiss('match invitation');
+          }}>
+          Decline
+        </button>
+      </div>,
+      {
+        id: 'match invitation',
+        duration: 10000,
+        icon: '🎾',
+      }
+    );
+  });
+
+  socket?.on('match invite ready', (inviter: string) => {
+    navigate("/game");
+    socket?.emit('accept match');
+  });
 
   return (
     <>

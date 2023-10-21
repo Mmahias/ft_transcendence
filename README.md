@@ -43,16 +43,6 @@ To use it, just add some types or shared data you may need.
 
 ###### TO FIX
 
-*GENERAL:*
-
-* OK: quand on se login pour la premiere fois, on apparait offline
-
-*CHAT:*
-
-* gerer linvitation a une game via le chat
-
 *GAME:*
 
-* OK: faire un systeme de classement elo
 * reperer les achievements quand ils sont debloques
-* regler lhistoire des join queue qui marchebt ps defsois
