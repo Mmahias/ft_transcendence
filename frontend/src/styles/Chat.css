@@ -1,60 +1,56 @@
-.chat {
-  position: fixed;
-  top: 80px;
-  right: 0%;
-  height: 85vh;
-  background-color: black;
-  transition: transform 0.3s ease-in-out;
-  }
-  
-  .chat.collapsed {
-  width:400px;
-  transform: translateX(410px);
-  }
-  
-  .chat.expanded {
-  width: 60%;
-  height: 85vh;
-  transform: translateX(0);
-  }
-  
-  /* .tab-content {
-  height: 80vh
-  } */
-  
-  .toggle-button {
-  position: absolute;
-  left: -60px;
-  top:30px;
-  width: 70px;
-  height: 70px;
-  color: black;
-  background-color: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  transform: translateY(-50%);
-  z-index: 1;
+   
+   .container-chatbox {
+    margin: 80px auto;
+    background: #fff;
+    padding: 0;
+    border-radius: 7px;
+    width: 80%;
   }
 
-
-  .content {
-  display: flex;
-  flex-wrap: wrap;
-  padding-bottom: 10px;
+  .aside-content {
+      width:20%;
+      height:800px;
+      background-color:#2b787a;
+      display:inline-block;
+      font-size:15px;
+      vertical-align:top;
+      border-radius: 7px;
   }
 
-.chat_button{
-  padding: 10px;
-  padding-left: 41px;
-  padding-right: 41px;
-  
-  font-family: var(--font-type);
-  font-size: 20px;
-  border: 3px solid gold;
-  background-color: transparent;
-  color: #e3eef1;
+  .aside-content ul{
+    padding-left:0;
+    margin:0;
+    list-style-type:none;
+    overflow-y:scroll;
+    height:100%;
+    border-radius: 7px;
   }
-  
+  .aside-content li{
+    padding: 20px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: bold;
+    border: 1px solid #3aafA9;
+  }
+  .aside-content li:hover{
+    background-color:#3aafA9;
+  }
+
+  .aside-content li div{
+    display:inline-block;
+    vertical-align:top;
+    margin-top:12px;
+  }
+  .aside-content li h2{
+    font-size: 20px;
+    color:#fff;
+    margin-bottom:5px;
+  }
+
+  .main-box {
+  width: 80%;
+	height:800px;
+	display:inline-block;
+	font-size:15px;
+	vertical-align:top;
+  border-radius: 7px;
+  }

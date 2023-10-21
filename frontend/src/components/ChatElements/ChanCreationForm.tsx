@@ -65,11 +65,13 @@ export default function ChanCreationForm() {
       {/* Channel Mode Selection */}
       <div>
         <p>Channel mode:</p>
-        <select name="mode" id="select-chan-mode" onChange={(event) => setChannelMode(event.target.value as ChanMode)}>
-          <option value={ChanMode.PUBLIC}>Public</option>
-          <option value={ChanMode.PRIVATE}>Private</option>
-          <option value={ChanMode.PROTECTED}>Protected</option>
-        </select>
+        <div className='custom-select'>
+          <select className="select-chan-mode" name="mode" id="select-chan-mode" onChange={(event) => setChannelMode(event.target.value as ChanMode)}>
+            <option value={ChanMode.PUBLIC}>Public</option>
+            <option value={ChanMode.PRIVATE}>Private</option>
+            <option value={ChanMode.PROTECTED}>Protected</option>
+          </select>
+        </div>
       </div>
 
       {/* Channel Password Input (Only for Protected Mode) */}

@@ -8,12 +8,13 @@ body {
 
 .channel-list-header {
   display: flex;
+  border-bottom: 1px solid #e5e5e5; 
   justify-content: space-between;
   align-items: center;
   font-weight: bold;
-  border-bottom: 1px solid #e5e5e5; /* Optional: adds a line after each item */
-  padding: 1% 4%;
-  background-color: rgb(150, 150, 150);
+  height: 110px;
+  padding: 30px 20px 30px 40px;
+  background-color: #2b7a78
 }
 
 .channel-list-item {
@@ -21,7 +22,8 @@ body {
   align-items: center;
   border-bottom: 1px solid #e5e5e5; /* Optional: adds a line after each item */
   padding: 1% 4%;
-  background-color: rgb(150, 150, 150);
+  font-weight: bold;
+  background-color: #3aafa9;
 }
 
 
@@ -67,8 +69,8 @@ body {
 
 .channel-join-btn {
   width: 15%;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #def2f1;
+  color: #3aafa9;
   margin-right: 0.3em;
   margin-left: 0.3em;
   padding: 5px 15px;
@@ -76,9 +78,13 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
   text-align: center;  /* center the button text */
+  font-size: .875rem;
+    line-height: 1.5;
+    padding: .25rem .5rem;
+    border-radius: .375rem;
 }
 .channel-join-btn:hover {
-  background-color: #45a049; /* Change as desired */
+  background-color: #2b7a78; /* Change as desired */
 }
 
 .channel-blank {
