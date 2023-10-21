@@ -7,14 +7,14 @@ export const leftPaddleColor = { r: 58, g: 175, b: 169 };
 export const canvasBackgroundColor = { r: 23, g: 37, b: 42 };
 
 // Game colors
-export const scoreCardColor = 'rgb(195, 195, 80)';
-export const borderColor = 'rgb(195, 195, 80)';
-export const gameBackgroundColor = 'rgb(60, 60, 60)';
+export const scoreCardColor = 'rgb(222, 242, 241)';
+export const borderColor = 'rgb(222, 242, 241)';
+export const gameBackgroundColor = 'rgb(23, 37, 42)';
 
 // Button colors
-export const buttonBackgroundColor = 'rgb(195, 195, 80)';
+export const buttonBackgroundColor = 'rgb(222, 242, 241)';
 export const buttonFontColor = 'rgb(0, 0, 0)';
-export const buttonHoverColor = 'rgb(215, 215, 180)';
+export const buttonHoverColor = 'rgb(43, 122, 120)';
 export const buttonDisabledColor = 'rgb(217, 217, 217)';
 
 // Winning message colors
@@ -42,7 +42,7 @@ export const ButtonContainer = styled.div`
 `;
 
 export const Score = styled.h1`
-    background: linear-gradient(45deg, ${scoreCardColor}, rgba(255,255,255,0.8)); // subtle gradient
+    // background: linear-gradient(45deg, ${scoreCardColor}, rgba(255,255,255,0.8));
     --webkit-background-clip: text;
     --webkit-text-fill-color: transparent;
     font-family: 'Lobster', cursive; 
@@ -52,13 +52,15 @@ export const Score = styled.h1`
     width: fit-content;
     padding: 10px 20px;  // Space inside the card
     border-radius: 10px;  // Rounded corners
-    box-shadow: 0px 4px 6px rgba(0,0,0,0.1);  // Drop shadow
+    // box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
     margin: 0em;
     transition: all 0.3s ease;  // Smooth transition effect
 
     &:hover {  // Optional: scale up slightly when hovered
         transform: scale(1.05);
     }
+    color: #def2f1;
+    margin-top: 1%;
 `;
 
 

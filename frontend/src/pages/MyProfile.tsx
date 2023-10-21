@@ -11,6 +11,7 @@ import { useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
 import { User } from '../api/types';
+import { Link } from "react-router-dom";
 
 
 const MyProfile: React.FC = () => {
@@ -107,7 +108,7 @@ const MyProfile: React.FC = () => {
     }
   }, [userProfile, isLoggedIn]);
 
-  // MY AVATAR
+  // AVATARS
   useEffect(() => {
     async function fetchUserAvatar() {
       if (userProfile) {
@@ -115,8 +116,40 @@ const MyProfile: React.FC = () => {
         setUserAvatar(avatar);
       }
     }
-    fetchUserAvatar(); // Appelez la fonction
+    fetchUserAvatar();
   }, [userProfile]);
+  
+  useEffect(() => {  
+    async function fetchFriendsAvatars() {
+      if (userFriends.length > 0) {
+        const avatarUserFriends = await Promise.all(
+          userFriends.map(async (friend) => {
+            const avatar = await UserService.getUserAvatarByUsername(friend.username);
+            return { ...friend, avatar };
+          })
+        );
+    
+        setUserFriends(avatarUserFriends);
+      }
+    }
+    fetchFriendsAvatars();
+  }, [userFriends, userProfile]); 
+
+  useEffect(() => {
+    async function fetchRequestFriendsAvatars() {
+      if (userRequestFriends.length > 0) {
+        const avatarRequestFriends = await Promise.all(
+          userRequestFriends.map(async (requestFriend) => {
+            const avatar = await UserService.getUserAvatarByUsername(requestFriend.username);
+            return { ...requestFriend, avatar };
+          })
+        );
+        setUserRequestFriends(avatarRequestFriends);
+      }
+    }
+    fetchRequestFriendsAvatars();
+  }, [userRequestFriends, userProfile]);
+  
 
   // 2FA
 
@@ -383,7 +416,9 @@ const MyProfile: React.FC = () => {
                                   <div className="description">
                                     <h3>{friend.username}</h3>
                                     <p>You can send a chat message, play games, or visit this friend's profile and more &#128521;</p>
-                                    <a href={`/profile/${friend.id}`} className="btn btn-sm btn-primary ghost">Profile</a>
+                                    <Link to={`/user/profile/${friend.username}`} className="btn btn-sm btn-primary ghost">
+                                      Profile
+                                    </Link>
                                     <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
                                     <a href="/game" className="btn btn-sm btn-primary ghost">Invite to Game</a>
                                     <button className="btn btn-sm btn-no ghost">Delete</button>
