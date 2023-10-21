@@ -43,6 +43,14 @@ To use it, just add some types or shared data you may need.
 
 ###### TO FIX
 
+*USER:*
+
+* rajouter les achievments aux joueurs
+
 *GAME:*
 
 * reperer les achievements quand ils sont debloques
+
+*CHAT:*
+
+* bien tout retester
