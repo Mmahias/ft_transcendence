@@ -94,7 +94,9 @@ const TabChannels: React.FC = () => {
 
   return (
     <div className="channels_page">
+    <div className='header_channels'>
       <h3 id="channels_page_title">Your channels:</h3>
+      </div>
       <div className="channel-link-header">
         {/* ... header rendering ... */}
       </div>
