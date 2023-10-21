@@ -108,16 +108,16 @@ model Achievement {
 }
 
 model Match {
-  id          Int      @id @default(autoincrement())
-  date        DateTime @default(now())
-  mode        String
-  duration    Int
-  winner      User     @relation(fields: [winnerId], references: [id], name: "winner")
-  winnerId    Int
-  scoreWinner Int
-  loser       User     @relation(fields: [loserId], references: [id], name: "loser")
-  loserId     Int
-  scoreLoser  Int
+  id             Int      @id @default(autoincrement())
+  date           DateTime @default(now())
+  mode           String
+  duration       Int
+  winner         User     @relation(fields: [winnerId], references: [id], name: "winner")
+  winnerId       Int
+  scoreWinner    Int
+  loser          User     @relation(fields: [loserId], references: [id], name: "loser")
+  loserId        Int
+  scoreLoser     Int
 
   @@map("matches")
 }

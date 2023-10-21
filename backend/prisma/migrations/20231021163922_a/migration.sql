@@ -81,8 +81,10 @@ CREATE TABLE "matches" (
     "duration" INTEGER NOT NULL,
     "winnerId" INTEGER NOT NULL,
     "scoreWinner" INTEGER NOT NULL,
+    "winnerUsername" TEXT NOT NULL,
     "loserId" INTEGER NOT NULL,
     "scoreLoser" INTEGER NOT NULL,
+    "loserUsername" TEXT NOT NULL,
 
     CONSTRAINT "matches_pkey" PRIMARY KEY ("id")
 );

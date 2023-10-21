@@ -555,7 +555,6 @@ export class SocketsGateway
           },
         }
       });
-      console.log("matchDb", matchDb);
     } catch (error) {
       console.log(error);
     }

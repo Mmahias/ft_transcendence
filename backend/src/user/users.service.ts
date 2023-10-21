@@ -278,6 +278,14 @@ export class UserService {
             { winnerId: userId },
             { loserId: userId },
           ]
+        },
+        include: {
+          winner: {
+            select: { username: true }
+          },
+          loser: {
+            select: { username: true }
+          }
         }
       });
       console.log('matches: ', matches);

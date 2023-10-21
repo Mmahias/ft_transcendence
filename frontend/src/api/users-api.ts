@@ -69,6 +69,7 @@ class UserService{
   
 
   static async getMatchHistory(userId: number): Promise< Match[] > {
+    console.log("getMatchHistory", userId)
     const response = await axiosPrivate.get<Match[]>(`${USERS_API}/getMatchHistory?userId=${userId}`);
     return response.data;
   }

@@ -12,6 +12,13 @@ import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
 import { User } from '../api/types';
 
+type MatchDetail = {
+  id: number;
+  opponentName: string;
+  score: string;
+  result: string;
+  duration: number;
+};
 
 const MyProfile: React.FC = () => {
 
@@ -30,13 +37,10 @@ const MyProfile: React.FC = () => {
   const [userEnteredCode, setUserEnteredCode] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
-  // const [showEditNickname, setShowEditNickname] = useState(false);
-  // const [showEditAvatar, setShowEditAvatar] = useState(false);
   const [userAvatar, setUserAvatar] = useState('');
   const [userFriends, setUserFriends] = useState<User[]>([]);
   const [userRequestFriends, setUserRequestFriends] = useState<User[]>([]);
-  const [matchHistory, setMatchHistory] = useState<Match[]>([]);
-
+  const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
 
   const queryClient = useQueryClient();
 
@@ -44,9 +48,6 @@ const MyProfile: React.FC = () => {
     queryKey: ['me'],
     queryFn: UserService.getMe,
     enabled: isLoggedIn ? true : false,
-    onSuccess: (user) => {
-      console.log("user", user)
-    },
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('user not connected');
@@ -64,48 +65,54 @@ const MyProfile: React.FC = () => {
     setIsLoggedIn(!!auth?.accessToken);
   }, [auth]);
 
+  const fetchMatchProperties = async (match: Match, userId: number) => {
+    const isWinner = match.winnerId === userId;
+    const opponentName = isWinner ? match.loser.username : match.winner.username;
+    console.log(match);
+    
+    return {
+      id: match.id,
+      opponentName: opponentName,
+      score: isWinner ? `${match.scoreWinner} - ${match.scoreLoser}` : `${match.scoreLoser} - ${match.scoreWinner}`,
+      result: isWinner ? 'W' : 'L',
+      duration: match.duration / 1000
+    };
+  };
+
   useEffect(() => {
-    console.log("UP", userProfile?.status)
     if (userProfile) {
-      if (userProfile.username) {
-        setUserName(userProfile.username);
-      } if (userProfile.nickname) {
-        setUserNick(userProfile.nickname);
-      } if (userProfile.id) {
-        setUserId(userProfile.id);
-      } if (userProfile.wins) {
-        setUserWins(userProfile.wins);
-      } if (userProfile.losses) {
-        setUserLosses(userProfile.losses);
-      } if (userProfile.level) {
-        setUserLevel(userProfile.level);
-      } if (userProfile.authenticationEnabled) {
-        setUser2FAEnabled(userProfile.authenticationEnabled);
-      } if (userProfile.createdAt) {
-        const date = new Date(userProfile.createdAt);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');  // months are 0-indexed in JavaScript
-        const year = date.getFullYear();
-        const formattedDate = `${day}/${month}/${year}`;
-        setUserSubDate(formattedDate);
-      } if (userProfile.friends) {
-        setUserFriends(userProfile.friends);
-      } if (userProfile.friendsRequestReceived) {
-        setUserRequestFriends(userProfile.friendsRequestReceived);
-      }
-      if (userProfile.id) {
-        if (userProfile.id) {
-          UserService.getMatchHistory(userProfile.id)
-            .then(matchHistory => {
-              setMatchHistory(matchHistory);
-            })
-            .catch(error => {
-              console.error("Failed to fetch match history", error);
-            });
-        }
-      }
+      setUserName(userProfile.username);
+      setUserNick(userProfile.nickname);
+      setUserId(userProfile.id);
+      setUserWins(userProfile.wins);
+      setUserLosses(userProfile.losses);
+      setUserLevel(userProfile.level);
+      setUser2FAEnabled(userProfile.authenticationEnabled);
+      setUserFriends(userProfile.friends);
+      setUserRequestFriends(userProfile.friendsRequestReceived);
+      
+      // Subscription date
+      const date = new Date(userProfile.createdAt);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');  // months are 0-indexed in JavaScript
+      const year = date.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+      setUserSubDate(formattedDate);
+      
+      // Game history
+      UserService.getMatchHistory(userProfile.id)
+      .then(async matchHistory => {
+        const processedMatchDetails = await Promise.all(
+          matchHistory.map(async game => fetchMatchProperties(game, userProfile.id))
+        );
+        console.log("processedMatchDetails", processedMatchDetails);
+        setMatchHistory(processedMatchDetails);
+      })
+      .catch(error => {
+        console.error("Failed to fetch match history", error);
+      });
     }
-  }, [userProfile, isLoggedIn]);
+  }, [userProfile]);
 
   // MY AVATAR
   useEffect(() => {
@@ -424,29 +431,23 @@ const MyProfile: React.FC = () => {
                             <table className="fl-table">
                               <thead>
                                 <tr>
-                                  <th>GAME_ID</th>
-                                  <th>OPPONENT</th>
-                                  <th>RANK</th>
-                                  <th>ELO</th>
+                                  <th>RESULT</th>
                                   <th>SCORE</th>
-                                  <th>WINNER</th>
+                                  <th>OPPONENT</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {matchHistory.map(game => (
-                                  <tr key={game.id}>
-                                    <td>{game.id}</td>
-                                    <td>{game.winnerId}</td>
-                                    <td>{game.loserId}</td>
-                                    <td>{game.scoreWinner}</td>
-                                    <td>{game.scoreLoser}</td>
+                                {matchHistory.map((detail, index) => (
+                                  <tr key={matchHistory[index].id}>
+                                    <td>{detail.result}</td>
+                                    <td>{detail.score}</td>
+                                    <td>{detail.opponentName}</td>
                                   </tr>
                                 ))}
                               </tbody>
-                                </table>
-                              </div>
-
+                            </table>
                           </div>
+                        </div>
                       </div>
                     </div>
                   </div>

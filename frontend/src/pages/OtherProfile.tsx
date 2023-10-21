@@ -1,12 +1,20 @@
 import '../styles/Profile.css';
 import React from "react";
 import UserService from "../api/users-api";
+import { Match, User } from "../api/types";
 import userImage from '../assets/user2.png';
 import { useState, useEffect } from "react";
 import { Link as RouterLink, useParams, Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
 
+type MatchDetail = {
+  id: number;
+  opponentName: string;
+  score: string;
+  result: string;
+  duration: number;
+};
 
 type RouteParams = {
   reqUsername: string;
@@ -18,6 +26,7 @@ const OtherProfile: React.FC = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
   const { reqUsername } = useParams<RouteParams>();
 
   
@@ -31,16 +40,61 @@ const OtherProfile: React.FC = () => {
     console.log('isLoggedIn: ', isLoggedIn );
     setIsLoggedIn(!!auth?.accessToken);
   }, [auth]);
-
+  
   const userProfileQuery = useQuery(['user', reqUsername], 
   () => {
     return UserService.getUserByUsername(reqUsername);
-  }, 
+  },
   {
     refetchOnWindowFocus: false,
     enabled: isLoggedIn && !!reqUsername,
   }
-);
+  );
+
+  const fetchMatchProperties = async (match: Match, userId: number) => {
+    const isWinner = match.winnerId === userId;
+    const opponentName = isWinner ? match.loser.username : match.winner.username;
+    console.log(match);
+    
+    return {
+      id: match.id,
+      opponentName: opponentName,
+      score: isWinner ? `${match.scoreWinner} - ${match.scoreLoser}` : `${match.scoreLoser} - ${match.scoreWinner}`,
+      result: isWinner ? 'W' : 'L',
+      duration: match.duration / 1000
+    };
+  };
+
+  useEffect(() => {
+    if (userProfileQuery.data) {
+      UserService.getMatchHistory(userProfileQuery.data.id)
+      .then(async matchHistory => {
+        const processedMatchDetails = await Promise.all(
+          matchHistory.map(async game => fetchMatchProperties(game, userProfileQuery.data.id))
+        );
+        console.log("processedMatchDetails", processedMatchDetails);
+        setMatchHistory(processedMatchDetails);
+      })
+      .catch(error => {
+        console.error("Failed to fetch match history", error);
+      });
+    }
+  }, [userProfileQuery]);
+
+  useEffect(() => {
+    const fetchUserAvatar = async () => {
+      try {
+        const avatarUrl = await UserService.getUserAvatarByUsername(reqUsername);
+        setUserAvatar(avatarUrl);
+      } catch (error) {
+        console.error("Error fetching user avatar:", error);
+      }
+    };
+    
+    if (reqUsername && userProfileQuery.data) {
+      fetchUserAvatar();
+    }
+  }, [reqUsername, userProfileQuery]);
 
   // need my name to compare with the one in the url
   const myProfileQuery = useQuery(
@@ -58,8 +112,6 @@ const OtherProfile: React.FC = () => {
   });
 
 
-  const userProfile = userProfileQuery.data;
-
   if (myProfileQuery.isLoading || userProfileQuery.isLoading) {
     return <div className="loading-screen-user"></div>;
   }
@@ -76,20 +128,6 @@ const OtherProfile: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
-  if (reqUsername && userProfile) {
-    const fetchUserAvatar = async () => {
-      try {
-        const avatarUrl = await UserService.getUserAvatarByUsername(reqUsername);
-        setUserAvatar(avatarUrl);
-      } catch (error) {
-        console.error("Error fetching user avatar:", error);
-      }
-    };
-  
-    fetchUserAvatar();
-  }
-  
-
   return (
     <div className="profile-page">
       <div className="main-content">
@@ -97,7 +135,7 @@ const OtherProfile: React.FC = () => {
           <span className="mask bg-gradient-default opacity-8"></span>
           <div className="container-fluid d-flex align-items-center">
             <div className="col-lg-7 col-md-10">
-              <h1 className="display-2 text-white">Welcome to profile of {userProfile?.username}</h1>
+              <h1 className="display-2 text-white">Welcome to profile of {userProfileQuery.data?.username}</h1>
             </div>
           </div>
         </div>
@@ -119,15 +157,15 @@ const OtherProfile: React.FC = () => {
                     <div className="col">
                       <div className="card-profile-stats d-flex justify-content-center mt-md-5">
                         <div>
-                          <span className="heading">{userProfile?.level}</span>
+                          <span className="heading">{userProfileQuery.data?.level}</span>
                           <span className="description">Level</span>
                         </div>
                         <div>
-                          <span className="heading">{userProfile?.wins}</span>
+                          <span className="heading">{userProfileQuery.data?.wins}</span>
                           <span className="description">Wins</span>
                         </div>
                         <div>
-                          <span className="heading">{userProfile?.losses}</span>
+                          <span className="heading">{userProfileQuery.data?.losses}</span>
                           <span className="description">Losses</span>
                         </div>
                       </div>
@@ -135,26 +173,26 @@ const OtherProfile: React.FC = () => {
                   </div>
                   <div className="text-center">
                     <h3>
-                      {userProfile?.username}
+                      {userProfileQuery.data?.username}
                     </h3>
                     <div className="h5 font-weight-300">
                       <i style={{
-                        color: userProfile?.status === "ONLINE"
+                        color: userProfileQuery.data?.status === "ONLINE"
                           ? '#006400'
-                          : userProfile?.status === "INGAME"
+                          : userProfileQuery.data?.status === "INGAME"
                             ? '#FFD700'
-                            : userProfile?.status === "OFFLINE"
+                            : userProfileQuery.data?.status === "OFFLINE"
                               ? '#CB0000'
                               : 'black'
                       }}>
-                        {userProfile?.status}
+                        {userProfileQuery.data?.status}
                       </i>
                     </div>
                     <div className="h5 mt-4">
                       <i className="ni business_briefcase-24 mr-2"></i>Joined at
                     </div>
                     <div>
-                      <i className="ni education_hat mr-2"></i>{userProfile?.createdAt && formatDate(String(userProfile.createdAt))}
+                      <i className="ni education_hat mr-2"></i>{userProfileQuery.data?.createdAt && formatDate(String(userProfileQuery.data?.createdAt))}
                     </div>
                     <hr className="my-4" />
                     <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
@@ -170,7 +208,7 @@ const OtherProfile: React.FC = () => {
                 <div className="card-header bg-white border-0">
                   <div className="row align-items-center">
                     <div className="col-8">
-                      <h3 className="mb-0">Profile: {userProfile?.username}</h3>
+                      <h3 className="mb-0">Profile: {userProfileQuery.data?.username}</h3>
                     </div>
                     <div className="col-4 text-right">
                     </div>
@@ -187,25 +225,21 @@ const OtherProfile: React.FC = () => {
                           <div className="table-wrapper">
                             <table className="fl-table">
                               <thead>
-                                <tr>
-                                  <th>GAME_ID</th>
-                                  <th>OPPONENT</th>
-                                  <th>RANK</th>
-                                  <th>LEVEL</th>
-                                  <th>SCORE</th>
-                                  <th>WINNER</th>
-                                </tr>
-                              </thead>
-                              <tbody>
                                   <tr>
-                                    <td>1</td>
-                                    <td>Friend_1</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                    <td>1/3</td>
-                                    <td>Winner_Name</td>
+                                    <th>RESULT</th>
+                                    <th>SCORE</th>
+                                    <th>OPPONENT</th>
                                   </tr>
-                              </tbody>
+                                </thead>
+                                <tbody>
+                                  {matchHistory.map((detail, index) => (
+                                    <tr key={matchHistory[index].id}>
+                                      <td>{detail.result}</td>
+                                      <td>{detail.score}</td>
+                                      <td>{detail.opponentName}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
                             </table>
                           </div>
 
