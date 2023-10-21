@@ -172,17 +172,20 @@
 }
 
 .one__msg_info {
-  padding:20px;
+  /* padding:20px;
 	color:#fff;
 	line-height:25px;
 	max-width:90%;
 	display:inline-block;
 	text-align:left;
-	border-radius:5px;
+	border-radius:5px; */
+  display: flex;
+  flex-direction: column;
 
 }
 
 .one__msg_header {
+  font-size: 10px;
   display: flex;
   gap: 5px;
   align-items: center;
@@ -203,11 +206,17 @@
 }
 
 .one__msg_content_me {
-  /* background-color: rgb(241, 175, 32); */
-  background-color:#58b666;
+  background-color: rgb(241, 175, 32);
+  /* background-color:#58b666;
   padding: 5px;
   border-radius: 10px;
-  margin-top: 1px;
+  margin-top: 1px; */
+  margin: 1em;
+  display: flex;
+  gap: 5px;
+  flex-direction: row-reverse;
+  justify-content: right;
+  align-items: right;
   
 }
 
