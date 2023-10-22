@@ -54,9 +54,9 @@ model User {
 
 model FriendRequest {
   id     Int  @id @default(autoincrement())
-  from   User @relation("sentRequests", fields: [fromId], references: [id])
+  from   User @relation("sentRequests", fields: [fromId], references: [id], onDelete: Cascade)
   fromId Int
-  to     User @relation("receivedRequests", fields: [toId], references: [id])
+  to     User @relation("receivedRequests", fields: [toId], references: [id], onDelete: Cascade)
   toId   Int
 }
 
@@ -108,16 +108,16 @@ model Achievement {
 }
 
 model Match {
-  id             Int      @id @default(autoincrement())
-  date           DateTime @default(now())
-  mode           String
-  duration       Int
-  winner         User     @relation(fields: [winnerId], references: [id], name: "winner")
-  winnerId       Int
-  scoreWinner    Int
-  loser          User     @relation(fields: [loserId], references: [id], name: "loser")
-  loserId        Int
-  scoreLoser     Int
+  id          Int      @id @default(autoincrement())
+  date        DateTime @default(now())
+  mode        String
+  duration    Int
+  winner      User     @relation(fields: [winnerId], references: [id], name: "winner")
+  winnerId    Int
+  scoreWinner Int
+  loser       User     @relation(fields: [loserId], references: [id], name: "loser")
+  loserId     Int
+  scoreLoser  Int
 
   @@map("matches")
 }

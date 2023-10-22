@@ -33,8 +33,20 @@ export class UserService {
           blockedList: true,
           matchesWon: true,
           matchesLost: true,
-          friends: true,
-          friendsRequestReceived: true
+          friends: {
+            select: {
+              username: true
+            }
+          },
+          friendsRequestReceived: {
+            select: {
+              from: {
+                select: {
+                  username: true
+                }
+              }
+            }
+          }
         }
       })
       .catch((error) => {
@@ -273,11 +285,8 @@ export class UserService {
 
       console.log('userId: ', userId);
       const matches = await this.prisma.match.findMany({
-        where: { 
-          OR: [
-            { winnerId: userId },
-            { loserId: userId },
-          ]
+        where: {
+          OR: [{ winnerId: userId }, { loserId: userId }]
         },
         include: {
           winner: {
@@ -290,9 +299,7 @@ export class UserService {
       });
       console.log('matches: ', matches);
       return matches;
-    }
-
-    catch (error) {
+    } catch (error) {
       this.logger.error(error.message);
       if (error instanceof PrismaClientKnownRequestError) {
         throw new NotFoundException(`No user found`);
