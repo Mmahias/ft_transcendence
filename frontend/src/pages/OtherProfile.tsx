@@ -79,7 +79,7 @@ const OtherProfile: React.FC = () => {
         console.error("Failed to fetch match history", error);
       });
     }
-  }, [userProfileQuery]);
+  }, [userProfileQuery.data?.id]);
 
   useEffect(() => {
     const fetchUserAvatar = async () => {
@@ -94,7 +94,7 @@ const OtherProfile: React.FC = () => {
     if (reqUsername && userProfileQuery.data) {
       fetchUserAvatar();
     }
-  }, [reqUsername, userProfileQuery]);
+  }, [reqUsername, userProfileQuery.data?.id]);
 
   // need my name to compare with the one in the url
   const myProfileQuery = useQuery(
