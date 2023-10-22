@@ -67,7 +67,7 @@ export class FriendService {
         });
     }
 
-    this.prisma.friendRequest.delete({
+    await this.prisma.friendRequest.delete({
       where: {
         id
       }

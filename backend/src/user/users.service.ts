@@ -35,11 +35,13 @@ export class UserService {
           matchesLost: true,
           friends: {
             select: {
+              id: true,
               username: true
             }
           },
           friendsRequestReceived: {
-            select: {
+            select: { 
+              id: true,
               from: {
                 select: {
                   username: true
