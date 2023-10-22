@@ -101,6 +101,19 @@ export class FriendService {
       }
     });
 
+    await this.prisma.user.update({
+      where: {
+        username: friendUsername
+      },
+      data: {
+        friends: {
+          disconnect: {
+            id: userId
+          }
+        }
+      }
+    });
+
     const { friends } = user;
     return friends;
   }
