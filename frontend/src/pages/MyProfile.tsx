@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import userImage from '../assets/user2.png'
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import UserService from "../api/users-api";
+import FriendsService from "../api/friends-api";
 import AuthService from "../api/auth-api";
 import { Match } from "../api/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
-import { User } from '../api/types';
+import { User, FriendRequest } from '../api/types';
 import { Link } from "react-router-dom";
 
 type MatchDetail = {
@@ -40,7 +41,7 @@ const MyProfile: React.FC = () => {
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [userAvatar, setUserAvatar] = useState('');
   const [userFriends, setUserFriends] = useState<User[]>([]);
-  const [userRequestFriends, setUserRequestFriends] = useState<User[]>([]);
+  const [userRequestFriends, setUserRequestFriends] = useState<FriendRequest[]>([]);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
 
   const queryClient = useQueryClient();
@@ -125,41 +126,9 @@ const MyProfile: React.FC = () => {
     }
     fetchUserAvatar();
   }, [userProfile]);
-  
-  // useEffect(() => {  
-  //   async function fetchFriendsAvatars() {
-  //     if (userFriends.length > 0) {
-  //       const avatarUserFriends = await Promise.all(
-  //         userFriends.map(async (friend) => {
-  //           const avatar = await UserService.getUserAvatarByUsername(friend.username);
-  //           return { ...friend, avatar };
-  //         })
-  //       );
-    
-  //       setUserFriends(avatarUserFriends);
-  //     }
-  //   }
-  //   fetchFriendsAvatars();
-  // }, [userFriends, userProfile]); 
 
-  // useEffect(() => {
-  //   async function fetchRequestFriendsAvatars() {
-  //     if (userRequestFriends.length > 0) {
-  //       const avatarRequestFriends = await Promise.all(
-  //         userRequestFriends.map(async (requestFriend) => {
-  //           const avatar = await UserService.getUserAvatarByUsername(requestFriend.username);
-  //           return { ...requestFriend, avatar };
-  //         })
-  //       );
-  //       setUserRequestFriends(avatarRequestFriends);
-  //     }
-  //   }
-  //   fetchRequestFriendsAvatars();
-  // }, [userRequestFriends, userProfile]);
-  
 
   // 2FA
-
   const enable2FAMutation = useMutation(async () => {
     return await AuthService.request2FAQrCode();
   }, {
@@ -247,6 +216,34 @@ const MyProfile: React.FC = () => {
       console.error('Failed to update avatar:', error);
     }
   };
+
+
+  // ACCEPT / REFUSE FRIENDS REQUEST
+  // Fonction pour accepter une demande d'ami
+  const acceptFriendRequest = async (friendUsername: string) => {
+    try {
+      await FriendsService.acceptFriendRequest(friendUsername);
+      setUserRequestFriends((prevRequests) =>
+        prevRequests.filter((request) => request.from.username !== friendUsername)
+      );
+      const updatedUserProfile = await UserService.getMe();
+      setUserFriends(updatedUserProfile.friends);
+    } catch (error) {
+      console.error('Échec de l\'acceptation de la demande d\'ami :', error);
+    }
+  };
+  
+  // Fonction pour refuser une demande d'ami
+  const refuseFriendRequest = async (friendUsername: string) => {
+    try {
+      await FriendsService.refuseFriendRequest(friendUsername);
+      setUserRequestFriends((prevRequests) =>
+        prevRequests.filter((request) => request.from.username !== friendUsername)
+      );
+    } catch (error) {
+      console.error('Failed to refuse friend request:', error);
+    }
+  };
   
 
   const handleSettingsClick = () => {
@@ -305,6 +302,7 @@ const MyProfile: React.FC = () => {
         </div>
       </div>
     );
+
   }
   
   return (
@@ -441,17 +439,27 @@ const MyProfile: React.FC = () => {
                         <div>
                           <div className="request-content">
                             <ul className="team">
-                            {userRequestFriends && userRequestFriends.map((requestFriend) => (
-                              <li className="member" key={requestFriend.id}>
-                                <div className="thumb"><img src={requestFriend.avatar} alt={`${requestFriend.username}'s avatar`} /></div>
-                                <div className="description">
-                                  <h3>{requestFriend.username}</h3>
-                                  <p>You sent a friend request</p>
-                                  <button className="btn btn-sm btn-primary ghost">Accept</button>
-                                  <button className="btn btn-sm btn-no ghost">Refuse</button>
-                                </div>
-                              </li>
-                            ))}
+                              {userRequestFriends && userRequestFriends.map((requestFriend) => (
+                                <li className="member" key={requestFriend.id}>
+                                  {/* <div className="thumb"><img src={requestFriend.avatar} alt={`${requestFriend.from.username}'s avatar`} /></div> */}
+                                  <div className="description">
+                                    <h3>{requestFriend.from.username}</h3>
+                                    <p>You received a friend request</p>
+                                    <button
+                                      className="btn btn-sm btn-primary ghost"
+                                      onClick={() => acceptFriendRequest(requestFriend.from.username)}
+                                    >
+                                      Accept
+                                    </button>
+                                    <button
+                                      className="btn btn-sm btn-no ghost"
+                                      onClick={() => refuseFriendRequest(requestFriend.from.username)}
+                                    >
+                                      Refuse
+                                    </button>
+                                  </div>
+                                </li>
+                              ))}
                             </ul>
                           </div>
                         </div>
@@ -491,7 +499,6 @@ const MyProfile: React.FC = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };

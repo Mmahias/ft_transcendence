@@ -1,12 +1,14 @@
 import '../styles/Profile.css';
 import React from "react";
 import UserService from "../api/users-api";
+import FriendsService from '../api/friends-api';
 import { Match, User } from "../api/types";
 import userImage from '../assets/user2.png';
 import { useState, useEffect } from "react";
 import { Link as RouterLink, useParams, Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
+import toast from 'react-hot-toast';
 
 type MatchDetail = {
   id: number;
@@ -28,7 +30,7 @@ const OtherProfile: React.FC = () => {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
   const { reqUsername } = useParams<RouteParams>();
-
+  const [isFriend, setIsFriend] = useState<boolean>(false);
   
   if (!isLoggedIn || !reqUsername) {
     navigate("/error");
@@ -110,6 +112,54 @@ const OtherProfile: React.FC = () => {
       }
     }
   });
+
+  useEffect(() => {
+    if (myProfileQuery.isSuccess && myProfileQuery.data) {
+      // Utilisez votre propre fonction pour obtenir la liste d'amis de l'utilisateur connecté (via getMe)
+      const myFriends = myProfileQuery.data.friends;
+  
+      if (myFriends) {
+        // Vérifiez si l'utilisateur cible est dans votre liste d'amis
+        const isFriend = myFriends.some((friend) => friend.username === reqUsername);
+        
+        // Mettez à jour l'état en conséquence
+        setIsFriend(isFriend);
+        console.log(isFriend);
+      }
+    }
+  }, [myProfileQuery]);
+
+  const handleAddFriend = async () => {
+    try {
+      // Utilisez votre propre fonction pour envoyer une demande d'ami
+      await FriendsService.sendFriendRequest(reqUsername);
+      setIsFriend(true);
+      toast.success('Your friend request has been sent successfully!', {
+        duration: 2000,
+      });
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+      toast.error("Error sending your friend request", {
+        duration: 2000,
+    })
+    }
+  };
+
+  const handleDeleteFriend = async () => {
+    try {
+      // Utilisez votre propre fonction pour supprimer un ami
+      await FriendsService.deleteFriend(reqUsername);
+      setIsFriend(false);
+      toast.success('Friend removed from your list successfully!', {
+        duration: 2000,
+      });
+    } catch (error) {
+      console.error("Error deleting friend:", error);
+      toast.error('Error removing the friend', {
+        duration: 2000,
+      });
+    }
+  };
 
 
   if (myProfileQuery.isLoading || userProfileQuery.isLoading) {
@@ -197,8 +247,11 @@ const OtherProfile: React.FC = () => {
                     <hr className="my-4" />
                     <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
                     <a href="/game" className="btn btn-sm btn-primary ghost">Invite Game</a>
-                    <a href="#!" className="btn btn-sm btn-primary ghost">Add</a>
-                    <a href="#!" className="btn btn-sm btn-no ghost">Delete</a>
+                    {isFriend ? (
+                      <button className="btn btn-sm btn-no ghost" onClick={handleDeleteFriend}>Delete Friend</button>
+                    ) : (
+                      <button className="btn btn-sm btn-primary ghost" onClick={handleAddFriend}>Add Friend</button>
+                    )}
                   </div>
                 </div>
               </div>
