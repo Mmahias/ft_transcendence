@@ -11,8 +11,9 @@ import { Server, Socket } from 'socket.io';
 import { usernameMiddleware } from './middleware/username.middleware';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { MatchClass, Player, GameService } from './game.service';
+import { MatchClass, GameService } from './game.service';
 import { HEIGHT, WIDTH, PADDLE_LENGTH, PADDLE_PADDING, WIN_SCORE, PADDLE_WIDTH, BALL_RADIUS } from './game.constants';
+import { UserService } from '@app/user/users.service';
 const corsConfig = {
   origin: '*', // replace with your front-end domain/port
   credentials: true,
@@ -30,6 +31,7 @@ export class SocketsGateway
     private readonly socketService: SocketService,
     private readonly gameService: GameService,
     private readonly jwtService: JwtService,
+    private userService: UserService,
   ) {}
 
   /* Attribue le nickname au socket ouvert à partir de son jwt */
@@ -469,11 +471,9 @@ export class SocketsGateway
 
 
   private async endMatch(match: MatchClass): Promise<void> {
-
     try {
       const socket1 = this.getSocketBySocketId(match.player1.socketId);
       const socket2 = this.getSocketBySocketId(match.player2.socketId);
-
       if (socket1)
         this.socketService.goOnline(match.player1.userId);
       else
@@ -488,7 +488,6 @@ export class SocketsGateway
         this.gameService.deleteMatch(match.matchId);
         return;
       }
-
       if (match.player1.score > match.player2.score && match.player1.score >= WIN_SCORE) {
         socket1.emit('match win', match.player1.username);
         socket2.emit('match lose', match.player2.username);
@@ -555,6 +554,10 @@ export class SocketsGateway
           },
         }
       });
+      
+      await this.userService.updateAchievements(winner.id);
+      await this.userService.updateAchievements(loser.id);
+
     } catch (error) {
       console.log(error);
     }

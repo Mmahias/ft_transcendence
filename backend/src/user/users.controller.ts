@@ -48,13 +48,6 @@ export class UserController {
     return this.userService.updateUser(userId, userUpdate);
   }
 
-  // This is a redundant method, I think
-  /*  @Get()
-  async userByNickname(@Query('nickname') nickname: string) {
-    console.log('BACK nickname: ', nickname);
-    return this.userService.getUserByNickname(nickname);
-  }*/
-
   @Post('avatar')
   @UseInterceptors(FileInterceptor('avatar', multerOptions))
   async uploadFile(@User('id') id: number, @UploadedFile() file: Express.Multer.File) {
@@ -97,6 +90,11 @@ export class UserController {
 
   @Get('getMatchHistory')
   async getMatchHistory(@Query('userId') userId: number) {
-      return await this.userService.getMatchHistory(userId);
+    return await this.userService.getMatchHistory(userId);
+  }
+
+  @Get('getAchievements')
+  async geAchievements(@Query('userId') userId: number) {
+    return await this.userService.getAchievements(userId);
   }
 }

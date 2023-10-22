@@ -25,7 +25,7 @@ model User {
   wins                   Int             @default(0)
   losses                 Int             @default(0)
   level                  Int             @default(1200)
-  achievements           Achievement[]
+  achievements           UserAchievement[]
   // 2FA
   authenticationSecret   String?
   authenticationEnabled  Boolean         @default(false)
@@ -99,12 +99,21 @@ model Achievement {
   title       String
   icon        String
   description String
-  date        DateTime?
-  fullfilled  Boolean   @default(false)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
+
+  userAchievements UserAchievement[]
 
   @@map("achievements")
+}
+
+model UserAchievement {
+  id             Int          @id @default(autoincrement())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+  achievement    Achievement  @relation(fields: [achievementId], references: [id])
+  achievementId  Int
+  date           DateTime     @default(now())
+
+  @@map("user_achievements")
 }
 
 model Match {

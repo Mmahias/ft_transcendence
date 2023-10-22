@@ -307,4 +307,102 @@ export class UserService {
       throw error;
     }
   }
+
+
+  async unlockAchievement(userId: number, achievementTitle: string) {
+    try {
+      const achievement = await this.prisma.achievement.findFirst({
+        where: {
+          title: achievementTitle
+        }
+      });
+
+      if (!achievement) {
+        throw new Error('No such achievement with the given title.');
+      }
+
+      // Check if the user has already unlocked this achievement
+      const existingAchievement = await this.prisma.userAchievement.findFirst({
+        where: {
+          userId: userId,
+          achievementId: achievement.id
+        }
+      });
+    
+      if (existingAchievement) {
+        return ;
+      }
+
+      // Unlock the achievement for the user
+      const unlockedAchievement = await this.prisma.userAchievement.create({
+        data: {
+          userId: userId,
+          achievementId: achievement.id
+        }
+      });
+    
+      console.log('Achievement unlocked:', unlockedAchievement);
+      return unlockedAchievement;
+
+    } catch (error) {
+      this.logger.error(error.message);
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new NotFoundException(`Error unlocking the achievement.`);
+      }
+      throw error;
+    }
+  }
+
+
+  async getAchievements(userIdRaw: number | string) {
+    try {
+      const userId = parseInt(userIdRaw as string);
+
+      const achievements = await this.prisma.userAchievement.findMany({
+        where: {
+          userId: userId
+        },
+        include: {
+          achievement: true
+        }
+      });
+      
+      console.log('Achievements:', achievements);
+      return achievements;
+
+    } catch (error) {
+      this.logger.error(error.message);
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new NotFoundException(`Error unlocking the achievement.`);
+      }
+      throw error;
+    }
+  }
+
+  async updateAchievements(userId: number) {
+    const matches = await this.getMatchHistory(userId);
+    console.log('matches: ', matches);
+    if (matches.length >= 1) {
+      this.unlockAchievement(userId, 'Noob');
+    }
+    if (matches.length >= 10) {
+      this.unlockAchievement(userId, 'Dedication');
+    }
+    if (matches.length >= 100) {
+      this.unlockAchievement(userId, 'Psycho');
+    }
+    if (matches.filter((match) => match.winnerId === userId).length >= 1) {
+      this.unlockAchievement(userId, 'First blood');
+    }
+    if (matches.filter((match) => match.winnerId === userId).length >= 3) {
+      this.unlockAchievement(userId, 'Little by little');
+    }
+    if (matches.filter((match) => match.loserId === userId).length >= 1) {
+      this.unlockAchievement(userId, 'Learning the hard way');
+    }
+    if (matches.filter((match) => match.loserId === userId).length >= 3) {
+      this.unlockAchievement(userId, 'Bad day');
+    }
+  }
+
 }
