@@ -160,31 +160,35 @@ const MyProfile: React.FC = () => {
     }
   };
 
-  const handleVerify2FACode = async () => {
-    try {
-      const newAccessToken = await AuthService.enable2FA(verificationCode);
-      console.log('newAccessToken:', newAccessToken);
 
-      if (isAuthAvailable({ accessToken: newAccessToken })) {
-        login({ accessToken: newAccessToken });
-        console.log('login:', newAccessToken);
-        setQRCodeData(null);
-        setVerificationCode('');
-        setIs2FAEnabled(true);
-        console.log('Access token updated successfully:', newAccessToken);
-      } else {
-        console.error("New access token does not meet criteria.");
-        toast.error("Error: Incorrect 2FA code", {
-          duration: 2000,
-        });
-      }
-    } catch (error) {
-      console.error('Error verifying 2FA code:', error);
+const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  // Empêcher le comportement par défaut (comme la soumission du formulaire)
+  event.preventDefault();
+
+  try {
+    const newAccessToken = await AuthService.enable2FA(verificationCode);
+    console.log('newAccessToken:', newAccessToken);
+
+    if (isAuthAvailable({ accessToken: newAccessToken })) {
+      login({ accessToken: newAccessToken });
+      console.log('login:', newAccessToken);
+      setQRCodeData(null);
+      setVerificationCode('');
+      setIs2FAEnabled(true);
+      console.log('Access token updated successfully:', newAccessToken);
+    } else {
+      console.error("New access token does not meet criteria.");
       toast.error("Error: Incorrect 2FA code", {
         duration: 2000,
       });
     }
-  };
+  } catch (error) {
+    console.error('Error verifying 2FA code:', error);
+    toast.error("Error: Incorrect 2FA code", {
+        duration: 2000,
+      });
+  }
+};
   
 
 
@@ -273,6 +277,7 @@ const MyProfile: React.FC = () => {
   if (showEditProfile) {
     editProfileForm = (
       
+      <form>
       <div className="pl-lg-4">
         <h6 className="heading-small text-muted mb-4">Edit Profile</h6>
         <div className="row">
@@ -328,7 +333,6 @@ const MyProfile: React.FC = () => {
                   className="btn btn-sm btn-primary ghost"
                   onClick={handleVerify2FACode}
                   style={{ marginTop: "10px" }}
-                  type="button"
                 >
                   Verify Code
                 </button>
@@ -338,6 +342,7 @@ const MyProfile: React.FC = () => {
 
         </div>
       </div>
+      </form>
     );
 
   }
