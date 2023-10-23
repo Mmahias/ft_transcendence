@@ -67,7 +67,7 @@ export class FriendService {
         });
     }
 
-    this.prisma.friendRequest.delete({
+    await this.prisma.friendRequest.delete({
       where: {
         id
       }
@@ -96,6 +96,19 @@ export class FriendService {
         friends: {
           select: {
             username: true
+          }
+        }
+      }
+    });
+
+    await this.prisma.user.update({
+      where: {
+        username: friendUsername
+      },
+      data: {
+        friends: {
+          disconnect: {
+            id: userId
           }
         }
       }

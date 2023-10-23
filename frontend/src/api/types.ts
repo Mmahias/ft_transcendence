@@ -1,3 +1,11 @@
+export interface FriendRequest {
+  id: number;
+  from: {
+      id: number;
+      username: string;
+  };
+}
+
 export interface User {
   id:           number;
   username:     string;
@@ -18,7 +26,7 @@ export interface User {
   ownerChans:   User[];
   adminChans:   User[];
   friends:  User[];
-  friendsRequestReceived: User[];
+  friendsRequestReceived: FriendRequest[];
   blockedList:  User[];
   waitingList:  User[];
 

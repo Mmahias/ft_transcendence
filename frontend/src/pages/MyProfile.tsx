@@ -1,17 +1,18 @@
 import React from "react";
 import '../styles/Profile.css';
 import { useEffect, useState } from "react";
-import userImage from '../assets/user2.png'
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import UserService from "../api/users-api";
+import FriendsService from "../api/friends-api";
 import AuthService from "../api/auth-api";
 import { Match } from "../api/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
-import { User, UserAchievement } from '../api/types';
+import { User, UserAchievement, FriendRequest } from '../api/types';
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 type MatchDetail = {
   id: number;
@@ -23,7 +24,7 @@ type MatchDetail = {
 
 const MyProfile: React.FC = () => {
 
-  const { auth } = useAuth();
+  const { auth, login, refreshToken, isAuthAvailable } = useAuth();
   const navigate = useNavigate();
 
   const [userName, setUserName] = useState<string>('');
@@ -33,14 +34,14 @@ const MyProfile: React.FC = () => {
   const [userLosses, setUserLosses] = useState<number>(0);
   const [userLevel, setUserLevel] = useState<number>(1);
   const [userSubDate, setUserSubDate] = useState<string>('');
-  const [user2FAEnabled, setUser2FAEnabled] = useState<boolean>(false); // Initialisation
-  const [userQrCodeData, setUserQrCodeData] = useState<string>('');
-  const [userEnteredCode, setUserEnteredCode] = useState<string>('');
+  const [qrCodeData, setQRCodeData] = useState<string | null>(null);
+  const [verificationCode, setVerificationCode] = useState<string>('');
+  const [is2FAEnabled, setIs2FAEnabled] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [userAvatar, setUserAvatar] = useState('');
   const [userFriends, setUserFriends] = useState<User[]>([]);
-  const [userRequestFriends, setUserRequestFriends] = useState<User[]>([]);
+  const [userRequestFriends, setUserRequestFriends] = useState<FriendRequest[]>([]);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
   const [achievements, setAchievements] = useState<UserAchievement[]>([]);
 
@@ -89,7 +90,7 @@ const MyProfile: React.FC = () => {
       setUserWins(userProfile.wins);
       setUserLosses(userProfile.losses);
       setUserLevel(userProfile.level);
-      setUser2FAEnabled(userProfile.authenticationEnabled);
+      setIs2FAEnabled(userProfile.authenticationEnabled)
       setUserFriends(userProfile.friends);
       setUserRequestFriends(userProfile.friendsRequestReceived);
       
@@ -122,6 +123,7 @@ const MyProfile: React.FC = () => {
       .catch(error => {
         console.error("Failed to fetch match history", error);
       });
+      check2FAStatus(userProfile.id);
     }
   }, [userProfile]);
 
@@ -135,95 +137,59 @@ const MyProfile: React.FC = () => {
     }
     fetchUserAvatar();
   }, [userProfile]);
-  
-  // useEffect(() => {  
-  //   async function fetchFriendsAvatars() {
-  //     if (userFriends.length > 0) {
-  //       const avatarUserFriends = await Promise.all(
-  //         userFriends.map(async (friend) => {
-  //           const avatar = await UserService.getUserAvatarByUsername(friend.username);
-  //           return { ...friend, avatar };
-  //         })
-  //       );
-    
-  //       setUserFriends(avatarUserFriends);
-  //     }
-  //   }
-  //   fetchFriendsAvatars();
-  // }, [userFriends, userProfile]); 
-
-  // useEffect(() => {
-  //   async function fetchRequestFriendsAvatars() {
-  //     if (userRequestFriends.length > 0) {
-  //       const avatarRequestFriends = await Promise.all(
-  //         userRequestFriends.map(async (requestFriend) => {
-  //           const avatar = await UserService.getUserAvatarByUsername(requestFriend.username);
-  //           return { ...requestFriend, avatar };
-  //         })
-  //       );
-  //       setUserRequestFriends(avatarRequestFriends);
-  //     }
-  //   }
-  //   fetchRequestFriendsAvatars();
-  // }, [userRequestFriends, userProfile]);
-  
 
   // 2FA
 
-  const enable2FAMutation = useMutation(async () => {
-    return await AuthService.request2FAQrCode();
-  }, {
-    onSuccess: (qrData) => {
-      setUserQrCodeData(qrData);
-      queryClient.invalidateQueries(['user']);
-    },
-    onError: () => {
-      alert('Failed to request 2FA. Please try again.');
-    }
-  });
-
-  const disable2FAMutation = useMutation(async () => {
-    // FIX IT
-    // Add the logic for deactivating 2FA here.
-    // return await AuthService.disable2FA();
-  }, {
-    onSuccess: () => {
-      // Handle successful deactivation, for example:
-      setUserQrCodeData('');
-      queryClient.invalidateQueries(['user']);
-    },
-    onError: () => {
-      alert('Failed to deactivate 2FA. Please try again.');
-    }
-  });
-
-  const handle2FAToggle = () => {
-    if (user2FAEnabled) {
-      disable2FAMutation.mutate();
-    } else {
-      enable2FAMutation.mutate();
+// // Appelez la méthode check2FAStatus sur cette instance
+  const check2FAStatus = async (userId: number) => {
+    try {
+      const is2FAEnabled = await AuthService.check2FAStatus(userId);
+      setIs2FAEnabled(is2FAEnabled);
+    } catch (error) {
+      console.error('Error checking 2FA status:', error);
     }
   };
 
-  const verify2FACodeMutation = useMutation(async (code: string) => {
-    const response = await AuthService.enable2FA(code);
-    return response; 
-  }, {
-    onSuccess: () => {
-      setUser2FAEnabled(true);
-      setUserQrCodeData('');  // Hide the QR code
-      alert('2FA verified and enabled successfully!');
-    },
-    onError: () => {
-      alert('Failed to verify or enable 2FA. Please try again.');
+  const handleEnable2FA = async () => {
+    try {
+      const qrData = await AuthService.generate2FAQRCode();
+      setQRCodeData(qrData);
+    } catch (error) {
+      console.error('Error enabling 2FA:', error);
     }
-  });
-  
+  };
 
-  const handleVerifyCode = () => {
-    verify2FACodeMutation.mutate(userEnteredCode);
+  const handleVerify2FACode = async () => {
+    try {
+      await AuthService.enable2FA(verificationCode);
+  
+      const oldAccessToken = auth?.accessToken;
+  
+      const newAccessToken = await refreshToken();
+
+      if (isAuthAvailable({ accessToken: newAccessToken })) {
+        login({ accessToken: newAccessToken });
+        console.log('login:', newAccessToken);
+        setQRCodeData(null);
+        setVerificationCode('');
+        setIs2FAEnabled(true);
+  
+        console.log('Access token updated successfully:', newAccessToken);
+      } else {
+        console.error("New access token does not meet criteria.");
+        toast.error("Error: Incorrect 2FA code", {
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error('Error verifying 2FA code:', error);
+      toast.error("Error: Incorrect 2FA code", {
+        duration: 2000,
+      });
+    }
   };
   
+
 
   // UPDATE AVATAR & NICKNAME
   const handleNicknameSave = async () => {
@@ -255,6 +221,34 @@ const MyProfile: React.FC = () => {
       queryClient.invalidateQueries(['user']);
     } catch (error) {
       console.error('Failed to update avatar:', error);
+    }
+  };
+
+
+  // ACCEPT / REFUSE FRIENDS REQUEST
+  // Fonction pour accepter une demande d'ami
+  const acceptFriendRequest = async (friendUsername: string) => {
+    try {
+      await FriendsService.acceptFriendRequest(friendUsername);
+      setUserRequestFriends((prevRequests) =>
+        prevRequests.filter((request) => request.from.username !== friendUsername)
+      );
+      const updatedUserProfile = await UserService.getMe();
+      setUserFriends(updatedUserProfile.friends);
+    } catch (error) {
+      console.error('Échec de l\'acceptation de la demande d\'ami :', error);
+    }
+  };
+  
+  // Fonction pour refuser une demande d'ami
+  const refuseFriendRequest = async (friendUsername: string) => {
+    try {
+      await FriendsService.refuseFriendRequest(friendUsername);
+      setUserRequestFriends((prevRequests) =>
+        prevRequests.filter((request) => request.from.username !== friendUsername)
+      );
+    } catch (error) {
+      console.error('Failed to refuse friend request:', error);
     }
   };
   
@@ -289,32 +283,50 @@ const MyProfile: React.FC = () => {
         <h6 className="heading-small text-muted mb-4">2FA</h6>
         <div className="pl-lg-4">
           <div className="form-group focused">
-            <Checkbox size='md' type="checkbox"
-              checked={user2FAEnabled}
-              onChange={handle2FAToggle}
-              disabled={!!userQrCodeData}
-              className="form-control form-control-alternative">
+            <Checkbox
+              size="md"
+              type="checkbox"
+              checked={is2FAEnabled}
+              onChange={handleEnable2FA}
+              disabled={!!qrCodeData}
+              className="form-control form-control-alternative"
+            >
               Active 2FA
             </Checkbox>
-            {userQrCodeData && (
+            {qrCodeData && (
               <div className="pl-lg-4">
-                <label className="form-control-label">Veuillez scanner ce QR Code avec votre application d'authentification:</label>
-                <img className="img-qrcode" style={{ margin: "auto" }} src={userQrCodeData} />
+                <label className="form-control-label">
+                  Please scan this QR Code with your authentication app:
+                </label>
+                <img
+                  className="img-qrcode"
+                  style={{ margin: "auto" }}
+                  src={qrCodeData}
+                  alt="QR Code"
+                />
                 <input
                   type="text"
-                  value={userEnteredCode}
-                  onChange={(e) => setUserEnteredCode(e.target.value)}
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
                   className="form-control form-control-alternative"
                   placeholder="Enter the code"
                   style={{ margin: "auto" }}
                 />
-                <a className="btn btn-sm btn-primary ghost" onClick={handleVerifyCode} style={{ marginTop: "10px" }}>Verify Code</a>
+                <a
+                  className="btn btn-sm btn-primary ghost"
+                  onClick={handleVerify2FACode}
+                  style={{ marginTop: "10px" }}
+                >
+                  Verify Code
+                </a>
               </div>
             )}
           </div>
+
         </div>
       </div>
     );
+
   }
   
   return (
@@ -388,8 +400,8 @@ const MyProfile: React.FC = () => {
                     <hr className="my-4" />
                     <h3>
                       2FA:
-                      <p style={{ color: user2FAEnabled ? 'green' : 'red' }}>
-                        {user2FAEnabled ? ' activated' : ' disabled'}
+                      <p style={{ color: is2FAEnabled ? 'green' : 'red' }}>
+                        {is2FAEnabled ? ' activated' : ' disabled'}
                       </p>
                     </h3>
                   </div>
@@ -451,17 +463,27 @@ const MyProfile: React.FC = () => {
                         <div>
                           <div className="request-content">
                             <ul className="team">
-                            {userRequestFriends && userRequestFriends.map((requestFriend) => (
-                              <li className="member" key={requestFriend.id}>
-                                <div className="thumb"><img src={requestFriend.avatar} alt={`${requestFriend.username}'s avatar`} /></div>
-                                <div className="description">
-                                  <h3>{requestFriend.username}</h3>
-                                  <p>You sent a friend request</p>
-                                  <button className="btn btn-sm btn-primary ghost">Accept</button>
-                                  <button className="btn btn-sm btn-no ghost">Refuse</button>
-                                </div>
-                              </li>
-                            ))}
+                              {userRequestFriends && userRequestFriends.map((requestFriend) => (
+                                <li className="member" key={requestFriend.id}>
+                                  {/* <div className="thumb"><img src={requestFriend.avatar} alt={`${requestFriend.from.username}'s avatar`} /></div> */}
+                                  <div className="description">
+                                    <h3>{requestFriend.from.username}</h3>
+                                    <p>You received a friend request</p>
+                                    <button
+                                      className="btn btn-sm btn-primary ghost"
+                                      onClick={() => acceptFriendRequest(requestFriend.from.username)}
+                                    >
+                                      Accept
+                                    </button>
+                                    <button
+                                      className="btn btn-sm btn-no ghost"
+                                      onClick={() => refuseFriendRequest(requestFriend.from.username)}
+                                    >
+                                      Refuse
+                                    </button>
+                                  </div>
+                                </li>
+                              ))}
                             </ul>
                           </div>
                         </div>
@@ -526,7 +548,6 @@ const MyProfile: React.FC = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };
