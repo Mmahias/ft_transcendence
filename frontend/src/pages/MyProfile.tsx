@@ -160,11 +160,14 @@ const MyProfile: React.FC = () => {
     }
   };
 
-  const handleVerify2FACode = async () => {
+  const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Empêcher le comportement par défaut (comme la soumission du formulaire)
+    event.preventDefault();
+  
     try {
       const newAccessToken = await AuthService.enable2FA(verificationCode);
       console.log('newAccessToken:', newAccessToken);
-
+  
       if (isAuthAvailable({ accessToken: newAccessToken })) {
         login({ accessToken: newAccessToken });
         console.log('login:', newAccessToken);
@@ -181,10 +184,10 @@ const MyProfile: React.FC = () => {
     } catch (error) {
       console.error('Error verifying 2FA code:', error);
       toast.error("Error: Incorrect 2FA code", {
-        duration: 2000,
-      });
+          duration: 2000,
+        });
     }
-  };
+  }; 
   
 
 
