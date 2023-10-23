@@ -274,8 +274,6 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
   let editProfileForm = null;
   if (showEditProfile) {
     editProfileForm = (
-      
-      <form>
       <div className="pl-lg-4">
         <h6 className="heading-small text-muted mb-4">Edit Profile</h6>
         <div className="row">
@@ -340,7 +338,6 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
 
         </div>
       </div>
-      </form>
     );
 
   }
