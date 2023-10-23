@@ -160,7 +160,6 @@ const MyProfile: React.FC = () => {
     }
   };
 
-
 const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) => {
   // Empêcher le comportement par défaut (comme la soumission du formulaire)
   event.preventDefault();
@@ -178,10 +177,10 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
       console.log('Access token updated successfully:', newAccessToken);
     } else {
       console.error("New access token does not meet criteria.");
-      toast.error("Error: Incorrect 2FA code", {
-        duration: 2000,
-      });
-    }
+        toast.error("Error: Incorrect 2FA code", {
+          duration: 2000,
+        });
+      }
   } catch (error) {
     console.error('Error verifying 2FA code:', error);
     toast.error("Error: Incorrect 2FA code", {
@@ -190,7 +189,6 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
   }
 };
   
-
 
   // UPDATE AVATAR & NICKNAME
   const handleNicknameSave = async () => {
