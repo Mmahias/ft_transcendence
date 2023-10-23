@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/Home.css';
-import { CLIENT_ID, BACKEND_FULL_URL, API_REDIR } from '../constants';
+import {BACKEND_FULL_URL} from '../constants';
 import { testBackendEndpoint } from '../api/test-api';
 import { useAuth, useSocket } from '../hooks';
 import { Socket } from 'socket.io-client';
@@ -9,26 +9,26 @@ import { Link as RouterLink } from "react-router-dom";
 import UserService from '../api/users-api'
 
 
-export const Log42: React.FC = () => {
-  const log = {
-    client_id: CLIENT_ID,
-    redirect_uri: API_REDIR,
-    response_type: "code",
-    scope: "public",
-  }
+// export const Log42: React.FC = () => {
+//   const log = {
+//     client_id: CLIENT_ID,
+//     redirect_uri: API_REDIR,
+//     response_type: "code",
+//     scope: "public",
+//   }
 
-  const url_42 = `${BACKEND_FULL_URL}?${new URLSearchParams(log).toString()}`;
+//   const url_42 = `${BACKEND_FULL_URL}?${new URLSearchParams(log).toString()}`;
 
-  const handleButtonClick = () => {
-    window.location.href = url_42;
-  };
+//   const handleButtonClick = () => {
+//     window.location.href = url_42;
+//   };
 
-  return (
-    <div className="button-container">
-      <button className="button-52" onClick={handleButtonClick}>42_Login</button>
-    </div>
-  );
-};
+//   return (
+//     <div className="button-container">
+//       <button className="button-52" onClick={handleButtonClick}>42_Login</button>
+//     </div>
+//   );
+// };
 
 const Home: React.FC = () => {
   const { auth } = useAuth();

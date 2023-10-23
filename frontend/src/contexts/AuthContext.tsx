@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = useCallback((data: AuthState) => {
     localStorage.setItem("auth", JSON.stringify(data));
     setAuth(data);
+    console.log('New token saved to localStorage:', data.accessToken);
   }, []);
 
   const logout = useCallback(() => {
@@ -41,7 +42,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const storedToken = localStorage.getItem("auth");
     if (storedToken) {
         const parsedToken = JSON.parse(storedToken);
+        console.log('Refresh:', parsedToken);
         setAuth(parsedToken);
+        // console.log('New token from localStorage:', parsedToken.accessToken);
         return parsedToken.accessToken;
     }
     return null;
