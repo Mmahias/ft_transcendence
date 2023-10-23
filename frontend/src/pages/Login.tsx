@@ -6,6 +6,23 @@ import AuthService from "../api/auth-api";
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
+// import { API_REDIR, API_URL, CLIENT_ID, BACKEND_FULL_URL } from '../constants';
+
+// export const Login42: React.FC = () => {
+//   const log = {
+//     client_id: CLIENT_ID,
+//     redirect_uri: API_REDIR,
+//     response_type: "code",
+//     scope: "public",
+//   };
+
+//   const url_42 = API_URL + "?" + new URLSearchParams(log).toString();
+
+//   return (
+//     <a className="btn-primary" style={{marginTop: '1%'}} href={url_42}>42_Login</a>
+//   );
+// };
+
 const Login = () => {
 
   const navigate = useNavigate();
@@ -186,6 +203,7 @@ const Login = () => {
               </div>
             }
             <button onClick={handleLogin} disabled={!!(usernameError || passwordError)}>Log In</button>
+            {/* <Login42 /> */}
           </form>
         </div>
         <div className="overlay-container">

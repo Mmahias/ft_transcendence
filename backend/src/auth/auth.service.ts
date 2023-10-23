@@ -26,6 +26,7 @@ export class AuthService {
       expiresIn: '24h',
       secret: secret
     });
+    console.log(token);
     return { accessToken: token };
   }
 

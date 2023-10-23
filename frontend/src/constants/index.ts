@@ -1,3 +1,3 @@
 // constants/index.ts
 export * from './envConstants';
-export * from './staticConstants';
+export {API_REDIR, API_URL, CLIENT_ID} from './staticConstants';

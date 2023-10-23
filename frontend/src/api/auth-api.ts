@@ -2,6 +2,7 @@
 import axios, {AxiosError} from 'axios';
 import UserService from './users-api';
 import { axiosPrivate, axiosPublic } from './axios-config';
+import {API_REDIR, API_URL} from '../constants';
 
 const AUTH_API = `/auth`;
 
@@ -57,52 +58,64 @@ class AuthService {
     }
   }
 
-    static async enable2FA(code: string) {
-      try {
-          const response = await axiosPrivate.post(`${AUTH_API}/2fa/turn-on`, { twoFactorAuthenticationCode: code });
-          return response.data;
-      } catch (error) {
-          if (axios.isAxiosError(error)) {
-              if (error.response && error.response.data && error.response.data.message) {
-                  throw new Error(error.response.data.message);
-              }
-          }
-          throw new Error('Failed to enable 2FA');
-      }
+  // Génère le QR Code pour le 2FA
+  static async generate2FAQRCode() {
+    try {
+      const response = await axiosPrivate.post(`${AUTH_API}/2fa/generate`);
+      return response.data; // Cela devrait être l'URL otpauth ou les données du QR code
+    } catch (error) {
+      console.error('Error in generate2FAQRCode:', error);
+      throw new Error('Failed to generate 2FA QRCode');
+    }
   }
 
-      // 2FA QRCODE
-
-      static async request2FAQrCode() {
-        try {
-          const response = await axiosPrivate.post(`${AUTH_API}/2fa/generate`);
-          return response.data; // Cela devrait être l'URL otpauth ou les données du QR code
-        } catch (error) {
-          console.error('Error in request2FAQrCode:', error);
-          throw new Error('Failed to request 2FA QRCode');
-        }
-      }
-      
-      
-      static async verify2FACode(code: string) {
-        try {
-          const response = await axiosPrivate.post(`${AUTH_API}/2fa/authenticate`, { twoFactorAuthenticationCode: code });
-          return response.data;
-        } catch (error) {
-          throw new Error('Failed verify 2FA QRCode');
-        }
-      }
-
-      static async checkTwoFactorAuthentication(userId: number) {
-        try {
-          const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`, { params: userId});
-          return response.data.isAuthenticationEnabled;
-        } catch (error) {
-          console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
-          return false;
-        }
-      };    
-
+  // Vérifie si le 2FA est activé pour l'utilisateur
+   static async check2FAStatus(userId: number) {
+    try {
+      const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`, { params: { userId } });
+      return response.data.isAuthenticationEnabled;
+    } catch (error) {
+      console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
+      return false;
     }
+  }
+
+  // Active le 2FA pour l'utilisateur
+  static async enable2FA(code: string) {
+    try {
+      const response = await axiosPrivate.post(`${AUTH_API}/2fa/turn-on`, { twoFactorAuthenticationCode: code });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.data && error.response.data.message) {
+          throw new Error(error.response.data.message);
+        }
+      }
+      throw new Error('Failed to enable 2FA');
+    }
+  }
+
+  // Désactive le 2FA pour l'utilisateur
+  static async disable2FA() {
+    try {
+      // Ajoutez ici la logique pour désactiver le 2FA
+      // return await axiosPrivate.post(`${AUTH_API}/2fa/turn-off`);
+    } catch (error) {
+      console.error('Error in disable2FA:', error);
+      throw new Error('Failed to disable 2FA');
+    }
+  }
+
+  // Authentifie l'utilisateur avec le 2FA
+  static async authenticate2FA(code: string) {
+    try {
+      const response = await axiosPrivate.post(`${AUTH_API}/2fa/authenticate`, { twoFactorAuthenticationCode: code });
+      return response.data;
+    } catch (error) {
+      throw new Error('Failed verify 2FA QRCode');
+    }
+  }  
+
+}
 
 export default AuthService;
