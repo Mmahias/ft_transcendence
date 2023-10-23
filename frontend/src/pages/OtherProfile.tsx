@@ -2,12 +2,13 @@ import '../styles/Profile.css';
 import React from "react";
 import UserService from "../api/users-api";
 import FriendsService from '../api/friends-api';
+import ChatService from '../api/chat-api';
 import { Match, User } from "../api/types";
 import userImage from '../assets/user2.png';
 import { useState, useEffect } from "react";
 import { Link as RouterLink, useParams, Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "../hooks";
+import { useAuth, useSocket } from "../hooks";
 import { UserAchievement } from "../api/types";
 import toast from 'react-hot-toast';
 
@@ -26,6 +27,7 @@ type RouteParams = {
 const OtherProfile: React.FC = () => {
 
   const { auth } = useAuth();
+  const socket = useSocket();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
@@ -173,6 +175,20 @@ const OtherProfile: React.FC = () => {
     }
   };
 
+  const handleInvitation = (username: string) => {
+    socket?.emit('invite match', username);
+    toast.success('Invitation sent', {id: 'invite'});
+  }
+
+  const handleDM = (sender: string, receiver: string) => {
+    ChatService.getDMs(sender, receiver);
+    setTimeout(() => {
+      navigate("/chat");
+    }, 500);
+  }
+  socket?.on('match invitation declined', (username: string) => {
+    toast.error(`${username} declined your invitation.`, {id: 'invite'});
+  });
 
   if (myProfileQuery.isLoading || userProfileQuery.isLoading) {
     return <div className="loading-screen-user"></div>;
@@ -257,8 +273,8 @@ const OtherProfile: React.FC = () => {
                       <i className="ni education_hat mr-2"></i>{userProfileQuery.data?.createdAt && formatDate(String(userProfileQuery.data?.createdAt))}
                     </div>
                     <hr className="my-4" />
-                    <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
-                    <a href="/game" className="btn btn-sm btn-primary ghost">Invite Game</a>
+                    <button className="btn btn-sm btn-primary ghost" onClick={() => handleDM(myProfileQuery.data.username, userProfileQuery.data.username)}>Invite to Chat</button>
+                    <button className="btn btn-sm btn-primary ghost" onClick={() => handleInvitation(userProfileQuery.data.username)}>Invite to Game</button>
                     {isFriend ? (
                       <button className="btn btn-sm btn-no ghost" onClick={handleDeleteFriend}>Delete Friend</button>
                     ) : (

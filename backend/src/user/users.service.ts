@@ -320,7 +320,7 @@ export class UserService {
       });
 
       if (!achievement) {
-        throw new Error('No such achievement with the given title.');
+        throw new Error(`No such achievement with the given title: ${achievementTitle}`);
       }
 
       // Check if the user has already unlocked this achievement

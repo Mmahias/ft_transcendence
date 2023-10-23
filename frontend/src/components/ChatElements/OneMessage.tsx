@@ -54,6 +54,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     socket?.emit('invite match', fromUsername);
     toast.success('Invitation sent', {id: 'invite'});
   }
+  
   socket?.on('match invitation declined', (username: string) => {
     toast.error(`${username} declined your invitation.`, {id: 'invite'});
   });

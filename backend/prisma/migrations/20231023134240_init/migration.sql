@@ -66,7 +66,6 @@ CREATE TABLE "achievements" (
     "title" TEXT NOT NULL,
     "icon" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "date" TIMESTAMP(3),
 
     CONSTRAINT "achievements_pkey" PRIMARY KEY ("id")
 );
@@ -76,6 +75,7 @@ CREATE TABLE "user_achievements" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "achievementId" INTEGER NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "user_achievements_pkey" PRIMARY KEY ("id")
 );

@@ -187,6 +187,10 @@ const Navbar: React.FC<NavbarProps> = () => {
     socket?.emit('accept match');
   });
 
+  socket?.on('match invitation declined', (username: string) => {
+    toast.error(`${username} declined your invitation.`, {id: 'invite'});
+  });
+
   return (
     <>
       <nav className="navbar-container">

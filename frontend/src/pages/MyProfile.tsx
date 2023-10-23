@@ -5,9 +5,10 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import UserService from "../api/users-api";
 import FriendsService from "../api/friends-api";
 import AuthService from "../api/auth-api";
+import ChatService from "../api/chat-api";
 import { Match } from "../api/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "../hooks";
+import { useSocket, useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
 import { User, UserAchievement, FriendRequest } from '../api/types';
@@ -25,6 +26,7 @@ type MatchDetail = {
 const MyProfile: React.FC = () => {
 
   const { auth, login, refreshToken, isAuthAvailable } = useAuth();
+  const socket = useSocket();
   const navigate = useNavigate();
 
   const [userName, setUserName] = useState<string>('');
@@ -252,6 +254,21 @@ const MyProfile: React.FC = () => {
     }
   };
   
+  const handleInvitation = (username: string) => {
+    socket?.emit('invite match', username);
+    toast.success('Invitation sent', {id: 'invite'});
+  }
+  
+  socket?.on('match invitation declined', (username: string) => {
+    toast.error(`${username} declined your invitation.`, {id: 'invite'});
+  });
+
+  const handleDM = (sender: string, receiver: string) => {
+    ChatService.getDMs(sender, receiver);
+    setTimeout(() => {
+      navigate("/chat");
+    }, 500);
+  }
 
   const handleSettingsClick = () => {
     setShowEditProfile(!showEditProfile);
@@ -448,8 +465,8 @@ const MyProfile: React.FC = () => {
                                     <a href={`/user/profile/${friend.username}`} className="btn btn-sm btn-primary ghost">
                                       Profile
                                     </a>
-                                    <a href="/chat" className="btn btn-sm btn-primary ghost">Message</a>
-                                    <a href="/game" className="btn btn-sm btn-primary ghost">Invite to Game</a>
+                                    <button className="btn btn-sm btn-primary ghost" onClick={() => handleDM(userName, friend.username)}>Invite to Chat</button>
+                                    <button className="btn btn-sm btn-primary ghost" onClick={() => handleInvitation(friend.username)}>Invite to Game</button>
                                   </div>
                                 </li>
                               ))}
