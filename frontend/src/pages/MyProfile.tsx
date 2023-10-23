@@ -165,16 +165,15 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
   event.preventDefault();
 
   try {
-    const newAccessToken = await AuthService.enable2FA(verificationCode);
-    console.log('newAccessToken:', newAccessToken);
+    const response = await AuthService.enable2FA(verificationCode);
+
+    const newAccessToken = response.accessToken; // extraire le token depuis l'objet
 
     if (isAuthAvailable({ accessToken: newAccessToken })) {
       login({ accessToken: newAccessToken });
-      console.log('login:', newAccessToken);
       setQRCodeData(null);
       setVerificationCode('');
-      setIs2FAEnabled(true);
-      console.log('Access token updated successfully:', newAccessToken);
+      setIs2FAEnabled(true);;
     } else {
       console.error("New access token does not meet criteria.");
         toast.error("Error: Incorrect 2FA code", {
@@ -296,16 +295,18 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
         <h6 className="heading-small text-muted mb-4">2FA</h6>
         <div className="pl-lg-4">
           <div className="form-group focused">
-            <Checkbox
-              size="md"
-              type="checkbox"
-              checked={is2FAEnabled}
-              onChange={handleEnable2FA}
-              disabled={!!qrCodeData}
-              className="form-control form-control-alternative"
-            >
-              Active 2FA
-            </Checkbox>
+            {!is2FAEnabled &&
+              <Checkbox
+                size="md"
+                type="checkbox"
+                checked={is2FAEnabled}
+                onChange={handleEnable2FA}
+                disabled={!!qrCodeData}
+                className="form-control form-control-alternative"
+              >
+                Active 2FA
+              </Checkbox>
+            }
             {qrCodeData && (
               <div className="pl-lg-4">
                 <label className="form-control-label">
