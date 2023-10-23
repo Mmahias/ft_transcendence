@@ -1,10 +1,15 @@
    
-   .container-chatbox {
-    margin: 80px auto;
-    background: #fff;
-    padding: 0;
-    border-radius: 7px;
-    width: 80%;
+  .container-chatbox {
+      margin: 80px auto;
+      background: #fff;
+      padding: 0;
+      border-radius: 7px;
+      width: 80%;
+      max-width: 1200px;
+      height: 70vh;          /* Percentage of the viewport's height */
+      max-height: 800px;     /* Maximum height */
+      min-height: 300px;     /* Minimum height */
+overflow-y: auto;      /* Adds a scrollbar when content exceeds the container's height */
   }
 
   .aside-content {

@@ -7,7 +7,7 @@ import UserService from "../../api/users-api";
 import { Channel, Message } from "../../api/types";
 import {AdminOptions} from './AdminOptions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useSocket, useAuth } from '../../hooks';
@@ -111,28 +111,28 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     }
   }
   return (
-  <div key={index + 2} className={`${isMe === true ? 'one__msg_me' : 'one__msg'}`} >
-    <div className="one__msg_avatar_container">
-      <Link to={`/user/profile/${fromUsername}`} >
-      <img src={message.from.avatar} title="See profile" className='one__msg_avatar' alt="Avatar"/>
-      </Link >
-    </div>
-    <div className='one__msg_info'>
-      <div key={index + 1} className='one__msg_header'>
-        <h4>{fromUsername}</h4>
-        <h6>{getDate(message)}</h6>
+    <div key={index + 2} className={`${isMe === true ? 'one__msg_me' : 'one__msg'}`} >
+      <div className="one__msg_avatar_container">
+        <Link to={`/user/profile/${fromUsername}`} >
+        <img src={message.from.avatar} title="See profile" className='one__msg_avatar' alt="Avatar"/>
+        </Link >
       </div>
-      <p className={`${isMe === true ? 'one__msg_content_me' : 'one__msg_content'}`} key={index}>{message.content}</p>
+      <div className='one__msg_info'>
+        <div key={index + 1} className='one__msg_header'>
+          <h4>{fromUsername}</h4>
+          <h6>{getDate(message)}</h6>
+        </div>
+        <p className={`${isMe === true ? 'one__msg_content_me' : 'one__msg_content'}`} key={index}>{message.content}</p>
+      </div>
+      {
+        isMe === false &&
+        <FontAwesomeIcon className='options__icon' title="Invite to game" icon={faGamepad} onClick={handleInvitation}/>
+      }
+      {
+        conv.mode !== ChanMode.DM && isMe === false && 
+        conv.adminUsers.filter((admin) => admin.username === userMe?.username).length === 1 && 
+        <AdminOptions channelId={conv.id}  userTalking={message.from}/>
+      }
     </div>
-    {
-      isMe === false &&
-      <FontAwesomeIcon className='options__icon' title="Invite to game" icon={faGamepad} onClick={handleInvitation}/>
-    }
-    {
-      conv.mode !== ChanMode.DM && isMe === false && 
-      conv.adminUsers.filter((admin) => admin.username === userMe?.username).length === 1 && 
-      <AdminOptions channelId={conv.id}  userTalking={message.from}/>
-    }
-  </div>
   );
 }

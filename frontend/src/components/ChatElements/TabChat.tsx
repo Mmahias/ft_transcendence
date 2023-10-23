@@ -8,12 +8,10 @@ import ChatService from '../../api/chat-api';
 import { OneMessage } from './OneMessage';
 import { TabChatHeader } from './TabChatHeader';
 import toast from 'react-hot-toast';
-import SocketService from '../../sockets/sockets';
-import Chat from 'pages/Chat';
 
 function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   const queryClient = useQueryClient();
-  const socketRef = useRef(useSocket());
+  const socket = useSocket();
   const { setActiveTab, setActiveChan } = useContext(ChatStatusContext);
   
   const [messages, setMessages] = useState<Message[]>([]);
@@ -33,10 +31,10 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     queryKey: ['channelMessages', conv.id],
     queryFn: () => ChatService.getAllMessages(conv.id),
     onSuccess: (data) => {
+      console.log('{{{ data', data)
       setMessages(data);
       scrollToBottom();
       setTryToKickBan(true);
-      console.log("{{{conv", conv.name, conv.joinedUsers)
     }
   });
 
@@ -48,7 +46,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     onSuccess: () => {
       const payload: string = `/msg***${conv?.id}***${inputValue}`;
       console.log('{{{sending message', payload);
-      socketRef.current?.emit('Chat', payload);
+      socket?.emit('Chat', payload);
       setInputValue('');
     },
     onError: () => toast.error('Message not sent: retry')
@@ -63,7 +61,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 
   // On mount: join room and scroll to the bottom of messages
   // useEffect(() => {
-  //   if (socketRef && channel?.id) {
+  //   if (socketnel?.id) {
   //     SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
   //     scrollToBottom();
   //   }
@@ -71,7 +69,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 
   // Listen for new messages, refetch messages when it receives one
   useEffect(() => {
-    socketRef.current?.on('newMessage', () => {
+    socket?.on('newMessage', () => {
       console.log('new message received')
       queryClient.invalidateQueries(['channelMessages']);
       queryClient.invalidateQueries(['channelDetails']);
@@ -79,9 +77,9 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
 
     scrollToBottom();
     return () => {
-      socketRef.current?.off('newMessage');
+      socket?.off('newMessage');
     };
-  }, [socketRef, sendMessageMutation]);
+  }, [socket, sendMessageMutation]);
 
   // Handle user muted permissions in the channel
   useEffect(() => {
@@ -133,7 +131,13 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
         <div id='convo__messages'>
         {
           messages.map((message, index) => (
-            <OneMessage conv={conv} message={message} myUsername={loggedUser.nickname}  index={index} fromUsername={message.fromUsername} key={index}/>
+            <OneMessage
+              conv={conv}
+              message={message}
+              myUsername={loggedUser.nickname}
+              index={index}
+              fromUsername={message.fromUsername}
+              key={message.id}/>
           ))
         }
         </div>
