@@ -119,7 +119,6 @@ const MyProfile: React.FC = () => {
         const processedMatchDetails = await Promise.all(
           matchHistory.map(async game => fetchMatchProperties(game, userProfile.id))
         );
-        console.log("processedMatchDetails", processedMatchDetails);
         setMatchHistory(processedMatchDetails);
       })
       .catch(error => {
@@ -163,11 +162,8 @@ const MyProfile: React.FC = () => {
 
   const handleVerify2FACode = async () => {
     try {
-      await AuthService.enable2FA(verificationCode);
-  
-      const oldAccessToken = auth?.accessToken;
-  
-      const newAccessToken = await refreshToken();
+      const newAccessToken = await AuthService.enable2FA(verificationCode);
+      console.log('newAccessToken:', newAccessToken);
 
       if (isAuthAvailable({ accessToken: newAccessToken })) {
         login({ accessToken: newAccessToken });
@@ -175,7 +171,6 @@ const MyProfile: React.FC = () => {
         setQRCodeData(null);
         setVerificationCode('');
         setIs2FAEnabled(true);
-  
         console.log('Access token updated successfully:', newAccessToken);
       } else {
         console.error("New access token does not meet criteria.");
@@ -329,13 +324,14 @@ const MyProfile: React.FC = () => {
                   placeholder="Enter the code"
                   style={{ margin: "auto" }}
                 />
-                <a
+                <button
                   className="btn btn-sm btn-primary ghost"
                   onClick={handleVerify2FACode}
                   style={{ marginTop: "10px" }}
+                  type="button"
                 >
                   Verify Code
-                </a>
+                </button>
               </div>
             )}
           </div>

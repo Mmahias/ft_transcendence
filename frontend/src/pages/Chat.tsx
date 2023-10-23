@@ -39,7 +39,7 @@ const Chat = () => {
     { label: 'Chat', content:
       activeChan ? <TabChat conv={activeChan} loggedUser={userMe}/> : <div id='chat_no-chat'>Join convos to chat!</div>
     },
-    { label: 'And More', content: <div><TabMore /></div> },
+    { label: 'More', content: <div><TabMore /></div> },
   ];
 
   return (

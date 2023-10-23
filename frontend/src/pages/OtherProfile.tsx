@@ -79,7 +79,6 @@ const OtherProfile: React.FC = () => {
         const processedMatchDetails = await Promise.all(
           matchHistory.map(async game => fetchMatchProperties(game, userProfileQuery.data.id))
         );
-        console.log("processedMatchDetails", processedMatchDetails);
         setMatchHistory(processedMatchDetails);
       })
       .catch(error => {

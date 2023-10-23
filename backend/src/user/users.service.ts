@@ -285,7 +285,6 @@ export class UserService {
     try {
       const userId = parseInt(userIdRaw as string);
 
-      console.log('userId: ', userId);
       const matches = await this.prisma.match.findMany({
         where: {
           OR: [{ winnerId: userId }, { loserId: userId }]
@@ -299,7 +298,6 @@ export class UserService {
           }
         }
       });
-      console.log('matches: ', matches);
       return matches;
     } catch (error) {
       this.logger.error(error.message);
@@ -343,7 +341,6 @@ export class UserService {
         }
       });
     
-      console.log('Achievement unlocked:', unlockedAchievement);
       return unlockedAchievement;
 
     } catch (error) {
@@ -369,7 +366,6 @@ export class UserService {
         }
       });
       
-      console.log('Achievements:', achievements);
       return achievements;
 
     } catch (error) {
@@ -383,7 +379,6 @@ export class UserService {
 
   async updateAchievements(userId: number) {
     const matches = await this.getMatchHistory(userId);
-    console.log('matches: ', matches);
     if (matches.length >= 1) {
       this.unlockAchievement(userId, 'Noob');
     }

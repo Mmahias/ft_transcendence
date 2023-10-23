@@ -63,12 +63,10 @@ class UserService{
   
 
   static async getMatchHistory(userId: number): Promise< Match[] > {
-    console.log("getMatchHistory", userId)
     const response = await axiosPrivate.get<Match[]>(`${USERS_API}/getMatchHistory?userId=${userId}`);
     return response.data;
   }
   static async getAchievements(userId: number): Promise< UserAchievement[] > {
-    console.log("getAchievments", userId)
     const response = await axiosPrivate.get<UserAchievement[]>(`${USERS_API}/getAchievements?userId=${userId}`);
     return response.data;
   }

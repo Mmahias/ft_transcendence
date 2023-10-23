@@ -80,6 +80,7 @@ export class AuthController {
     const user = await this.userService.getUserById(userId);
     const { authenticationEnabled } = user;
 
+    console.log(authenticationEnabled);
     return { isAuthenticationEnabled: authenticationEnabled };
   }
 
