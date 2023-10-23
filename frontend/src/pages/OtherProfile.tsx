@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Link as RouterLink, useParams, Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
+import { UserAchievement } from "../api/types";
 
 type MatchDetail = {
   id: number;
@@ -27,6 +28,7 @@ const OtherProfile: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
+  const [achievements, setAchievements] = useState<UserAchievement[]>([]);
   const { reqUsername } = useParams<RouteParams>();
 
   
@@ -67,6 +69,7 @@ const OtherProfile: React.FC = () => {
 
   useEffect(() => {
     if (userProfileQuery.data) {
+      // match history
       UserService.getMatchHistory(userProfileQuery.data.id)
       .then(async matchHistory => {
         const processedMatchDetails = await Promise.all(
@@ -74,6 +77,15 @@ const OtherProfile: React.FC = () => {
         );
         console.log("processedMatchDetails", processedMatchDetails);
         setMatchHistory(processedMatchDetails);
+      })
+      .catch(error => {
+        console.error("Failed to fetch match history", error);
+      });
+
+      // Achievements
+      UserService.getAchievements(userProfileQuery.data.id)
+      .then(async achievements => {
+        setAchievements(achievements);
       })
       .catch(error => {
         console.error("Failed to fetch match history", error);
@@ -243,6 +255,31 @@ const OtherProfile: React.FC = () => {
                             </table>
                           </div>
 
+                        </div>
+                      </div>
+                      <div className="tab-2">
+                        <label htmlFor="tab2-4">Achievements</label>
+                        <input id="tab2-4" name="tabs-two" type="radio" />
+                        <div>
+
+                          <div className="table-wrapper">
+                            <table className="fl-table">
+                              <thead>
+                                <tr>
+                                  <th>TITLE</th>
+                                  <th>DESCRIPTION</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {achievements.map((detail, index) => (
+                                  <tr key={achievements[index].id}>
+                                    <td>{detail.achievement.title}</td>
+                                    <td>{detail.achievement.description}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>

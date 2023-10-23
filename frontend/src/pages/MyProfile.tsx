@@ -10,7 +10,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
-import { User } from '../api/types';
+import { User, UserAchievement } from '../api/types';
 import { Link } from "react-router-dom";
 
 type MatchDetail = {
@@ -42,6 +42,7 @@ const MyProfile: React.FC = () => {
   const [userFriends, setUserFriends] = useState<User[]>([]);
   const [userRequestFriends, setUserRequestFriends] = useState<User[]>([]);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
+  const [achievements, setAchievements] = useState<UserAchievement[]>([]);
 
   const queryClient = useQueryClient();
 
@@ -99,7 +100,16 @@ const MyProfile: React.FC = () => {
       const year = date.getFullYear();
       const formattedDate = `${day}/${month}/${year}`;
       setUserSubDate(formattedDate);
-      
+
+      // Achievements
+      UserService.getAchievements(userProfile.id)
+      .then(async achievements => {
+        setAchievements(achievements);
+      })
+      .catch(error => {
+        console.error("Failed to fetch match history", error);
+      });
+
       // Game history
       UserService.getMatchHistory(userProfile.id)
       .then(async matchHistory => {
@@ -457,7 +467,7 @@ const MyProfile: React.FC = () => {
                         </div>
                       </div>
                       <div className="tab-2">
-                        <label htmlFor="tab2-3">Game Histories</label>
+                        <label htmlFor="tab2-3">Match History</label>
                         <input id="tab2-3" name="tabs-two" type="radio" />
                         <div>
 
@@ -476,6 +486,31 @@ const MyProfile: React.FC = () => {
                                     <td>{detail.result}</td>
                                     <td>{detail.score}</td>
                                     <td>{detail.opponentName}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="tab-2">
+                        <label htmlFor="tab2-4">Achievements</label>
+                        <input id="tab2-4" name="tabs-two" type="radio" />
+                        <div>
+
+                          <div className="table-wrapper">
+                            <table className="fl-table">
+                              <thead>
+                                <tr>
+                                  <th>TITLE</th>
+                                  <th>DESCRIPTION</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {achievements.map((detail, index) => (
+                                  <tr key={achievements[index].id}>
+                                    <td>{detail.achievement.title}</td>
+                                    <td>{detail.achievement.description}</td>
                                   </tr>
                                 ))}
                               </tbody>

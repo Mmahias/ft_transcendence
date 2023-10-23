@@ -65,10 +65,15 @@ export interface Achievement {
   title:       string;
   icon:        string;
   description: string;
-  date:        Date;
-  fullfilled:  boolean;
-  user:        User;
-  userId:      number;
+}
+
+export interface UserAchievement {
+  id:            number;
+  user:          User;
+  userId:        number;
+  achievement:   Achievement;
+  achievementId: number;
+  date:          Date;
 }
 export interface Match {
   id          : number;

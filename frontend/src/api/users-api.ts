@@ -1,5 +1,5 @@
 import { axiosPrivate } from './axios-config';
-import { User, UserUpdateDto, Match } from './types';
+import { User, UserUpdateDto, Match, UserAchievement } from './types';
 
 const USERS_API = `/users`
 
@@ -51,12 +51,6 @@ class UserService{
     });
   }
 
-  // static async getUserAvatar(userId: number): Promise<string> {
-  //   const response = await axiosPrivate.get<string>(`${USERS_API}/avatar`, {
-  //     params: { userId },
-  //   });
-  //   return response.data;
-  // }
   static async getUserAvatar(userId: number): Promise<string> {
     const response = await axiosPrivate.get<Blob>(`${USERS_API}/avatar`, {
       params: { userId },
@@ -71,6 +65,11 @@ class UserService{
   static async getMatchHistory(userId: number): Promise< Match[] > {
     console.log("getMatchHistory", userId)
     const response = await axiosPrivate.get<Match[]>(`${USERS_API}/getMatchHistory?userId=${userId}`);
+    return response.data;
+  }
+  static async getAchievements(userId: number): Promise< UserAchievement[] > {
+    console.log("getAchievments", userId)
+    const response = await axiosPrivate.get<UserAchievement[]>(`${USERS_API}/getAchievements?userId=${userId}`);
     return response.data;
   }
 
