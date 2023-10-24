@@ -70,9 +70,9 @@ class AuthService {
   }
 
   // Vérifie si le 2FA est activé pour l'utilisateur
-   static async check2FAStatus(userId: number) {
+   static async check2FAStatus() {
     try {
-      const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`, { params: { userId } });
+      const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`);
       return response.data.isAuthenticationEnabled;
     } catch (error) {
       console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
