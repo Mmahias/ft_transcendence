@@ -86,9 +86,7 @@ export function TabChatHeader({ conv }: { conv: Channel}) {
 
           <button id="convo__header_leave-btn" onClick={handleClick}>Leave</button>
         </div>
-        <p>Channel created on {getDate(conv)}</p>
-        <p>Owner is: {conv?.owner.nickname} </p>
-        <ChannelType channelId={conv.id} loggedUser={myDetails} />
+        <p> Owner is: {conv?.owner.nickname}</p>
       </div>
     );
 }

@@ -98,7 +98,11 @@ const TabChannels: React.FC = () => {
       <h3 id="channels_page_title">Your channels:</h3>
       </div>
       <div className="channel-link-header">
-        {/* ... header rendering ... */}
+        <span className="channel-link-name-header truncate-link-text">Channel</span>
+        <span className="channel-link-mode-header truncate-link-text">Mode</span>
+        <span className="channel-link-members-header truncate-link-text">Members</span>
+        <span className="channel-link-last-update-header truncate-link-text">Last Update</span>
+        <span className="channel-link-msg-count-header truncate-link-text">Messages</span>
       </div>
       <div id="channels_page_joinedscroll">
         {displayedChannels.map(chan => (

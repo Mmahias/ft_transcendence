@@ -196,8 +196,6 @@ export class ChatService {
   async updateChannelUserlist(channelId: number, body: UpdateChannelDto) {
     const { id, usergroup, action } = body;
 
-    console.log("UPDATEZZZ", body)
-    
     // Check for missing parameters
     if (!id || !usergroup || !action) {
       throw new BadRequestException('Missing parameters');

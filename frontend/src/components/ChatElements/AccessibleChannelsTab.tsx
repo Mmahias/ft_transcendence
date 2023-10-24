@@ -79,7 +79,6 @@ const ChannelListItem: React.FC<ChannelListItemProps> = ({ channel }) => {
     },
     onSuccess: (isVerified) => {
       if (isVerified) {
-        toast.success("Successfully joined channel");
         joinChannelRequest.mutate(channel);
       } else {
         toast.error("Incorrect password!");

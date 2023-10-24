@@ -4,6 +4,10 @@
 /* ***       TabChat PAGE       ***/
 /* ********************************/
 
+.tab {
+  /* Your existing styles for .tab */
+  cursor: pointer;
+}
 
 span {
   margin: 0;
@@ -15,9 +19,9 @@ span {
 }
 
   main .header_channels{
-    height:110px;
-    padding:30px 20px 30px 40px;
-    background-color: #2b7a78;
+    height:100%;
+    padding:10px 10px 0px 15px;
+    background-color: #37a4a0;
   }
   main .header_channels > *{
     display:inline-block;
@@ -44,6 +48,15 @@ span {
     color:#def2f1;
   }
 
+  .channel-link-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    border-bottom: 2px solid #e5e5e5; /* matches with your existing style for items */
+    padding: 1% 4%;
+    background-color: #2b7a78; /* matches with your existing style */
+  }
 
 .channels_page-noconv {
     height: 60vh;
@@ -84,11 +97,11 @@ span {
 .channel-link-item {
   display: flex;
   align-items: center;
-  border-bottom: 2px solid #e5e5e5; /* Optional: adds a line after each item */
-  padding: 2% 2%;
+  border-bottom: 2px solid; /* Optional: adds a line after each item */
+  padding: 1% 1%;
   background-color: #3aafa9;
   cursor: pointer;
-  transition: filter 0.1s ease-in-out, background-color 0.1s ease-in-out; /* This adds a smooth transition effect */
+  transition: filter 0.2s ease-in-out, background-color 0.2s ease-in-out; /* This adds a smooth transition effect */
 }
 
 .channel-link-name {
@@ -96,7 +109,7 @@ span {
   margin-right: 0.3em;
   margin-left: 0.3em;
   color: black;
-  font-size: 18px;
+  font-size: 90%;
   font-weight: bold;
   text-decoration: underline;
   text-align: left;
@@ -106,6 +119,7 @@ span {
   width: 18%;  /* Example width */
   margin-right: 0.3em;
   margin-left: 0.3em;
+  font-size: 90%;
   color: black;
   text-align: left;
 }
@@ -185,4 +199,47 @@ span {
 
 .channels_page input::placeholder{
 	color: grey;
+}
+
+.channel-link-name-header {
+  width: 18%;
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  font-size: 90%;
+  font-weight: bold;
+  text-align: left;
+}
+
+.channel-link-mode-header {
+  width: 18%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  font-size: 90%;
+  color: black;
+  text-align: left;
+}
+
+.channel-link-members-header {
+  width: 18%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
+}
+
+.channel-link-last-update-header {
+  width: 28%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
+}
+
+.channel-link-msg-count-header {
+  width: 18%;  /* Example width */
+  margin-right: 0.3em;
+  margin-left: 0.3em;
+  color: black;
+  text-align: left;
 }

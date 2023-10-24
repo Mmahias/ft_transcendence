@@ -167,6 +167,7 @@
 
 .one__msg_me {
   margin: 1em;
+  justify-content: flex-end;
   display: flex;
   gap: 5px;
 }
