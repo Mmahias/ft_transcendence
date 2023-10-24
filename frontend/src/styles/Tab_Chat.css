@@ -9,18 +9,17 @@
 } */
 
 .convo__content_card {
-  display: flex;        /* Enables flexbox */
-  flex-direction: column;/* Column direction so that children stack vertically */
   width: 80%;
   max-width: 800px;
-  height: 70vh;
-  max-height: 700px;
-  min-height: 300px;
-  margin: 0 auto;
+  height: 100%;
+  margin: auto;
+  background-color: #befcf9;
 }
 
 .convo__card {
-  flex: 5; /* This will take up more space than the bottom */
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Assuming you want the entire height of the viewport */
 }
 
 .convo__card * {
@@ -32,15 +31,16 @@
 }
 
 .convo__bottom {
-  flex: 1; /* This will take up less space compared to the card */
-  max-height: 80px;
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  flex: 0.65;
   width: 100%;
   background-color: #2B7A78;
-  border: #2B7A78 solid 2px;
-  padding: 5%;
+  border: #2B7A78 solid 4px;
 }
 
 .convo__header {
+  height: 80px;
   background-color: #2B7A78;
   padding: 1.5% 1.5% 1.5% 1.5%;
 }
@@ -119,21 +119,16 @@
 }
 
 #convo__messages {
-  /* background-color: white;
-  border: solid;
-  position: relative;
-  overflow: scroll;
-  overflow-x:hidden;
-  overflow-y: auto;
-  overflow-anchor: none;
-  height: 45vh; */
-  padding-left:0;
-	margin:0;
-	list-style-type:none;
-	overflow-y:scroll;
-	height:535px;
-	border-top:2px solid #fff;
-	border-bottom:2px solid #fff;
+  flex: 1; /* This will make it grow to take available space */
+  /* Overriding the fixed height */
+  height: auto;
+  /* Your existing styles */
+  padding-left: 0;
+  margin: 0;
+  list-style-type: none;
+  overflow-y: scroll;
+  border-top: 2px solid rgb(35, 71, 103);
+  border-bottom: 2px solid rgb(35, 71, 103);
 }
 
 #convo__messages * {

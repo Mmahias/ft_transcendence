@@ -13,7 +13,7 @@
 
   .aside-content {
       width:20%;
-      height:800px;
+      height:100%;
       background-color:#2b787a;
       display:inline-block;
       font-size:15px;
@@ -52,9 +52,10 @@
 
   .main-box {
     width: 80%;
-    height: 120%;
+    height: 100%;
     display:inline-block;
     font-size:15px;
     vertical-align:top;
     border-radius: 7px;
+    background-color: rgb(61, 167, 167);
   }
