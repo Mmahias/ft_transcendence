@@ -65,7 +65,6 @@ const MyProfile: React.FC = () => {
     return null;
   }
 
-  // listening to login/logout
   useEffect(() => {
     setIsLoggedIn(!!auth?.accessToken);
   }, [auth]);
@@ -141,10 +140,10 @@ const MyProfile: React.FC = () => {
 
   // 2FA
 
-// // Appelez la méthode check2FAStatus sur cette instance
+// Appelez la méthode check2FAStatus sur cette instance
   const check2FAStatus = async (userId: number) => {
     try {
-      const is2FAEnabled = await AuthService.check2FAStatus(userId);
+      const is2FAEnabled = await AuthService.check2FAStatus();
       setIs2FAEnabled(is2FAEnabled);
     } catch (error) {
       console.error('Error checking 2FA status:', error);

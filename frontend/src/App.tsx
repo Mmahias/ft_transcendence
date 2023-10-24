@@ -9,6 +9,7 @@ import Pong from './pages/Game1';
 import MyProfile from './pages/MyProfile';
 import OtherProfile from './pages/OtherProfile';
 import Login from './pages/Login';
+import FaCode from './pages/FaCode';
 import Error from './pages/Error';
 import { Toaster } from 'react-hot-toast';
 import { useAxiosPrivate } from './hooks';
@@ -31,6 +32,7 @@ const MainContent: React.FC = () => {
         <Route path="/user/profile/:reqUsername" element={<OtherProfile />} />
         <Route path="/chat" element={ <Chat/> } />
         <Route path="/login" element={<Login />} />
+        <Route path="/facode" element={<FaCode />} />
         <Route path='*' element={<Error />}/>
       </Routes>
     </MainContentWrapper>

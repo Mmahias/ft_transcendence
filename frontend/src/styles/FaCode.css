@@ -1,0 +1,77 @@
+
+.facode-page * {
+	box-sizing: border-box;
+	font-family: "Montserrat", sans-serif;
+}
+
+
+.facode-page h1 {
+	font-weight: bold;
+	font-size: 20px;
+	margin: 0;
+    color: #def2f1;
+}
+
+.card-fa {
+  max-width: 300px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  max-width: 500px;
+  height: 300px;
+  padding: 35px;
+
+  border: 1px solid #2b7a78;
+  border-radius: 20px;
+  background-color: #2b7a78;
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+
+  backdrop-filter: blur(15px);
+}
+
+.facode-page button {
+	border-radius: 20px;
+	border: 1px solid #3aafa9;
+	background-color: #3aafa9;
+	color: #FFFFFF;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 12px 45px;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	transition: transform 80ms ease-in;
+}
+
+.facode-page button:active {
+	transform: scale(0.95);
+}
+
+.facode-page button:focus {
+	outline: none;
+}
+
+.facode-page button.ghost {
+	background-color: transparent;
+	border-color: #def2f1;
+}
+
+.facode-page form {
+	background-color: #def2f1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	padding: 0 50px;
+	height: 100%;
+	text-align: center;
+}
+
+.facode-page input {
+	background-color: white;
+	border: none;
+	padding: 12px 15px;
+	margin: 8px 0;
+	width: 70%;
+}
