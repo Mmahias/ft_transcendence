@@ -9,7 +9,6 @@
       height: 70vh;          /* Percentage of the viewport's height */
       max-height: 800px;     /* Maximum height */
       min-height: 300px;     /* Minimum height */
-overflow-y: auto;      /* Adds a scrollbar when content exceeds the container's height */
   }
 
   .aside-content {
@@ -52,10 +51,10 @@ overflow-y: auto;      /* Adds a scrollbar when content exceeds the container's 
   }
 
   .main-box {
-  width: 80%;
-	height:800px;
-	display:inline-block;
-	font-size:15px;
-	vertical-align:top;
-  border-radius: 7px;
+    width: 80%;
+    height: 120%;
+    display:inline-block;
+    font-size:15px;
+    vertical-align:top;
+    border-radius: 7px;
   }

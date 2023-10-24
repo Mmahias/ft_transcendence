@@ -233,6 +233,7 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
       );
       const updatedUserProfile = await UserService.getMe();
       setUserFriends(updatedUserProfile.friends);
+      toast.success('Friend request accepted', {id: 'friend'});
     } catch (error) {
       console.error('Échec de l\'acceptation de la demande d\'ami :', error);
     }
@@ -245,6 +246,7 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
       setUserRequestFriends((prevRequests) =>
         prevRequests.filter((request) => request.from.username !== friendUsername)
       );
+      toast.error('Friend request refused', {id: 'friend'});
     } catch (error) {
       console.error('Failed to refuse friend request:', error);
     }
@@ -472,7 +474,7 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
                         </div>
                       </div>
                       <div className="tab-2">
-                        <label htmlFor="tab2-2">Request Friends</label>
+                        <label htmlFor="tab2-2">Friend requests</label>
                         <input id="tab2-2" name="tabs-two" type="radio" />
                         <div>
                           <div className="request-content">
@@ -481,8 +483,7 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
                                 <li className="member" key={requestFriend.id}>
                                   {/* <div className="thumb"><img src={requestFriend.avatar} alt={`${requestFriend.from.username}'s avatar`} /></div> */}
                                   <div className="description">
-                                    <h3>{requestFriend.from.username}</h3>
-                                    <p>You received a friend request</p>
+                                    <h3>{requestFriend.from.username} wants to be your friend</h3>
                                     <button
                                       className="btn btn-sm btn-primary ghost"
                                       onClick={() => acceptFriendRequest(requestFriend.from.username)}

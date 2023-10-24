@@ -24,17 +24,21 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ channel, onClose, onPassw
   return (
     <div className="password-modal-overlay">
       <div className="password-modal">
-        <h2>Enter Password for {channel.name}</h2>
-        <form onSubmit={handleSubmit}>
-          <input 
-            type="password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password" 
-          />
-          <button type="submit">Submit</button>
-        </form>
-        <button onClick={onClose}>Close</button>
+        <div className="password-modal-header">
+          <h2>Password for {channel.name}:</h2>
+        </div>
+        <div className="password-input-container">
+          <form onSubmit={handleSubmit}>
+            <input 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password" 
+            />
+            <button className="modal-btn" type="submit">Submit</button>
+            <button className="modal-btn" onClick={onClose}>Close</button>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -71,18 +75,18 @@ const ChannelListItem: React.FC<ChannelListItemProps> = ({ channel }) => {
   const { mutate: verifyPassword } = useMutation({
     mutationFn: async (pwd: string) => {
       const isVerified = await ChatService.verifyPasswords(channel.id, pwd);
-      if (!isVerified) {
-        throw new Error("Incorrect password");
+      return isVerified; // return true or false
+    },
+    onSuccess: (isVerified) => {
+      if (isVerified) {
+        toast.success("Successfully joined channel");
+        joinChannelRequest.mutate(channel);
+      } else {
+        toast.error("Incorrect password!");
       }
-    },
-    onSuccess: () => {
-      toast.success("Correct password!");
-      joinChannelRequest.mutate(channel);
-    },
-    onError: () => {
-      toast.error("Incorrect password!")
     }
   })
+  
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

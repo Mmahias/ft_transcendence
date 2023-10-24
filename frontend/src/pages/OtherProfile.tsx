@@ -277,7 +277,7 @@ const OtherProfile: React.FC = () => {
                     {isFriend ? (
                       <button className="btn btn-sm btn-no ghost" onClick={handleDeleteFriend}>Delete Friend</button>
                     ) : (
-                      <button className="btn btn-sm btn-primary ghost" onClick={handleAddFriend}>Add Friend</button>
+                      <button className="btn btn-sm btn-primary ghost" onClick={handleAddFriend}>Add as friend</button>
                     )}
                   </div>
                 </div>

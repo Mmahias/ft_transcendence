@@ -124,7 +124,7 @@ export default function TabMore() {
       <div id="tabmore_page">
         {tab === Tab.CREATE ? <ChanCreationForm /> : <AccessibleChannelsTab />}
         <button id="button-join-create" onClick={toggleTab}>
-          {tab === Tab.CREATE ? "Join a channel" : "Create a channel"}
+          {tab === Tab.CREATE ? "Join a channel ?" : "Create your channel ?"}
         </button>
       </div>
 

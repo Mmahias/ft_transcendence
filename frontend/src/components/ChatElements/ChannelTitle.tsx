@@ -7,6 +7,8 @@ import ChatService from "../../api/chat-api";
 import UserService from "../../api/users-api";
 import { Channel } from "../../api/types";
 import { useAuth } from '../../hooks';
+import { ChanMode } from '../../shared/types';
+
 
 export function ChannelTitle({ conv, initialName } : { conv: Channel, initialName: string}) {
   const [isEditing, setIsEditing] = useState(false);
@@ -82,7 +84,7 @@ export function ChannelTitle({ conv, initialName } : { conv: Channel, initialNam
         <h1 id="convo__name" onClick={handleTitleClick}>
           {newTitle}
           {
-            conv.ownerId === user.id && 
+            conv.ownerId === user.id && conv.mode !== ChanMode.DM &&
             <FontAwesomeIcon icon={faPencil} style={{ cursor: "pointer" }}/>
           } 
         </h1>

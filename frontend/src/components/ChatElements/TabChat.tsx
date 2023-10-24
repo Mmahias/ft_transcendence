@@ -141,7 +141,6 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
           ))
         }
         </div>
-      </div>
         {
           isMuted === false &&
           <div className='convo__bottom'>
@@ -161,6 +160,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
           isMuted === true && 
           <div className="convo__bottom">You're not allowed to speak here! (muted)</div>
         }
+      </div>
     </div>
   );
 }

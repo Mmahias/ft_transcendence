@@ -72,7 +72,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     return (
       <div key={index + 2} className='one__msg_role'>
         <div key={index + 1} className='one__msg_header_info'>
-          <h6>{getDate(message)}</h6>
+          <p>{getDate(message)}</p>
         </div>
         <p className='one_msg_announcement' key={index}>You blocked {fromUsername} so this message is censored.</p>
       </div>
@@ -87,7 +87,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
       return (
         <div key={index + 2} className='one__msg_role'>
             <div key={index + 1} className='one__msg_header_info'>
-              <h6>Initiated by: {fromUsername} on {getDate(message)}</h6>
+              <p>Initiated by: {fromUsername} on {getDate(message)}</p>
             </div>
             <p className='one_msg_announcement' key={index}>{censoredContent}</p>
             {
@@ -103,7 +103,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
       return (
         <div key={index + 2} className='one__msg_role'>
             <div key={index + 1} className='one__msg_header_info'>
-              <h6>Initiated by: {fromUsername} on {getDate(message)}</h6>
+              <p>Initiated by: {fromUsername} on {getDate(message)}</p>
             </div>
             <p className='one_msg_announcement' key={index}>{censoredContent}</p>
         </div>
