@@ -1,6 +1,6 @@
 import '../styles/Login.css';
 import "../App.styles";
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from "../api/auth-api";
 import UserService from '../api/users-api';
@@ -31,6 +31,18 @@ const Login = () => {
   const switchToSignUp = () => {
     setRightPanelActive(true);
   }
+
+  // useEffect(() => {
+  //   const url = window.location.href;
+
+  //   const tokenMatch = url.match(/token=([a-zA-Z0-9_.-]+)/);
+
+  //   if (tokenMatch && tokenMatch[1]) {
+  //       const token = tokenMatch[1];
+  //       login({ accessToken: token });
+  //       navigate('/facode');
+  //   }
+  // }, [login, navigate]);
   
   const validateUsername = (value: string): string | null => {
     if (!value) return "Username is required";
@@ -127,6 +139,10 @@ const Login = () => {
     }
 };
 
+const handleOauth42Login = () => {
+  AuthService.oauth42Login();
+};
+
   return (
     <div className="login-page">
       <div className={`container ${rightPanelActive ? 'right-panel-active' : ''}`} id="container">
@@ -175,7 +191,7 @@ const Login = () => {
               </div>
             }
             <button onClick={handleLogin} disabled={!!(usernameError || passwordError)}>Log In</button>
-            {/* <Login42 /> */}
+            <button style={{margin:'1%'}} onClick={handleOauth42Login}>Log 42</button>
           </form>
         </div>
         <div className="overlay-container">
