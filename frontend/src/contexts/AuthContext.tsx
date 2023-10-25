@@ -1,11 +1,20 @@
 import React, { createContext, useState, ReactNode, useCallback } from "react";
-
+import { axiosPrivate } from "../api/axios-config";
+import AuthService from "../api/auth-api";
 export interface AuthState {
   accessToken: string | null;
 }
 
+export enum AuthStatus {
+  DISCONNECTED = "DISCONNECTED",
+  PARTIALLY_AUTHENTICATED = "PARTIALLY_AUTHENTICATED",
+  FULLY_AUTHENTICATED = "FULLY_AUTHENTICATED",
+}
+
 export interface AuthContextType {
   auth: AuthState;
+  authStatus: AuthStatus;
+  setAuthStatus: (authStatus: AuthStatus) => void;
   isAuthAvailable: (auth: AuthState) => boolean;
   login: (data: AuthState) => void;
   logout: () => void;
@@ -26,17 +35,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const initialAuth = JSON.parse(localStorage.getItem("auth") || "{}");
   const [auth, setAuth] = useState<AuthState>(initialAuth);
+  const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.DISCONNECTED);
 
   const login = useCallback((data: AuthState) => {
-    // console.log("Token to be stored:", data.accessToken);
     localStorage.setItem("auth", JSON.stringify(data));
     setAuth(data);
-}, []);
+    
+    // Set token for axios immediately after login
+    axiosPrivate.defaults.headers['Authorization'] = `Bearer ${data.accessToken}`;
 
+    const check2FAStatusAndSetAuth = async () => {
+      const isTwoFAActive1 = await AuthService.check2FAStatus();
+      const isTwoFAActive2 = await AuthService.check2FAStatus();
+      setAuthStatus(isTwoFAActive2 ? AuthStatus.PARTIALLY_AUTHENTICATED : AuthStatus.FULLY_AUTHENTICATED);
+      console.log("2FA status:", isTwoFAActive2);
+    };
+
+    check2FAStatusAndSetAuth();
+}, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem("auth");
     setAuth({ accessToken: null });
+    setAuthStatus(AuthStatus.DISCONNECTED);
   }, []);
 
   const refreshToken = useCallback((): string | null => {
@@ -51,11 +72,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return null;
 }, []);
 
-  return (
-    <AuthContext.Provider value={{ auth, isAuthAvailable: () => isAuthAvailable(auth), login, logout, refreshToken }}>
-      {children}
-    </AuthContext.Provider>
-  );
+return (
+  <AuthContext.Provider value={{ auth, authStatus, setAuthStatus, isAuthAvailable: () => isAuthAvailable(auth), login, logout, refreshToken }}>
+    {children}
+  </AuthContext.Provider>
+);
 }
 
 export default AuthContext;

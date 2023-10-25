@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 const Login = () => {
 
   const navigate = useNavigate();
-  const { login, isAuthAvailable } = useAuth();
+  const { login, isAuthAvailable, authStatus } = useAuth();
   
   const [nickname, setNickname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -21,7 +21,6 @@ const Login = () => {
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
-  
   const [rightPanelActive, setRightPanelActive] = useState(false);
 
   const switchToSignIn = () => {
@@ -31,18 +30,6 @@ const Login = () => {
   const switchToSignUp = () => {
     setRightPanelActive(true);
   }
-
-  // useEffect(() => {
-  //   const url = window.location.href;
-
-  //   const tokenMatch = url.match(/token=([a-zA-Z0-9_.-]+)/);
-
-  //   if (tokenMatch && tokenMatch[1]) {
-  //       const token = tokenMatch[1];
-  //       login({ accessToken: token });
-  //       navigate('/facode');
-  //   }
-  // }, [login, navigate]);
   
   const validateUsername = (value: string): string | null => {
     if (!value) return "Username is required";
@@ -124,9 +111,6 @@ const Login = () => {
       const response = await AuthService.login(username.toLowerCase(), password);
       if (response) {
         login(response);
-        navigate('/facode');
-      } else {
-        throw new Error("No valid token received");
       }
     } catch (error) {
       setSuccessMsg('');
@@ -137,7 +121,18 @@ const Login = () => {
       });
       setErrorMsg("Wrong nickname or password");
     }
-};
+  };
+
+  useEffect(() => {
+    console.log("Auth status:", authStatus)
+    if (authStatus === "PARTIALLY_AUTHENTICATED") {
+      navigate('/facode');
+    }
+    else if (authStatus === "FULLY_AUTHENTICATED") {
+      navigate('/user/profile');
+    }
+  }, [authStatus]);
+
 
 const handleOauth42Login = () => {
   AuthService.oauth42Login();

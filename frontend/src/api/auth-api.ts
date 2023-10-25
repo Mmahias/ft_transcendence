@@ -96,7 +96,7 @@ class AuthService {
       const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`);
       return response.data.isAuthenticationEnabled;
     } catch (error) {
-      console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
+      // console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
       return false;
     }
   }
