@@ -272,7 +272,7 @@ const useGameLogic = () => {
 
       setTimeout(() => {
         // Redirect to profile page
-        navigate("/user/profile/" + payload);
+        navigate("/user/profile/");
       }, 2500);
     };
 
@@ -289,7 +289,7 @@ const useGameLogic = () => {
       setTimeout(() => {
         // Redirect to profile page
         toast.dismiss("matchmaking");
-        navigate("/user/profile/" + payload);
+        navigate("/user/profile/");
       }, 2500);
     };
 
