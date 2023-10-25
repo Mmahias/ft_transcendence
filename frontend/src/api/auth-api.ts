@@ -58,11 +58,16 @@ class AuthService {
     }
   }
 
+  // 42 LOGIN
+  static oauth42Login() {
+    window.location.href = `${AUTH_API}/42`;
+  }
+
   // Génère le QR Code pour le 2FA
   static async generate2FAQRCode() {
     try {
       const response = await axiosPrivate.post(`${AUTH_API}/2fa/generate`);
-      return response.data; // Cela devrait être l'URL otpauth ou les données du QR code
+      return response.data;
     } catch (error) {
       console.error('Error in generate2FAQRCode:', error);
       throw new Error('Failed to generate 2FA QRCode');
@@ -118,3 +123,4 @@ class AuthService {
 }
 
 export default AuthService;
+
