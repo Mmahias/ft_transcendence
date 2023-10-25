@@ -13,55 +13,60 @@ const FaCode: React.FC = () => {
     const [successMsg, setSuccessMsg] = useState<string>("");
     const [show2FAForm, setShow2FAForm] = useState<boolean>(false);
     const [twoFACode, setTwoFACode] = useState<string>('');
-    const [is2FARequired, setIs2FARequired] = useState<boolean>(true);
+    
+
     useEffect(() => {
         const checkAuthStatus = async () => {
-          const authed = await AuthService.check2FAStatus();
-          setIs2FARequired(authed);
-          console.log("qqqq", is2FARequired);
-          if (is2FARequired) {
-            setShow2FAForm(is2FARequired);
-          }
-          else {
-            toast.success('Connexion réussie !');
-            navigate('/user/profile');
-          }
-        };
+            const isTwoFAActive = await AuthService.check2FAStatus();
+            console.log("2FA status:", isTwoFAActive);
+    
+            if (isTwoFAActive) {
+                setShow2FAForm(true);
+            } else {
+              setTimeout(() => {
+                if (isTwoFAActive) {
+                  toast.success('Connexion réussie !');
+                  navigate('/user/profile');
+              }
+            }, 500);
+        }
+    
         checkAuthStatus();
-    }, [is2FARequired]);
+      }
+    }, []);
 
     const handleVerifyCode = async (event: React.FormEvent) => {
-        event.preventDefault();
-        try {
-            const response = await AuthService.authenticate2FA(twoFACode);
-      
-            const newAccessToken = response.accessToken;
-      
-            if (isAuthAvailable({ accessToken: newAccessToken })) {
-                login({ accessToken: newAccessToken });
-                setShow2FAForm(false);
-                
-                setSuccessMsg("Successfully authenticated with 2FA!");
-                toast.success("Successfully authenticated with 2FA!", {
-                    id: "2fa",
-                    icon: "🎮⌛",
-                    duration: 2000,
-                });
-                setTimeout(() => {
-                    navigate('/user/profile');
-                }, 500);
-            } else {
-                console.error("New access token does not meet criteria.");
-                toast.error("Error: Incorrect 2FA code", {
-                    duration: 2000,
-                });
-            }
-        } catch (error) {
-            console.error('Error verifying 2FA code:', error);
-            toast.error("Error: Incorrect 2FA code", {
-                duration: 2000,
-            });
+      event.preventDefault();
+      try {
+        const response = await AuthService.authenticate2FA(twoFACode);
+  
+        const newAccessToken = response.accessToken;
+  
+        if (isAuthAvailable({ accessToken: newAccessToken })) {
+          login({ accessToken: newAccessToken });
+          setShow2FAForm(false);
+          
+          setSuccessMsg("Successfully authenticated with 2FA!");
+          toast.success("Successfully authenticated with 2FA!", {
+            id: "2fa",
+            icon: "🎮⌛",
+            duration: 2000,
+          });
+          setTimeout(() => {
+            navigate('/user/profile');
+          }, 500);
+        } else {
+          console.error("New access token does not meet criteria.");
+          toast.error("Error: Incorrect 2FA code", {
+            duration: 2000,
+          });
         }
+      } catch (error) {
+        console.error('Error verifying 2FA code:', error);
+        toast.error("Error: Incorrect 2FA code", {
+          duration: 2000,
+        });
+      }
     };
 
     return (
