@@ -26,7 +26,15 @@ const Navbar: React.FC<NavbarProps> = () => {
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const blurTimeoutRef = useRef<number | null>(null); // Added ref for timeout
-  const socketRef = useRef(socket);
+  const socketRef = useRef<typeof socket | null>(socket);
+
+  // useEffect(() => {
+  //   if (auth.accessToken) {
+  //     socketRef.current = socket;
+  //   } else {
+  //     socketRef.current = null;
+  //   }
+  // }, [auth.accessToken]);
 
   const { data: myDetails } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,

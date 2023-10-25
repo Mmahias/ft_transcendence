@@ -121,21 +121,21 @@ const Login = () => {
     }
 
     try {
-        const response = await AuthService.login(username.toLowerCase(), password);
-        if (response) {
-            login(response);
-            navigate('/facode');
-        } else {
-            throw new Error("No valid token received");
-        }
+      const response = await AuthService.login(username.toLowerCase(), password);
+      if (response) {
+        login(response);
+        navigate('/facode');
+      } else {
+        throw new Error("No valid token received");
+      }
     } catch (error) {
-        setSuccessMsg('');
-        toast.error("Error while logging in !", {
-            id: "login",
-            icon: "🎮⌛",
-            duration: 2000,
-        });
-        setErrorMsg("Wrong nickname or password");
+      setSuccessMsg('');
+      toast.error("Error while logging in !", {
+        id: "login",
+        icon: "🎮⌛",
+        duration: 2000,
+      });
+      setErrorMsg("Wrong nickname or password");
     }
 };
 

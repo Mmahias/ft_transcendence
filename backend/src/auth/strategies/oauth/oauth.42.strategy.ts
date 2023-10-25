@@ -40,6 +40,7 @@ export class Oauth42Strategy extends PassportStrategy(Strategy, 'oauth_42') {
   ) {
     try {
       // call 42 api to retrieve 42 login
+      console.log('accessToken', accessToken)
       const login = await this.get42Login(accessToken);
       if (!login) {
         return done(null, false);

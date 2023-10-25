@@ -13,19 +13,22 @@ const FaCode: React.FC = () => {
     const [successMsg, setSuccessMsg] = useState<string>("");
     const [show2FAForm, setShow2FAForm] = useState<boolean>(false);
     const [twoFACode, setTwoFACode] = useState<string>('');
+    const [is2FARequired, setIs2FARequired] = useState<boolean>(true);
     useEffect(() => {
         const checkAuthStatus = async () => {
-            try {
-                await UserService.getMe();
-                toast.success('Connexion réussie !');
-                navigate('/user/profile');
-            } catch (error) {
-                const is2FARequired = await AuthService.check2FAStatus();
-                setShow2FAForm(is2FARequired);
-            }
+          const authed = await AuthService.check2FAStatus();
+          setIs2FARequired(authed);
+          console.log("qqqq", is2FARequired);
+          if (is2FARequired) {
+            setShow2FAForm(is2FARequired);
+          }
+          else {
+            toast.success('Connexion réussie !');
+            navigate('/user/profile');
+          }
         };
         checkAuthStatus();
-    }, [navigate]);
+    }, [is2FARequired]);
 
     const handleVerifyCode = async (event: React.FormEvent) => {
         event.preventDefault();

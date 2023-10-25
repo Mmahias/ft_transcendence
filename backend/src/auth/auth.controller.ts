@@ -126,4 +126,13 @@ export class AuthController {
   async logout(@Body('userId') userId: number) {
     return this.authService.logout(userId);
   };
+
+  @Get('2fa/check2fa')
+  async check2fa(@User('id') userId: number) {
+    const user = await this.userService.getUserById(userId);
+    const { authenticationEnabled } = user;
+
+    console.log(authenticationEnabled);
+    return { isAuthenticationEnabled: authenticationEnabled };
+  }
 }

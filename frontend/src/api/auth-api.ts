@@ -59,8 +59,24 @@ class AuthService {
   }
 
   // 42 LOGIN
-  static oauth42Login() {
-    window.location.href = `${AUTH_API}/42`;
+  static async oauth42Login() {
+    try {
+      console.log("42");
+      const response = await axiosPublic.get(`${AUTH_API}/42`);
+      // console.log(response.data);
+      if (response.data.redirectUrl) {
+        window.location.href = response.data.redirectUrl;
+      } else {
+        throw new Error('Unexpected response: Missing redirect URL');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.data && error.response.data.message) {
+          throw new Error(error.response.data.message);
+        }
+      }
+      throw new Error('Failed to initiate 42 OAuth login');
+    }
   }
 
   // Génère le QR Code pour le 2FA
@@ -78,6 +94,16 @@ class AuthService {
    static async check2FAStatus() {
     try {
       const response = await axiosPrivate.get(`${AUTH_API}/2fa/is-turn-on`);
+      return response.data.isAuthenticationEnabled;
+    } catch (error) {
+      console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);
+      return false;
+    }
+  }
+
+  static async check2FAStatusLogin() {
+    try {
+      const response = await axiosPublic.get(`${AUTH_API}/2fa/check2fa`);
       return response.data.isAuthenticationEnabled;
     } catch (error) {
       console.error('Une erreur s\'est produite lors de la vérification de la double authentification à deux facteurs :', error);

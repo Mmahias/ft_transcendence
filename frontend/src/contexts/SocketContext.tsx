@@ -18,22 +18,23 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { auth, logout } = useAuth();
 
   useEffect(() => {
-    
-    let newSocket : Socket = io('/', {  // or just '/' if your server setup serves socket.io at the root
-      path: '/socket.io', // Ensure this path matches with your backend socket.io path setup
-      auth: {
-        token: auth.accessToken,
-      },
-    });
-    newSocket.on("connect", () => {
-      setSocket(newSocket);
-      console.log('New socket created. Socket ID:', newSocket?.id || 'Not yet connected');
-    });
-    socket?.connect();
-    
-    return () => {
-      if (newSocket) {
-        newSocket.close();
+    if (auth.accessToken) {
+      let newSocket : Socket = io('/', {  // or just '/' if your server setup serves socket.io at the root
+        path: '/socket.io', // Ensure this path matches with your backend socket.io path setup
+        auth: {
+          token: auth.accessToken,
+        },
+      });
+      newSocket.on("connect", () => {
+        setSocket(newSocket);
+        console.log('New socket created. Socket ID:', newSocket?.id || 'Not yet connected');
+      });
+      socket?.connect();
+      
+      return () => {
+        if (newSocket) {
+          newSocket.close();
+        }
       }
     };
   }, []);
