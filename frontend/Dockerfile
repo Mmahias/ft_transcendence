@@ -1,29 +1,33 @@
+# Utiliser l'image Node 18
 FROM node:18
 
-# Set working directory
+# Définir le répertoire de travail
 WORKDIR /app
 
+# Copier les fichiers package.json et package-lock.json
 COPY package*.json ./
 
-# Install global and local npm packages
+# Installer les packages npm localement
 RUN npm i
 
-# Install esbuild for Linux (for cross-platforms runs)
+# Installer esbuild pour Linux (pour une exécution multi-plateformes)
 RUN if [ "$(uname -m)" = "aarch64" ]; then npm install @esbuild/linux-arm64; else npm install @esbuild/linux-x64; fi
 
-# Install ping and curl in a single layer to reduce the total number of layers
+# Installer ping et curl en une seule couche pour réduire le nombre total de couches
 RUN apt-get update && \
   apt-get install -y iputils-ping curl
 
+# Installer Vite globalement
 RUN npm install -g vite
 
-# Copy the rest of your app to the container
+# Copier le reste de votre application dans le conteneur
 COPY . .
 
-# Expose port 3001
+# Assurez-vous que le script start.sh est exécutable
+RUN chmod +x /app/start.sh
+
+# Exposer le port 3001
 EXPOSE 3001
 
-# Start the application
-CMD ["npm", "start"]
-
-# CMD ["tail", "-f", "/dev/null"]
+# Démarrer l'application en utilisant le script start.sh
+CMD [ "sh", "/app/start.sh" ]

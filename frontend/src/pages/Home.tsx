@@ -115,12 +115,12 @@ const Home: React.FC = () => {
       </div>
       )}
       <div className='button-test'>
-        <button onClick={callTestEndpoint}>Test Backend Endpoint</button>
-        <button onClick={() => testMe()}>Test User Me</button>
-        <button onClick={() => testToken(auth)}>Test Token</button>
-        <button onClick={() => testConnected(auth)}>Am i connected ?</button>
-        <button onClick={() => testSocketConnection(socket)}>Test Socket Connection</button>
-        <button onClick={() => testMatchHistory()}>Test Match History</button>
+        <button style={{color: 'white',marginLeft:'10px'}} onClick={callTestEndpoint}>Test BackendEndpoint |</button>
+        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testMe()}>Test UserMe |</button>
+        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testToken(auth)}>TestToken |</button>
+        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testConnected(auth)}>Am iconnected? |</button>
+        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testSocketConnection(socket)}>Test SocketConnection |</button>
+        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testMatchHistory()}>Test MatchHistory |</button>
       </div>
     </div>
   );
