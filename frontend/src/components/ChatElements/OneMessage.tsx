@@ -114,12 +114,12 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     <div key={index + 2} className={`${isMe === true ? 'one__msg_me' : 'one__msg'}`} >
       <div className="one__msg_avatar_container">
         <Link to={`/user/profile/${fromUsername}`} >
-        <img src={message.from.avatar} title="See profile" className='one__msg_avatar' alt="Avatar"/>
+        {/* <img src={message.from.avatar} title="See profile" className='one__msg_avatar' alt="Avatar"/> */}
         </Link >
       </div>
       <div className='one__msg_info'>
         <div key={index + 1} className='one__msg_header'>
-          <h4>{fromUsername}</h4>
+          <h4 style={{color: 'blue'}}>{fromUsername}</h4>
           <h6>{getDate(message)}</h6>
         </div>
         <p className={`${isMe === true ? 'one__msg_content_me' : 'one__msg_content'}`} key={index}>{message.content}</p>

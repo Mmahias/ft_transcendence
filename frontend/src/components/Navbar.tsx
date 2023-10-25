@@ -248,7 +248,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                         handleOnClick(user.username);
                       }}
                     >
-                      <img src={user.avatar} className="user-avatar" />
+                      {/* <img src={user.avatar} className="user-avatar" /> */}
                       {user.username}
                     </Link>
                   </div>
