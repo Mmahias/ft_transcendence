@@ -101,7 +101,6 @@ class AuthService {
       // Ajoutez ici la logique pour désactiver le 2FA
       // return await axiosPrivate.post(`${AUTH_API}/2fa/turn-off`);
     } catch (error) {
-      console.error('Error in disable2FA:', error);
       throw new Error('Failed to disable 2FA');
     }
   }

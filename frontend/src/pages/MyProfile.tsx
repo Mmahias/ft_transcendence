@@ -155,7 +155,7 @@ const MyProfile: React.FC = () => {
       const qrData = await AuthService.generate2FAQRCode();
       setQRCodeData(qrData);
     } catch (error) {
-      console.error('Error enabling 2FA:', error);
+      toast.error('Error enabling 2FA');
     }
   };
 
