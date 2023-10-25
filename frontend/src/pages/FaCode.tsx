@@ -25,6 +25,7 @@ const FaCode: React.FC = () => {
         if (isAuthAvailable({ accessToken: newAccessToken })) {
           login({ accessToken: newAccessToken });
           setAuthStatus(AuthStatus.FULLY_AUTHENTICATED);
+          localStorage.setItem("authStatus", AuthStatus.FULLY_AUTHENTICATED);
           setShow2FAForm(false);
 
           setSuccessMsg("Successfully authenticated with 2FA!");

@@ -35,7 +35,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const initialAuth = JSON.parse(localStorage.getItem("auth") || "{}");
   const [auth, setAuth] = useState<AuthState>(initialAuth);
-  const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.DISCONNECTED);
+  const initialAuthStatus = localStorage.getItem("authStatus") as AuthStatus || AuthStatus.DISCONNECTED;
+  const [authStatus, setAuthStatus] = useState<AuthStatus>(initialAuthStatus);
+  
 
   const login = useCallback((data: AuthState) => {
     localStorage.setItem("auth", JSON.stringify(data));
@@ -48,7 +50,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const isTwoFAActive1 = await AuthService.check2FAStatus();
       const isTwoFAActive2 = await AuthService.check2FAStatus();
       if (authStatus === AuthStatus.DISCONNECTED) {
-        setAuthStatus(isTwoFAActive2 ? AuthStatus.PARTIALLY_AUTHENTICATED : AuthStatus.FULLY_AUTHENTICATED);
+        const newStatus = isTwoFAActive2 ? AuthStatus.PARTIALLY_AUTHENTICATED : AuthStatus.FULLY_AUTHENTICATED;
+        setAuthStatus(newStatus);
+        localStorage.setItem("authStatus", newStatus);
       }
       console.log("2FA status:", isTwoFAActive2);
     };
@@ -60,6 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("auth");
     setAuth({ accessToken: null });
     setAuthStatus(AuthStatus.DISCONNECTED);
+    localStorage.setItem("authStatus", AuthStatus.DISCONNECTED);
   }, []);
 
   const refreshToken = useCallback((): string | null => {
