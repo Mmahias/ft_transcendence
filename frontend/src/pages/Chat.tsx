@@ -1,4 +1,4 @@
-import React,  { useContext }  from 'react';
+import React,  { useContext, useEffect }  from 'react';
 import '../styles/Chat.css';
 import '../styles/Tab_channels.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,6 +18,13 @@ interface Tab {
 const Chat = () => {
   const {data: userMe, status: statusMe } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
   const { activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded } = useContext(ChatStatusContext);
+
+  useEffect(() => {
+    if (!window.location.search.includes('load')) {
+      // Rafraîchissez la page et ajoutez le paramètre "refreshed"
+      window.location.href = window.location.href + '?load';
+    }
+  }, []);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
