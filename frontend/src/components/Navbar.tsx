@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth, useSocket } from '../hooks';
+import { AuthStatus } from '../contexts/AuthContext';
 import '../styles/Navbar.css';
 import logo from '../assets/school_42.jpeg';
 import toast from 'react-hot-toast';
@@ -17,25 +18,24 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = () => {
   const navigate = useNavigate();
-  const { auth, logout } = useAuth();
+  const { auth, logout, authStatus } = useAuth();
   const socket = useSocket();
   
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<Partial<User>[]>([]);
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const blurTimeoutRef = useRef<number | null>(null); // Added ref for timeout
   const socketRef = useRef<typeof socket | null>(socket);
 
-  // useEffect(() => {
-  //   if (auth.accessToken) {
-  //     socketRef.current = socket;
-  //   } else {
-  //     socketRef.current = null;
-  //   }
-  // }, [auth.accessToken]);
+  useEffect(() => {
+    console.log(authStatus, auth);
+    if (!!auth?.accessToken && authStatus === AuthStatus.FULLY_AUTHENTICATED)
+      setIsLoggedIn(true);
+  }, [auth.accessToken, authStatus]);
 
+  console.log("LOGGED", isLoggedIn)
   const { data: myDetails } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     enabled: isLoggedIn ? true : false,
@@ -111,11 +111,6 @@ const Navbar: React.FC<NavbarProps> = () => {
   useEffect(() => {
     socketRef.current = socket; // always keep the ref updated
   }, [socket]);
-
-  // listening to login/logout
-  useEffect(() => {
-    setIsLoggedIn(!!auth?.accessToken);
-  }, [auth]);
   
   // listening to logout from other tabs
   useEffect(() => {
