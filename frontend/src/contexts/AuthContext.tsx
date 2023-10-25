@@ -47,7 +47,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const check2FAStatusAndSetAuth = async () => {
       const isTwoFAActive1 = await AuthService.check2FAStatus();
       const isTwoFAActive2 = await AuthService.check2FAStatus();
-      setAuthStatus(isTwoFAActive2 ? AuthStatus.PARTIALLY_AUTHENTICATED : AuthStatus.FULLY_AUTHENTICATED);
+      if (authStatus === AuthStatus.DISCONNECTED) {
+        setAuthStatus(isTwoFAActive2 ? AuthStatus.PARTIALLY_AUTHENTICATED : AuthStatus.FULLY_AUTHENTICATED);
+      }
       console.log("2FA status:", isTwoFAActive2);
     };
 

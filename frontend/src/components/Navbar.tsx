@@ -31,8 +31,11 @@ const Navbar: React.FC<NavbarProps> = () => {
 
   useEffect(() => {
     console.log(authStatus, auth);
-    if (!!auth?.accessToken && authStatus === AuthStatus.FULLY_AUTHENTICATED)
-      setIsLoggedIn(true);
+    if (!!auth?.accessToken && authStatus === AuthStatus.FULLY_AUTHENTICATED) {
+        setIsLoggedIn(true);
+    } else {
+        setIsLoggedIn(false); // Make sure to set isLoggedIn to false if conditions are not met
+    }
   }, [auth.accessToken, authStatus]);
 
   console.log("LOGGED", isLoggedIn)
