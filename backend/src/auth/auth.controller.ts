@@ -6,7 +6,8 @@ import {
   Body,
   HttpCode,
   UnauthorizedException,
-  Res
+  Res,
+  Logger
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from '@app/auth/dto';
@@ -25,6 +26,7 @@ const cookieAuthConfig = {
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
   constructor(
     private authService: AuthService,
     private userService: UserService
@@ -110,7 +112,7 @@ export class AuthController {
 
     await this.userService.turnOnTwoFactorAuthentication(user.id);
     const jwtToken = await this.authService.login(user, true);
-    res.cookie('Authorization', jwtToken, cookieAuthConfig).status(200);
+    res.cookie('Authorization', jwtToken, cookieAuthConfig).send('');
   }
 
   @Post('2fa/turn-off')
@@ -130,18 +132,18 @@ export class AuthController {
       );
 
       if (!isCodeValid) {
-        throw new Error('Wrong authentication code');
+        const error = 'Wrong authentication code';
+        this.logger.error(error);
+        throw new Error(error);
       }
     } catch (error) {
-      throw new UnauthorizedException(
-        `2fa authentication failed. Cause: ${error.message}`
-      );
+      const message = `2fa authentication failed. Cause: ${error.message}`;
+      this.logger.error(message);
+      throw new UnauthorizedException(message);
     }
 
     const jwtToken = await this.authService.login(user, true);
-    res
-      .cookie('Authorization', jwtToken, cookieAuthConfig)
-      .redirect('http://localhost:3001/');
+    res.cookie('Authorization', jwtToken, cookieAuthConfig).send('');
   }
 
   @Post('logout')

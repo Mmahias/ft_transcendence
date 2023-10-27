@@ -165,10 +165,9 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
   event.preventDefault();
 
   try {
-    const responseStatus = await AuthService.enable2FA(verificationCode);
+    const response = await AuthService.enable2FA(verificationCode);
 
-    console.log(responseStatus);
-    if (responseStatus === 201) {
+    if (response) {
       setQRCodeData(null);
       setVerificationCode('');
       setIs2FAEnabled(true);

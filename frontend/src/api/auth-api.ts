@@ -93,7 +93,7 @@ class AuthService {
   static async enable2FA(code: string) {
     try {
       const response = await axiosPrivate.post(`${AUTH_API}/2fa/turn-on`, { twoFactorAuthenticationCode: code });
-      return response.status;
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.data && error.response.data.message) {
