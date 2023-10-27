@@ -19,7 +19,8 @@ import { Jwt2faAuthGuard } from '@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard
 
 const cookieAuthConfig = {
   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-  httpOnly: true
+  httpOnly: true,
+  sameSite: 'strict'
 };
 
 @Controller('auth')
@@ -43,9 +44,12 @@ export class AuthController {
   async oauthRedirect(@User() user, @Res() res) {
     const tokenJwt = await this.authService.login(user, false);
 
-    res
-      .cookie('Authorization', tokenJwt, cookieAuthConfig)
-      .redirect('http://localhost:3001/user/profile');
+    res.cookie('Authorization', tokenJwt, tokenJwt);
+    if (user.authenticationEnabled) {
+      res.redirect('http://localhost:3001/facode');
+      return;
+    }
+    res.redirect('http://localhost:3001/');
   }
 
   /*
@@ -62,20 +66,22 @@ export class AuthController {
       res.redirect('http://localhost:3001/facode');
       return;
     }
-    res.redirect('http://localhost:3001/user/profile');
+    res.redirect('http://localhost:3001/');
   }
 
   /*
       Create a new account
    */
   @Post('signup')
-  async signup(@Body() body: RegisterDto) {
+  async signup(@Body() body: RegisterDto, @Res() res) {
     const user = await this.userService.createUser(
       body.username,
       body.password,
       body.nickname
     );
-    return await this.authService.login(user, false);
+
+    const tokenJwt = await this.authService.login(user, false);
+    res.cookie('Authorization', tokenJwt, tokenJwt);
   }
 
   /*
@@ -90,19 +96,9 @@ export class AuthController {
     return response.json(await this.authService.generateQrCodeDataURL(otpAuthUrl));
   }
 
-  @Get('2fa/is-turn-on')
-  @UseGuards(Jwt2faAuthGuard)
-  async isTurnOnTwoFactorAuthentication(@User('id') userId: number) {
-    const user = await this.userService.getUserById(userId);
-    const { authenticationEnabled } = user;
-
-    console.log(authenticationEnabled);
-    return { isAuthenticationEnabled: authenticationEnabled };
-  }
-
   @Post('2fa/turn-on')
   @UseGuards(Jwt2faAuthGuard)
-  async turnOnTwoFactorAuthentication(@User() user, @Body() body: TwoFaAuth) {
+  async turnOnTwoFactorAuthentication(@User() user, @Body() body: TwoFaAuth, @Res() res) {
     const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
       body.twoFactorAuthenticationCode,
       user
@@ -113,7 +109,8 @@ export class AuthController {
     }
 
     await this.userService.turnOnTwoFactorAuthentication(user.id);
-    return await this.authService.login(user, true);
+    const jwtToken = await this.authService.login(user, true);
+    res.cookie('Authorization', jwtToken, cookieAuthConfig).status(200);
   }
 
   @Post('2fa/turn-off')
@@ -125,18 +122,26 @@ export class AuthController {
   @Post('2fa/authenticate')
   @HttpCode(200)
   @UseGuards(Jwt2faAuthGuard)
-  async authenticate(@User() user, @Body() body: TwoFaAuth) {
-    console.log(body);
-    const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
-      body.twoFactorAuthenticationCode,
-      user
-    );
+  async authenticate(@User() user, @Body() body: TwoFaAuth, @Res() res) {
+    try {
+      const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
+        body.twoFactorAuthenticationCode,
+        user
+      );
 
-    if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
+      if (!isCodeValid) {
+        throw new Error('Wrong authentication code');
+      }
+    } catch (error) {
+      throw new UnauthorizedException(
+        `2fa authentication failed. Cause: ${error.message}`
+      );
     }
 
-    return this.authService.login(user, true);
+    const jwtToken = await this.authService.login(user, true);
+    res
+      .cookie('Authorization', jwtToken, cookieAuthConfig)
+      .redirect('http://localhost:3001/');
   }
 
   @Post('logout')
@@ -144,14 +149,5 @@ export class AuthController {
     await this.authService.logout(userId);
 
     res.clearCookie('Authorization').redirect('http://localhost:3001/');
-  }
-
-  @Get('2fa/check2fa')
-  async check2fa(@User('id') userId: number) {
-    const user = await this.userService.getUserById(userId);
-    const { authenticationEnabled } = user;
-
-    console.log(authenticationEnabled);
-    return { isAuthenticationEnabled: authenticationEnabled };
   }
 }
