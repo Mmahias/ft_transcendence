@@ -5,7 +5,6 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Chat from './pages/Chat';
 import Game from './pages/Game';
-import Pong from './pages/Game1';
 import MyProfile from './pages/MyProfile';
 import OtherProfile from './pages/OtherProfile';
 import Login from './pages/Login';

@@ -1,23 +1,24 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import UserService from "../api/users-api";
+import AuthService from "../api/auth-api";
 
 interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
-  error: any;
+  error: Error | null;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
   isLoading: true,
-  error: null
+  error: null,
 }
-
-const AuthContext = createContext<AuthState | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
+
+const AuthContext = createContext<(AuthState & { logout: () => Promise<void> }) | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>(initialState);
@@ -35,23 +36,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState({
         isAuthenticated: false,
         isLoading: false,
-        error: error
+        error: error instanceof Error ? error : new Error(String(error))
       });
+    }
+  };
+  
+  const logout = async () => {
+    try {
+      await AuthService.logout();
+      setAuthState(prevState => ({
+        ...prevState,
+        isAuthenticated: false
+      }));
+    } catch (error) {
+      console.error("Logout error:", error);
     }
   };
 
   useEffect(() => {
     checkIsLoggedIn();
-
-    const intervalId = setInterval(() => {
-      checkIsLoggedIn();
-    }, 30000);
-
+    const intervalId = setInterval(checkIsLoggedIn, 30000);
     return () => clearInterval(intervalId);
   }, []);
 
   return (
-    <AuthContext.Provider value={authState}>
+    <AuthContext.Provider value={{ ...authState, logout }}>
       {children}
     </AuthContext.Provider>
   );

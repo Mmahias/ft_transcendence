@@ -50,7 +50,7 @@ class AuthService {
       await axiosPrivate.post(`${AUTH_API}/logout`, { userId: me.id });
     }  catch (error) {
       if (axios.isAxiosError(error) && error.response && error.response.data) {
-        console.error('Error logging out:', error.response.data);
+        console.error('Error logging out efbe:', error.response.data);
       } else {
         console.error('Error logging out:', error);
       }

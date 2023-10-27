@@ -61,11 +61,6 @@ const MyProfile: React.FC = () => {
     }
   });
 
-  if (!isAuthenticated) {
-    navigate("/error");
-    return null;
-  }
-
   const fetchMatchProperties = async (match: Match, userId: number) => {
     const isWinner = match.winnerId === userId;
     const opponentName = isWinner ? match.loser.username : match.winner.username;
@@ -120,20 +115,29 @@ const MyProfile: React.FC = () => {
       .catch(error => {
         console.error("Failed to fetch match history", error);
       });
+
+      // avatar
+      UserService.getUserAvatar(userProfile.id)
+      .then(async avatar => {
+        setUserAvatar(avatar);
+      })
+      .catch(error => {
+        console.error("Failed to fetch user avatar", error);
+      });
+
+      // 2fa status
       check2FAStatus(userProfile.id);
     }
   }, [userProfile]);
 
-  // AVATARS
-  useEffect(() => {
-    async function fetchUserAvatar() {
-      if (userProfile) {
-        const avatar = await UserService.getUserAvatar(userId);
-        setUserAvatar(avatar);
-      }
-    }
-    fetchUserAvatar();
-  }, [userProfile]);
+  // // AVATARS
+  // useEffect(() => {
+  //   async function fetchUserAvatar() {
+  //     if (userProfile) {
+  //     }
+  //   }
+  //   fetchUserAvatar();
+  // }, [userProfile]);
 
   // 2FA
 
@@ -264,6 +268,11 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
   const handleSettingsClick = () => {
     setShowEditProfile(!showEditProfile);
   };
+
+  if (!isAuthenticated) {
+    navigate("/error");
+    return null;
+  }
 
   let editProfileForm = null;
   if (showEditProfile) {
