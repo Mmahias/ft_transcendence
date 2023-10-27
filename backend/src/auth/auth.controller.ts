@@ -115,6 +115,15 @@ export class AuthController {
     res.cookie('Authorization', jwtToken, cookieAuthConfig).send('');
   }
 
+  @Get('2fa/is-turn-on')
+  @UseGuards(Jwt2faAuthGuard)
+  async isTurnOnTwoFactorAuthentication(@User('id') userId: number) {
+    const user = await this.userService.getUserById(userId);
+    const { authenticationEnabled } = user;
+
+    return { isAuthenticationEnabled: authenticationEnabled };
+  }
+
   @Post('2fa/turn-off')
   @UseGuards(Jwt2faAuthGuard)
   async turnOffTwoFactorAuthentication(@User() user) {
