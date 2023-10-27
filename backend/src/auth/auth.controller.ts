@@ -17,6 +17,11 @@ import { User } from '@app/user/decorator';
 import { LocalAuthGuard } from '@app/auth/strategies/local/local-auth.guard';
 import { Jwt2faAuthGuard } from '@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard';
 
+const cookieAuthConfig = {
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  httpOnly: true
+};
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -36,13 +41,11 @@ export class AuthController {
   @UseGuards(Oauth42Guard)
   @Get('42/redirect')
   async oauthRedirect(@User() user, @Res() res) {
-    const auth = await this.authService.login(user, false);
+    const tokenJwt = await this.authService.login(user, false);
+
     res
-      .cookie('Authorization', `${auth.accessToken}`, {
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        httpOnly: true
-      })
-      .redirect(301, 'http://localhost:3001/user/profile');
+      .cookie('Authorization', tokenJwt, cookieAuthConfig)
+      .redirect('http://localhost:3001/user/profile');
   }
 
   /*
@@ -52,11 +55,8 @@ export class AuthController {
   @HttpCode(200)
   @Post('login')
   async login(@User() user, @Res() res) {
-    const auth = await this.authService.login(user, false);
-    res.cookie('Authorization', `${auth.accessToken}`, {
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      httpOnly: true
-    });
+    const tokenJwt = await this.authService.login(user, false);
+    res.cookie('Authorization', tokenJwt, tokenJwt);
 
     if (user.authenticationEnabled) {
       res.redirect('http://localhost:3001/facode');
@@ -141,7 +141,9 @@ export class AuthController {
 
   @Post('logout')
   async logout(@Body('userId') userId: number, @Res() res) {
-    return this.authService.logout(userId);
+    await this.authService.logout(userId);
+
+    res.clearCookie('Authorization').redirect('http://localhost:3001/');
   }
 
   @Get('2fa/check2fa')

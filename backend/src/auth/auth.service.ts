@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '@app/user/users.service';
@@ -6,7 +6,6 @@ import { authenticator } from 'otplib';
 import { User } from '@prisma/client';
 import { toDataURL } from 'qrcode';
 import { JwtPayload } from '@app/auth/entities/jwt-payload';
-import { SocketService } from '@app/sockets/sockets.service';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { UserStatus } from '@prisma/client';
 
@@ -16,22 +15,19 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private prismaService: PrismaService,
+    private prismaService: PrismaService
   ) {}
 
   async signToken(payload: JwtPayload) {
     const secret = this.config.get('JWT_SECRET');
 
-    const token = await this.jwtService.signAsync(payload, {
+    return await this.jwtService.signAsync(payload, {
       expiresIn: '24h',
       secret: secret
     });
-    console.log(token);
-    return { accessToken: token };
   }
 
   isTwoFactorAuthenticationCodeValid(authenticationCode: string, user: Partial<User>) {
-    console.log(user.authenticationSecret);
     return authenticator.verify({
       token: authenticationCode,
       secret: user.authenticationSecret
@@ -69,7 +65,6 @@ export class AuthService {
   }
 
   async logout(id: number) {
-    console.log("logout", id);
     if (id) {
       await this.prismaService.user.update({
         where: {
