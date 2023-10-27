@@ -135,7 +135,7 @@ const Login = () => {
 
 
 const handleOauth42Login = () => {
-  AuthService.oauth42Login();
+  window.location.href = "/api/auth/42"
 };
 
   return (

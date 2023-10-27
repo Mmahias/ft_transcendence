@@ -11,7 +11,15 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
     private userService: UserService
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: any) => {
+          const data = request?.cookies['Authorization'];
+          if (!data) {
+            return null;
+          }
+          return data;
+        }
+      ]),
       secretOrKey: config.get('JWT_SECRET')
     });
   }

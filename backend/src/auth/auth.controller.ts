@@ -35,8 +35,14 @@ export class AuthController {
 
   @UseGuards(Oauth42Guard)
   @Get('42/redirect')
-  async oauthRedirect(@User() user) {
-    return await this.authService.login(user, false);
+  async oauthRedirect(@User() user, @Res() res) {
+    const auth = await this.authService.login(user, false);
+    res
+      .cookie('Authorization', `${auth.accessToken}`, {
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        httpOnly: true
+      })
+      .redirect(301, 'http://localhost:3001/user/profile');
   }
 
   /*
@@ -45,8 +51,18 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   @Post('login')
-  async login(@User() user) {
-    return await this.authService.login(user, false);
+  async login(@User() user, @Res() res) {
+    const auth = await this.authService.login(user, false);
+    res.cookie('Authorization', `${auth.accessToken}`, {
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      httpOnly: true
+    });
+
+    if (user.authenticationEnabled) {
+      res.redirect('http://localhost:3001/facode');
+      return;
+    }
+    res.redirect('http://localhost:3001/user/profile');
   }
 
   /*
@@ -110,6 +126,7 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(Jwt2faAuthGuard)
   async authenticate(@User() user, @Body() body: TwoFaAuth) {
+    console.log(body);
     const isCodeValid = this.authService.isTwoFactorAuthenticationCodeValid(
       body.twoFactorAuthenticationCode,
       user
@@ -123,9 +140,10 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@Body('userId') userId: number) {
+  async logout(@Body('userId') userId: number, @Res() res) {
+
     return this.authService.logout(userId);
-  };
+  }
 
   @Get('2fa/check2fa')
   async check2fa(@User('id') userId: number) {

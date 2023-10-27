@@ -11,7 +11,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private userService: UserService
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: any) => {
+          const data = request?.cookies['Authorization'];
+          if (!data) {
+            return null;
+          }
+          return data;
+        }
+      ]),
       secretOrKey: config.get('JWT_SECRET')
     });
   }
@@ -26,3 +34,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     return userWithoutPasswd;
   }
 }
+
+/*jwtFromRequest: ExtractJwt.fromExtractors([
+  (request: any) => {
+    console.log(request);
+    const data = request?.cookies['auth-cookie'];
+    if (!data) {
+      return null;
+    }
+    return data.token;
+  }
+]),*/

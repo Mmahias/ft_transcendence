@@ -1,8 +1,7 @@
 // AuthService.ts
-import axios, {AxiosError} from 'axios';
+import axios from 'axios';
 import UserService from './users-api';
 import { axiosPrivate, axiosPublic } from './axios-config';
-import {API_REDIR, API_URL} from '../constants';
 
 const AUTH_API = `/auth`;
 
@@ -55,27 +54,6 @@ class AuthService {
       } else {
         console.error('Error logging out:', error);
       }
-    }
-  }
-
-  // 42 LOGIN
-  static async oauth42Login() {
-    try {
-      console.log("42");
-      const response = await axiosPublic.get(`${AUTH_API}/42`);
-      // console.log(response.data);
-      if (response.data.redirectUrl) {
-        window.location.href = response.data.redirectUrl;
-      } else {
-        throw new Error('Unexpected response: Missing redirect URL');
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response && error.response.data && error.response.data.message) {
-          throw new Error(error.response.data.message);
-        }
-      }
-      throw new Error('Failed to initiate 42 OAuth login');
     }
   }
 

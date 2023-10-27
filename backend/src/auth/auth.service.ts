@@ -31,6 +31,7 @@ export class AuthService {
   }
 
   isTwoFactorAuthenticationCodeValid(authenticationCode: string, user: Partial<User>) {
+    console.log(user.authenticationSecret);
     return authenticator.verify({
       token: authenticationCode,
       secret: user.authenticationSecret

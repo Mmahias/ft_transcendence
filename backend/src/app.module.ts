@@ -4,7 +4,6 @@ import { UserModule } from '@app/user/users.module';
 import { ChatModule } from './chat/chat.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
-import { TestModule } from './test/test.module';
 import { SocketModule } from './sockets/sockets.module';
 import { LoggerMiddleware } from './middlewares/logger-middleware';
 import { FriendModule } from '@app/friend/friend.module';
@@ -17,9 +16,8 @@ import { FriendModule } from '@app/friend/friend.module';
     FriendModule,
     ChatModule,
     AuthModule,
-    TestModule,
     SocketModule
-  ],
+  ]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
