@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import AuthService from "../api/auth-api";
 import UserService from "../api/users-api";
 import { User } from '../api/types';
@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth, useSocket } from '../hooks';
-import { AuthStatus } from '../contexts/AuthContext';
+import AuthContext from '../contexts/AuthContext';
 import '../styles/Navbar.css';
 import logo from '../assets/school_42.jpeg';
 import toast from 'react-hot-toast';
@@ -18,33 +18,23 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = () => {
   const navigate = useNavigate();
-  const { auth, logout, authStatus } = useAuth();
+  const { isAuthenticated } = useAuth();
   const socket = useSocket();
   
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<Partial<User>[]>([]);
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const blurTimeoutRef = useRef<number | null>(null); // Added ref for timeout
   const socketRef = useRef<typeof socket | null>(socket);
 
-  useEffect(() => {
-    console.log(authStatus, auth);
-    if (!!auth?.accessToken && authStatus === AuthStatus.FULLY_AUTHENTICATED) {
-        setIsLoggedIn(true);
-    } else {
-        setIsLoggedIn(false); // Make sure to set isLoggedIn to false if conditions are not met
-    }
-  }, [auth.accessToken, authStatus]);
-
-  console.log("LOGGED", isLoggedIn)
+  console.log("LOGGED", isAuthenticated)
   const { data: myDetails } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
-    enabled: isLoggedIn ? true : false,
-    onSuccess: () => {
-      // console.log('Fetched user profile');
-    },
+    enabled: isAuthenticated ? true : false,
+    // onSuccess: () => {
+    //   console.log('Fetched user profile');
+    // },
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('User not connected');
@@ -56,7 +46,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     ['searchUsers', searchTerm],
     () => UserService.searchUsers(searchTerm, 8),
     {
-      enabled: !!searchTerm && isLoggedIn,
+      enabled: !!searchTerm && isAuthenticated,
       refetchOnWindowFocus: false,
       onSuccess: (fetchedData) => {
         const filteredData = fetchedData.filter(user => user.id !== myDetails?.id);
@@ -103,7 +93,6 @@ const Navbar: React.FC<NavbarProps> = () => {
     try {
       await AuthService.logout();
       socketRef.current?.emit('forceDisconnectAll');
-      logout();
       navigate("/");
     } catch (error) {
       console.log("logout error", error);
@@ -208,7 +197,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         </a>
 
       <div className="links-container">
-        {isLoggedIn && (
+        {isAuthenticated && (
           <div className="searchBar">
             <input
               type="text"
@@ -261,7 +250,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             <FontAwesomeIcon icon={faBars} />
           </div>
           <div className="dropdown-content">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <>
                 <Link to="/user/profile" className="router-link">PROFILE</Link>
                 <Link to="/game" className="router-link">GAME</Link>

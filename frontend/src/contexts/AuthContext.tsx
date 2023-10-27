@@ -1,89 +1,60 @@
-import React, { createContext, useState, ReactNode, useCallback } from "react";
-import { axiosPrivate } from "../api/axios-config";
-import AuthService from "../api/auth-api";
-export interface AuthState {
-  accessToken: string | null;
+import React, { createContext, useState, ReactNode, useEffect } from "react";
+import UserService from "../api/users-api";
+
+interface AuthState {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: any;
 }
 
-export enum AuthStatus {
-  DISCONNECTED = "DISCONNECTED",
-  PARTIALLY_AUTHENTICATED = "PARTIALLY_AUTHENTICATED",
-  FULLY_AUTHENTICATED = "FULLY_AUTHENTICATED",
+const initialState: AuthState = {
+  isAuthenticated: false,
+  isLoading: true,
+  error: null
 }
 
-export interface AuthContextType {
-  auth: AuthState;
-  authStatus: AuthStatus;
-  setAuthStatus: (authStatus: AuthStatus) => void;
-  isAuthAvailable: (auth: AuthState) => boolean;
-  login: (data: AuthState) => void;
-  logout: () => void;
-  refreshToken: () => string | null;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthState | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const isAuthAvailable = (auth: AuthState) => {
-  return !!auth.accessToken;
-};
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [authState, setAuthState] = useState<AuthState>(initialState);
 
-  const initialAuth = JSON.parse(localStorage.getItem("auth") || "{}");
-  const [auth, setAuth] = useState<AuthState>(initialAuth);
-  const initialAuthStatus = localStorage.getItem("authStatus") as AuthStatus || AuthStatus.DISCONNECTED;
-  const [authStatus, setAuthStatus] = useState<AuthStatus>(initialAuthStatus);
-  
+  const checkIsLoggedIn = async () => {
+    try {
+      const response = await UserService.isLoggedIn();
+      setAuthState({
+        isAuthenticated: !!response,
+        isLoading: false,
+        error: null
+      });
+    } catch (error) {
+      console.log("User not authenticated");
+      setAuthState({
+        isAuthenticated: false,
+        isLoading: false,
+        error: error
+      });
+    }
+  };
 
-  const login = useCallback((data: AuthState) => {
-    localStorage.setItem("auth", JSON.stringify(data));
-    setAuth(data);
-    
-    // Set token for axios immediately after login
-    axiosPrivate.defaults.headers['Authorization'] = `Bearer ${data.accessToken}`;
+  useEffect(() => {
+    checkIsLoggedIn();
 
-    const check2FAStatusAndSetAuth = async () => {
-      const isTwoFAActive1 = await AuthService.check2FAStatus();
-      const isTwoFAActive2 = await AuthService.check2FAStatus();
-      if (authStatus === AuthStatus.DISCONNECTED) {
-        const newStatus = isTwoFAActive2 ? AuthStatus.PARTIALLY_AUTHENTICATED : AuthStatus.FULLY_AUTHENTICATED;
-        setAuthStatus(newStatus);
-        localStorage.setItem("authStatus", newStatus);
-      }
-      console.log("2FA status:", isTwoFAActive2);
-    };
+    const intervalId = setInterval(() => {
+      checkIsLoggedIn();
+    }, 30000);
 
-    check2FAStatusAndSetAuth();
-}, []);
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("auth");
-    setAuth({ accessToken: null });
-    setAuthStatus(AuthStatus.DISCONNECTED);
-    localStorage.setItem("authStatus", AuthStatus.DISCONNECTED);
+    return () => clearInterval(intervalId);
   }, []);
 
-  const refreshToken = useCallback((): string | null => {
-    const storedToken = localStorage.getItem("auth");
-    if (storedToken) {
-        const parsedToken = JSON.parse(storedToken);
-        // console.log("Parsed token object:", parsedToken);
-        // console.log("Access token from parsed token:", parsedToken.accessToken);
-        setAuth(parsedToken);
-        return parsedToken.accessToken;
-    }
-    return null;
-}, []);
-
-return (
-  <AuthContext.Provider value={{ auth, authStatus, setAuthStatus, isAuthAvailable: () => isAuthAvailable(auth), login, logout, refreshToken }}>
-    {children}
-  </AuthContext.Provider>
-);
-}
+  return (
+    <AuthContext.Provider value={authState}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export default AuthContext;

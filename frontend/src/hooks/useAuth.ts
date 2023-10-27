@@ -1,15 +1,14 @@
 import { useContext, useDebugValue } from "react";
-import AuthContext, { AuthContextType } from "../contexts/AuthContext";
+import AuthContext from "../contexts/AuthContext";
 
-export const useAuth = (): AuthContextType => {
-    const authContext = useContext(AuthContext);
+export const useAuth = () => {
+    const authState = useContext(AuthContext);
 
-    if (!authContext) {
+    if (!authState) {
         throw new Error("useAuth must be used within an AuthProvider");
     }
 
-    const { auth } = authContext;
-    useDebugValue(auth, auth => auth?.accessToken ? "Logged In" : "Logged Out");
+    useDebugValue(authState.isAuthenticated, auth => auth ? "Logged In" : "Logged Out");
 
-    return authContext;
+    return authState;
 };

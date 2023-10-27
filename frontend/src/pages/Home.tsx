@@ -4,7 +4,7 @@ import {BACKEND_FULL_URL} from '../constants';
 import { testBackendEndpoint } from '../api/test-api';
 import { useAuth, useSocket } from '../hooks';
 import { Socket } from 'socket.io-client';
-import { AuthState, isAuthAvailable } from '../contexts/AuthContext';
+import AuthContext from '../contexts/AuthContext';
 import { Link as RouterLink } from "react-router-dom";
 import UserService from '../api/users-api'
 
@@ -31,31 +31,14 @@ import UserService from '../api/users-api'
 // };
 
 const Home: React.FC = () => {
-  const { auth } = useAuth();
+  const { isAuthenticated } = useAuth();
   const socket = useSocket();
-  const isLoggedIn = isAuthAvailable(auth);
 
   
   const callTestEndpoint = async () => {
     try {
       const result = await testBackendEndpoint();
       console.log(result);
-    } catch (error) {
-      console.error("Error calling test endpoint:", error);
-    }
-  };
-  
-  const testToken = async (auth: AuthState) => {
-    try {
-      console.log('auth: ', auth);
-    } catch (error) {
-      console.error("Error calling test endpoint");
-    }
-  };
-  
-  const testConnected = async (auth: AuthState) => {
-    try {
-      console.log('isLoggedIn', !!auth?.accessToken);
     } catch (error) {
       console.error("Error calling test endpoint:", error);
     }
@@ -71,7 +54,7 @@ const Home: React.FC = () => {
   };
   
   const testMe= () => {
-    if (!!auth?.accessToken && socket) {
+    if (isAuthenticated && socket) {
       UserService.getMe().then((res) => {
         console.log(res);
       }).catch(() => {
@@ -100,7 +83,7 @@ const Home: React.FC = () => {
   return (
     <div className="home-container">
       <h1 className="home-title" data-shadow='FT_TRANSCENDENCE'>FT_TRANSCENDENCE</h1>
-      {isLoggedIn ? (
+      {isAuthenticated ? (
         <>
         <div className="wlcm-container">
           <div className='wlcm-div'>
@@ -117,8 +100,6 @@ const Home: React.FC = () => {
       <div className='button-test'>
         <button style={{color: 'white',marginLeft:'10px'}} onClick={callTestEndpoint}>Test BackendEndpoint |</button>
         <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testMe()}>Test UserMe |</button>
-        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testToken(auth)}>TestToken |</button>
-        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testConnected(auth)}>Am iconnected? |</button>
         <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testSocketConnection(socket)}>Test SocketConnection |</button>
         <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testMatchHistory()}>Test MatchHistory |</button>
       </div>

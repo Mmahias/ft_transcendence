@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { createContext, useContext, useEffect, useState, useDebugValue } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '../hooks';
 
@@ -15,14 +15,14 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { auth, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (auth.accessToken) {
+    if (isAuthenticated) {
       let newSocket : Socket = io('/', {  // or just '/' if your server setup serves socket.io at the root
         path: '/socket.io', // Ensure this path matches with your backend socket.io path setup
         auth: {
-          token: auth.accessToken,
+          token: isAuthenticated,
         },
       });
       newSocket.on("connect", () => {
@@ -58,13 +58,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     };
   }, [socket]);
 
-  useEffect(() => {
-      return () => {
-          if (socket) {
-              socket.close();
-          }
-      };
-  }, [logout]);
+  // useEffect(() => {
+  //     return () => {
+  //         if (socket) {
+  //             socket.close();
+  //         }
+  //     };
+  // }, [logout]);
 
   return (
     <SocketContext.Provider value={{ socket }}>

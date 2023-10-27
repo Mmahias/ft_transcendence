@@ -141,7 +141,6 @@ export class AuthController {
 
   @Post('logout')
   async logout(@Body('userId') userId: number, @Res() res) {
-
     return this.authService.logout(userId);
   }
 

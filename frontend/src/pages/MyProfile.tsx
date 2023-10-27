@@ -12,7 +12,6 @@ import { useSocket, useAuth } from "../hooks";
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import '../styles/Request.style.css'
 import { User, UserAchievement, FriendRequest } from '../api/types';
-import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 type MatchDetail = {
@@ -25,7 +24,7 @@ type MatchDetail = {
 
 const MyProfile: React.FC = () => {
 
-  const { auth, login, refreshToken, isAuthAvailable } = useAuth();
+  const { isAuthenticated } = useAuth();
   const socket = useSocket();
   const navigate = useNavigate();
 
@@ -39,7 +38,6 @@ const MyProfile: React.FC = () => {
   const [qrCodeData, setQRCodeData] = useState<string | null>(null);
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [is2FAEnabled, setIs2FAEnabled] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [userAvatar, setUserAvatar] = useState('');
   const [userFriends, setUserFriends] = useState<User[]>([]);
@@ -52,7 +50,10 @@ const MyProfile: React.FC = () => {
   const { data: userProfile } = useQuery({
     queryKey: ['me'],
     queryFn: UserService.getMe,
-    enabled: isLoggedIn ? true : false,
+    enabled: isAuthenticated ? true : false,
+    onSuccess: (data) => {
+      console.log('Fetched user profile', data);
+    },
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('user not connected');
@@ -60,14 +61,10 @@ const MyProfile: React.FC = () => {
     }
   });
 
-  if (!isLoggedIn) {
+  if (!isAuthenticated) {
     navigate("/error");
     return null;
   }
-
-  useEffect(() => {
-    setIsLoggedIn(!!auth?.accessToken);
-  }, [auth]);
 
   const fetchMatchProperties = async (match: Match, userId: number) => {
     const isWinner = match.winnerId === userId;
@@ -166,10 +163,7 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
   try {
     const response = await AuthService.enable2FA(verificationCode);
 
-    const newAccessToken = response.accessToken; // extraire le token depuis l'objet
-
-    if (isAuthAvailable({ accessToken: newAccessToken })) {
-      login({ accessToken: newAccessToken });
+    if (response) {
       setQRCodeData(null);
       setVerificationCode('');
       setIs2FAEnabled(true);;

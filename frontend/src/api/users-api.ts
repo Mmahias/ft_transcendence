@@ -11,6 +11,11 @@ const USERS_API = `/users`
 
 class UserService{
 
+  static async isLoggedIn(): Promise<boolean> {
+    const response = await axiosPrivate.get<boolean>(`${USERS_API}/isLoggedin`);
+    return response.data;
+  }
+
   static async getMe(): Promise<User> {
     const response = await axiosPrivate.get<User>(`${USERS_API}/me`);
     return response.data;
@@ -66,6 +71,7 @@ class UserService{
     const response = await axiosPrivate.get<Match[]>(`${USERS_API}/getMatchHistory?userId=${userId}`);
     return response.data;
   }
+
   static async getAchievements(userId: number): Promise< UserAchievement[] > {
     const response = await axiosPrivate.get<UserAchievement[]>(`${USERS_API}/getAchievements?userId=${userId}`);
     return response.data;
@@ -79,6 +85,7 @@ class UserService{
     return imageUrl;
   }
   
+
 
 }
 

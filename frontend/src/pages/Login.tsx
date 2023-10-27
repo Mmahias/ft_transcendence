@@ -11,7 +11,6 @@ import toast from 'react-hot-toast';
 const Login = () => {
 
   const navigate = useNavigate();
-  const { login, isAuthAvailable, authStatus } = useAuth();
   
   const [nickname, setNickname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -67,7 +66,6 @@ const Login = () => {
     try {
       const response = await AuthService.signUp(username.toLowerCase(), password, nickname.toLowerCase());
       if (response) {
-        login(response);
         setSuccessMsg("Successfully signed up! ");
         setErrorMsg('');
         toast.success("Successfully signed up!", {
@@ -108,10 +106,7 @@ const Login = () => {
     }
 
     try {
-      const response = await AuthService.login(username.toLowerCase(), password);
-      if (response) {
-        login(response);
-      }
+      await AuthService.login(username.toLowerCase(), password);
     } catch (error) {
       setSuccessMsg('');
       toast.error("Error while logging in !", {
@@ -122,17 +117,6 @@ const Login = () => {
       setErrorMsg("Wrong nickname or password");
     }
   };
-
-  useEffect(() => {
-    console.log("Auth status:", authStatus)
-    if (authStatus === "PARTIALLY_AUTHENTICATED") {
-      navigate('/facode');
-    }
-    else if (authStatus === "FULLY_AUTHENTICATED") {
-      navigate('/user/profile');
-    }
-  }, [authStatus]);
-
 
 const handleOauth42Login = () => {
   window.location.href = "/api/auth/42"

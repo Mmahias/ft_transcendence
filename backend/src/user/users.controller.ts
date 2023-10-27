@@ -27,6 +27,11 @@ export class UserController {
   private readonly logger = new Logger(UserController.name);
   constructor(private userService: UserService) {}
 
+  @Get('isLoggedIn')
+  async isLoggedIn() {
+    return true;
+  }
+
   @Get('me')
   async userInformation(@User('id') userId: number) {
     const user = await this.userService.getUserById(userId);
