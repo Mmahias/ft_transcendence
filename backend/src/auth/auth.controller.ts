@@ -48,10 +48,10 @@ export class AuthController {
 
     res.cookie('Authorization', tokenJwt, tokenJwt);
     if (user.authenticationEnabled) {
-      res.redirect('http://10.33.8.5:3001/facode');
+      res.redirect('http://localhost:3001/facode');
       return;
     }
-    res.redirect('http://10.33.8.5:3001/');
+    res.redirect('http://localhost:3001/');
   }
 
   /*
@@ -62,13 +62,8 @@ export class AuthController {
   @Post('login')
   async login(@User() user, @Res() res) {
     const tokenJwt = await this.authService.login(user, false);
-    res.cookie('Authorization', tokenJwt, tokenJwt);
-
-    if (user.authenticationEnabled) {
-      res.redirect('http://10.33.8.5:3001/facode');
-      return;
-    }
-    res.redirect('http://10.33.8.5:3001/');
+    res.cookie('Authorization', tokenJwt, tokenJwt)
+    .send(user.authenticationEnabled);
   }
 
   /*
@@ -83,7 +78,7 @@ export class AuthController {
     );
 
     const tokenJwt = await this.authService.login(user, false);
-    res.cookie('Authorization', tokenJwt, tokenJwt);
+    res.cookie('Authorization', tokenJwt, tokenJwt).send('');
   }
 
   /*
@@ -159,6 +154,6 @@ export class AuthController {
   async logout(@Body('userId') userId: number, @Res() res) {
     await this.authService.logout(userId);
 
-    res.clearCookie('Authorization').redirect('http://10.33.8.5:3001/');
+    res.clearCookie('Authorization').redirect('http://localhost:3001/');
   }
 }

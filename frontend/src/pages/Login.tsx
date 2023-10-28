@@ -1,6 +1,6 @@
 import '../styles/Login.css';
 import "../App.styles";
-import React, { useState, useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from "../api/auth-api";
 import UserService from '../api/users-api';
@@ -11,7 +11,8 @@ import toast from 'react-hot-toast';
 const Login = () => {
 
   const navigate = useNavigate();
-  
+  const { checkIsLoggedIn } = useAuth();
+
   const [nickname, setNickname] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -25,17 +26,17 @@ const Login = () => {
   const switchToSignIn = () => {
     setRightPanelActive(false);
   }
-  
+
   const switchToSignUp = () => {
     setRightPanelActive(true);
   }
-  
+
   const validateUsername = (value: string): string | null => {
     if (!value) return "Username is required";
     if (value.length < 4 || value.length > 20) return "Username must be between 4 and 20 characters";
     return null;
   };
-  
+
   const validatePassword = (value: string): string | null => {
     if (!value) return "Password is required";
     if (value.length < 2) return "Password must be at least 2 characters";
@@ -45,12 +46,12 @@ const Login = () => {
     if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value)) return "Password should contain at least one special character.";
     return null;
   };
-  
+
   const validateNickname = (value: string): string | null => {
     if (!value) return "Nickname is required";
     return null;
   };
-  
+
   const validateLoginUsername = (value: string): string | null => {
     if (!value) return "Username is required";
     return null;
@@ -64,19 +65,18 @@ const Login = () => {
   const handleSignUp = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     try {
-      const response = await AuthService.signUp(username.toLowerCase(), password, nickname.toLowerCase());
-      if (response) {
-        setSuccessMsg("Successfully signed up! ");
-        setErrorMsg('');
-        toast.success("Successfully signed up!", {
-          id: "signup",
-          icon: "🎮⌛",
-          duration: 2000,
-        });
-        setTimeout(() => {
-          navigate('/user/profile');
-        }, 500);
-      }
+      await AuthService.signUp(username.toLowerCase(), password, nickname.toLowerCase());
+      checkIsLoggedIn();
+      setSuccessMsg("Successfully signed up! ");
+      setErrorMsg('');
+      toast.success("Successfully signed up!", {
+        id: "signup",
+        icon: "🎮⌛",
+        duration: 2000,
+      });
+      setTimeout(() => {
+        navigate('/user/profile');
+      }, 500);
     } catch (error) {
       setSuccessMsg('');
       toast.error("Error while signing up!", {
@@ -102,11 +102,19 @@ const Login = () => {
     setPasswordError(passwordValidationError);
 
     if (usernameValidationError || passwordValidationError) {
-        return;
+      return;
     }
 
     try {
-      await AuthService.login(username.toLowerCase(), password);
+      const enable2fa: boolean = await AuthService.login(username.toLowerCase(), password);
+      console.log(enable2fa);
+      if (enable2fa) {
+        navigate('/facode');
+
+      } else {
+        checkIsLoggedIn();
+        navigate('/')
+      }
     } catch (error) {
       setSuccessMsg('');
       toast.error("Error while logging in !", {
@@ -118,9 +126,9 @@ const Login = () => {
     }
   };
 
-// const handleOauth42Login = () => {
-//   window.location.href = "/api/auth/42"
-// };
+  // const handleOauth42Login = () => {
+  //   window.location.href = "/api/auth/42"
+  // };
 
   return (
     <div className="login-page">
@@ -170,7 +178,7 @@ const Login = () => {
               </div>
             }
             <button onClick={handleLogin} disabled={!!(usernameError || passwordError)}>Log In</button>
-            <a style={{margin:'1%'}} href="/api/auth/42">Log 42</a>
+            <a style={{ margin: '1%' }} href="/api/auth/42">Log 42</a>
           </form>
         </div>
         <div className="overlay-container">

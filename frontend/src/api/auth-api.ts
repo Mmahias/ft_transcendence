@@ -15,7 +15,10 @@ class AuthService {
       password: password,
       nickname: newNickname
     });
-    return response.data;
+    if (response.status !== 201) {
+      return Promise.reject("Sign up failed")
+    }
+    return ;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response && error.response.data && error.response.data.message) {
@@ -122,7 +125,6 @@ class AuthService {
       const response = await axiosPrivate.post(`${AUTH_API}/2fa/authenticate`, { twoFactorAuthenticationCode: code });
       return response.data;
     } catch (error) {
-      console.log("2FA KO");
       throw new Error('Failed verify 2FA QRCode');
     }
   }  
