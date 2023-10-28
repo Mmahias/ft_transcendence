@@ -31,7 +31,6 @@ const MyProfile: React.FC = () => {
   const [userName, setUserName] = useState<string>('');
   const [userId, setUserId] = useState<number>(0);
   const [userNick, setUserNick] = useState<string>('');
-  const [userNickUpdate, setUserNickUpdate] = useState<string>('');
   const [userWins, setUserWins] = useState<number>(0);
   const [userLosses, setUserLosses] = useState<number>(0);
   const [userLevel, setUserLevel] = useState<number>(1);
@@ -45,6 +44,7 @@ const MyProfile: React.FC = () => {
   const [userRequestFriends, setUserRequestFriends] = useState<FriendRequest[]>([]);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
   const [achievements, setAchievements] = useState<UserAchievement[]>([]);
+  const [userNickUpdate, setUserNickUpdate] = useState<string>('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
 
@@ -201,6 +201,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
     try {
       await UserService.updateNickname({ nickname: userNickUpdate });
       queryClient.invalidateQueries(['me']);
+      resetSettings();
     } catch (error) {
       console.error('Failed to update nickname:', error);
     }
@@ -212,6 +213,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
       try {
         await UserService.uploadAvatar(userId, file);
         queryClient.invalidateQueries(['me']);
+        resetSettings();
       } catch (error) {
         console.error('Failed to upload avatar:', error);
       }
@@ -252,7 +254,12 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
     toast.success('Invitation sent', {id: 'invite'});
   }
 
-  // const resetSettings = () => {
+  const resetSettings = () => {
+    setUserNickUpdate('');
+    if (fileInputRef.current) {
+        fileInputRef.current.value = '';  // Resets the file input
+    }
+};
 
 
   socket?.on('match invitation declined', (username: string) => {
