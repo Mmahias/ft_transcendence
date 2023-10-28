@@ -26,15 +26,14 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
   const socket = useSocket();
   const queryClient = useQueryClient();
   const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
-  const isMe = myUsername === fromUsername;
+  const [isMe, setIsMe] = useState<boolean | null>(null);
 
   // Fetch my details
   const { data: userMe, error, isLoading } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     enabled: isAuthenticated,
-    onSuccess: () => {
-      console.log('message', message);
-      console.log('userMe', userMe);
+    onSuccess: (data: any) => {
+      setIsMe(data.id === message.from.id);
     },
     onError: (error: any) => {
       if (error.response?.status === 401) {
@@ -81,7 +80,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     }
   }
 
-  if (userMe?.blockedList && userMe.blockedList.some((user) => user.username === fromUsername) === true) {
+  if (userMe?.blockedList && userMe.blockedList.some((user: any) => user.username === fromUsername) === true) {
     
     return (
       <div key={index + 2} className='one__msg_role'>

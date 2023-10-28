@@ -440,9 +440,9 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
                   </div>
                 </div>
                 <div className="card-body">
-                  <form>
+                  <div>
                     {editProfileForm}
-                  </form>
+                  </div>
                   <div className="tab-container">
                     <div className="tabs-profile">
                       <div className="tab-2">
