@@ -160,7 +160,7 @@ const MyProfile: React.FC = () => {
     }
   };
 
-const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) => {
+const handleVerify2FACode = async (event: React.FormEvent) => {
   // Empêcher le comportement par défaut (comme la soumission du formulaire)
   event.preventDefault();
 
