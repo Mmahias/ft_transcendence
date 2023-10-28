@@ -2,16 +2,14 @@ import '../styles/FaCode.css';
 import React, { useState, useEffect } from 'react';
 import AuthService from '../api/auth-api';
 import { useNavigate } from 'react-router-dom';
-// import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
 const FaCode: React.FC = () => {
 
   const navigate = useNavigate();
-  const [successMsg, setSuccessMsg] = useState<string>("");
-  const [show2FAForm, setShow2FAForm] = useState<boolean>(false);
   const [twoFACode, setTwoFACode] = useState<string>('');
-  // const { setAuthentication } = useAuth();
+  const { checkIsLoggedIn } = useAuth();
 
   const handleVerifyCode = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -22,6 +20,7 @@ const FaCode: React.FC = () => {
         icon: "🎮⌛",
         duration: 2000,
       });
+      checkIsLoggedIn();
       setTimeout(() => {
         navigate('/user/profile');
       }, 500);

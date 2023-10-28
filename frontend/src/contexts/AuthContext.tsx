@@ -20,7 +20,7 @@ interface AuthProviderProps {
 
 const AuthContext = createContext<(AuthState & { 
   logout: () => Promise<void>; 
-  setAuthentication: (value: boolean) => void;
+  checkIsLoggedIn: () => Promise<void>;
 }) | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -56,13 +56,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const setAuthentication = (value: boolean) => {
-    setAuthState(prevState => ({
-      ...prevState,
-      isAuthenticated: value
-    }));
-  };
-
   useEffect(() => {
     checkIsLoggedIn();
     const intervalId = setInterval(checkIsLoggedIn, 30000);
@@ -70,7 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...authState, logout, setAuthentication }}>
+    <AuthContext.Provider value={{ ...authState, logout, checkIsLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

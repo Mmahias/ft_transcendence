@@ -120,12 +120,6 @@ class AuthService {
   static async authenticate2FA(code: string) {
     try {
       const response = await axiosPrivate.post(`${AUTH_API}/2fa/authenticate`, { twoFactorAuthenticationCode: code });
-      if (response.status === 200) {
-        console.log ("2FA OK1");
-        const { setAuthentication } = useAuth();
-        setAuthentication(true);
-        console.log ("2FA OK2");
-      }
       return response.data;
     } catch (error) {
       console.log("2FA KO");
