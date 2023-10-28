@@ -1,22 +1,15 @@
 import React from 'react';
 import '../styles/Home.css';
 import { useAuth, useSocket } from '../hooks';
-import { Socket } from 'socket.io-client';
 import { Link as RouterLink } from "react-router-dom";
 
 
 const Home: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  const socket = useSocket();
-  
-  const testSocketConnection = (socket: Socket | null) => {
-    console.log('socket: ', socket);
-    if (!socket || socket?.connected === null) {
-      console.log('Socket is null or not connected');
-      return;
-    }
-    socket.emit('test-event', { message: 'Hello from client!' });
-  };
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="home-container">
@@ -35,9 +28,6 @@ const Home: React.FC = () => {
         
       </div>
       )}
-      <div className='button-test'>
-        <button style={{color: 'white',marginLeft:'10px'}} onClick={() => testSocketConnection(socket)}>Test SocketConnection |</button>
-      </div>
     </div>
   );
 }

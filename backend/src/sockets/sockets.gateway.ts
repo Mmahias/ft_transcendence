@@ -74,7 +74,7 @@ export class SocketsGateway
     
     if (!userSockets || userSockets.size === 0) {
       this.gameService.disconnect(clientUserId);
-      this.socketService.goOffline(clientUserId);
+      // this.socketService.goOffline(clientUserId);
     }
     client.disconnect(true);
   }

@@ -191,7 +191,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
   const handleNicknameSave = async () => {
     try {
       await UserService.updateNickname(userId, { nickname: userNick });
-      queryClient.invalidateQueries(['user']);
+      queryClient.invalidateQueries(['me']);
     } catch (error) {
       console.error('Failed to update nickname:', error);
     }
@@ -205,7 +205,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
         // Code pour télécharger le fichier avatar ici
         await UserService.uploadAvatar(userId, file);
         // Mettez à jour les données de l'utilisateur après le téléchargement de l'avatar
-        queryClient.invalidateQueries(['user']);
+        queryClient.invalidateQueries(['me']);
       } catch (error) {
         console.error('Failed to upload avatar:', error);
       }
