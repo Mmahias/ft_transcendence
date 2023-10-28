@@ -102,4 +102,15 @@ export class UserController {
   async geAchievements(@Query('userId') userId: number) {
     return await this.userService.getAchievements(userId);
   }
+
+  @Post('/blockuser/:username')
+  async blockUser(@User('id') userId, @Param('username') username) {
+    return this.userService.blockUser(userId, username);
+  }
+
+  @Post('/unblockuser/:username')
+  async unblockUser(@User('id') userId, @Param('username') username) {
+    return this.userService.unblockUser(userId, username);
+  }
+
 }
