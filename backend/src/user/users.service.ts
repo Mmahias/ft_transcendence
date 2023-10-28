@@ -415,4 +415,56 @@ export class UserService {
       this.unlockAchievement(userId, 'Bad day');
     }
   }
+
+  async blockUser(userId: number, username: string) {
+    return this.prisma
+      .$transaction([
+        this.prisma.user.update({
+          where: { id: userId },
+          data: {
+            blockedList: {
+              connect: { username }
+            }
+          }
+        }),
+        this.prisma.user.update({
+          where: { username },
+          data: {
+            blockedBy: {
+              connect: { id: userId }
+            }
+          }
+        })
+      ])
+      .catch((error) => {
+        this.logger.error(`Error while blocked user. Error: ${error.message}`);
+        throw new Error('Error while blocked user');
+      });
+  }
+
+  async unblockUser(userId: number, username: string) {
+    return this.prisma
+      .$transaction([
+        this.prisma.user.update({
+          where: { id: userId },
+          data: {
+            blockedList: {
+              disconnect: { username }
+            }
+          }
+        }),
+        this.prisma.user.update({
+          where: { username },
+          data: {
+            blockedBy: {
+              disconnect: { id: userId }
+            }
+          }
+        })
+      ])
+      .catch((error) => {
+        this.logger.error(`Error while unblocked user. Error: ${error.message}`);
+        throw new Error('Error while unblocked user');
+      });
+  }
 }

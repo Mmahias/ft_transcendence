@@ -112,5 +112,4 @@ export class UserController {
   async unblockUser(@User('id') userId, @Param('username') username) {
     return this.userService.unblockUser(userId, username);
   }
-
 }
