@@ -26,26 +26,19 @@ type RouteParams = {
 
 const OtherProfile: React.FC = () => {
 
-  const { auth } = useAuth();
+  const { isAuthenticated } = useAuth();
   const socket = useSocket();
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth?.accessToken);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
   const [achievements, setAchievements] = useState<UserAchievement[]>([]);
   const { reqUsername } = useParams<RouteParams>();
   const [isFriend, setIsFriend] = useState<boolean>(false);
   
-  if (!isLoggedIn || !reqUsername) {
+  if (!reqUsername) {
     navigate("/error");
     return null;
   }
-
-  // listening to login/logout
-  useEffect(() => {
-    console.log('isLoggedIn: ', isLoggedIn );
-    setIsLoggedIn(!!auth?.accessToken);
-  }, [auth]);
   
   const userProfileQuery = useQuery(['user', reqUsername], 
   () => {
@@ -53,7 +46,7 @@ const OtherProfile: React.FC = () => {
   },
   {
     refetchOnWindowFocus: false,
-    enabled: isLoggedIn && !!reqUsername,
+    enabled: isAuthenticated && !!reqUsername,
   }
   );
 
@@ -118,7 +111,7 @@ const OtherProfile: React.FC = () => {
       return UserService.getMe();
     }, {
     refetchOnWindowFocus: false,
-    enabled: isLoggedIn ? true : false,
+    enabled: isAuthenticated ? true : false,
     onSuccess: () => {
       if (reqUsername === myProfileQuery.data?.username) {
         navigate("/user/profile");
@@ -204,6 +197,11 @@ const OtherProfile: React.FC = () => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  if (!isAuthenticated) {
+    navigate("/error");
+    return null;
+  }
 
   return (
     <div className="profile-page">
