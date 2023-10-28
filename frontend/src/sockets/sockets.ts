@@ -12,7 +12,7 @@ class SocketService {
    */
   static sendNotificationToServer(socket: Socket | null, event: string, payload: string) {
     if (socket) {
-      console.log("sendNotificationToServer: ", event, payload)
+      // console.log("sendNotificationToServer: ", event, payload)
       socket.emit(event, payload);
     }
   };
@@ -54,7 +54,7 @@ class SocketService {
         role = "/msg";
         info = `#INFO# ${channelId} ${userTalking} is quoted.`
     }
-    console.log("{{{info", info);
+    // console.log("{{{info", info);
     return (info);
   }
 

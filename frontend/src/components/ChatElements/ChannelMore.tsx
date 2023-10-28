@@ -41,7 +41,7 @@ const { auth } = useAuth();
   const { mutate: verifyPassword } = useMutation({
     mutationFn: async (pwd: string) => {
       const isVerified = await ChatService.verifyPasswords(channel.id, pwd);
-      console.log("verified ?", isVerified);
+      // console.log("verified ?", isVerified);
       if (!isVerified) {
         throw new Error("Incorrect password");
       }

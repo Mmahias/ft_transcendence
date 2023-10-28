@@ -67,7 +67,7 @@ const MyProfile: React.FC = () => {
   const fetchMatchProperties = async (match: Match, userId: number) => {
     const isWinner = match.winnerId === userId;
     const opponentName = isWinner ? match.loser.username : match.winner.username;
-    console.log(match);
+    // console.log(match);
     
     return {
       id: match.id,
@@ -139,17 +139,6 @@ const MyProfile: React.FC = () => {
     }
   }, [userProfile]);
 
-  // // AVATARS
-  // useEffect(() => {
-  //   async function fetchUserAvatar() {
-  //     if (userProfile) {
-  //     }
-  //   }
-  //   fetchUserAvatar();
-  // }, [userProfile]);
-
-  // 2FA
-
 // Appelez la méthode check2FAStatus sur cette instance
   const check2FAStatus = async (userId: number) => {
     try {
@@ -175,7 +164,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
 
   try {
     const response = await AuthService.enable2FA(verificationCode);
-    console.log(response);
+    // console.log(response);
     if (response === 201) {
       setQRCodeData(null);
       setVerificationCode('');
@@ -283,7 +272,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
   if (showEditProfile) {
     editProfileForm = (
       <div className="pl-lg-4">
-        <h6 className="heading-small text-muted mb-4">Edit Profile</h6>
+        <h6 className="heading-small text-muted mb-4" style={{textAlign: 'center'}}>Edit Profile</h6>
         <div className="row">
           <div className="col-lg-6">
             <div className="form-group focused">
@@ -302,7 +291,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
           </div>
         </div>
         <hr className="my-4" />
-        <h6 className="heading-small text-muted mb-4">2FA</h6>
+        <h6 className="heading-small text-muted mb-4" style={{textAlign: 'center'}}>2FA</h6>
         <div className="pl-lg-4">
           <div className="form-group focused">
             {!is2FAEnabled &&
@@ -313,13 +302,14 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
                 onChange={handleEnable2FA}
                 disabled={!!qrCodeData}
                 className="form-control form-control-alternative"
+                style={{margin: 'auto', display: 'flex'}}
               >
                 Active 2FA
               </Checkbox>
             }
             {qrCodeData && (
               <div className="pl-lg-4">
-                <label className="form-control-label">
+                <label className="form-control-label" style={{marginTop: '2%', textAlign: 'center', display: 'block'}}>
                   Please scan this QR Code with your authentication app:
                 </label>
                 <img
@@ -339,7 +329,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
                 <button
                   className="btn btn-sm btn-primary ghost"
                   onClick={handleVerify2FACode}
-                  style={{ marginTop: "10px" }}
+                  style={{margin: 'auto', display: 'flex', textAlign: 'center'}}
                 >
                   Verify Code
                 </button>

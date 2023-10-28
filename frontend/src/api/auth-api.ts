@@ -51,7 +51,7 @@ class AuthService {
   static async logout() {
     try {
       const me = await UserService.getMe();
-      console.log("me", me.id)
+      // console.log("me", me.id)
       await axiosPrivate.post(`${AUTH_API}/logout`, { userId: me.id });
     }  catch (error) {
       if (axios.isAxiosError(error) && error.response && error.response.data) {

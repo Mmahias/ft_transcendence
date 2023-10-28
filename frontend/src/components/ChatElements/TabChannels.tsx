@@ -32,7 +32,7 @@ const ChannelLinkItem: React.FC<ChannelListItemProps> = ({ channel, onClick }) =
 
   useEffect(() => {
     if (channel.mode === ChanMode.DM && myDetails) {
-      console.log('convName', convName);
+      // console.log('convName', convName);
       const parts = convName.split('@');
       setConvName(myDetails.username === parts[0] ? parts[1] : parts[0]);
     }

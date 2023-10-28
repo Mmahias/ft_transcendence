@@ -70,7 +70,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
   // Listen for new messages, refetch messages when it receives one
   useEffect(() => {
     socket?.on('newMessage', () => {
-      console.log('new message received')
+      // console.log('new message received')
       queryClient.invalidateQueries(['channelMessages']);
       queryClient.invalidateQueries(['channelDetails']);
     });
@@ -99,12 +99,12 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
       };
 
       if (channel.kickedUsers.some(user => user.id === loggedUser.id)) {
-        console.log("{{{kickedusers:", channel.kickedUsers.forEach(user => console.log(user.username)));
+        // console.log("{{{kickedusers:", channel.kickedUsers.forEach(user => console.log(user.username)));
         kickBanUser(`You were kicked from ${channel.name}!`);
         ChatService.updateUserInChannel(loggedUser.id, channel.id, 'kickedUsers', 'disconnect');
       }
       else if (channel.bannedUsers.some(user => user.id === loggedUser.id)) {
-        console.log("{{{bannedusers:", channel.bannedUsers.forEach(user => console.log(user.username)));
+        // console.log("{{{bannedusers:", channel.bannedUsers.forEach(user => console.log(user.username)));
         kickBanUser(`You were banned from ${channel.name}!`);
       }
     }

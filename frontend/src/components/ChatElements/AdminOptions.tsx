@@ -62,7 +62,7 @@ export function AdminOptions({ channelId, userTalking }: { channelId: number, us
   const sendMessage = useMutation({
     mutationFn: ([channelId, message]: [number, string]) => ChatService.newMessage(channelId, message),
     onSuccess: () => {
-      console.log("{{{sendMessage", payload);
+      // console.log("{{{sendMessage", payload);
       SocketService.sendNotificationToServer(socket, 'Chat', `/action***${channelId}***${payload}`);
     },
     onError: () => toast.error('Message not sent: retry'),
@@ -77,9 +77,9 @@ export function AdminOptions({ channelId, userTalking }: { channelId: number, us
       const userInGroup: boolean = (Array.isArray(channel[group] as User[])) ?
         (channel[group] as User[]).some((member: User) => member.id === userTalking.id)
         : false;
-      console.log("{{{group:", group, "userInGroup:", userInGroup);
+      // console.log("{{{group:", group, "userInGroup:", userInGroup);
       if (!userInGroup) {
-        console.log("{{{2")
+        // console.log("{{{2")
         addToGroup.mutate([group, "connect", String(channel?.id)]);
         toast.success(`${userTalking.nickname}'s role was added!`);
         setPayload(SocketService.handleRequestFromUser(socket, group, "connect", channelId, userTalking.nickname));
@@ -87,7 +87,7 @@ export function AdminOptions({ channelId, userTalking }: { channelId: number, us
         // console.log("{{{payload", payload)
         // sendMessage.mutate([channel.id, payload]);
       } else {
-        console.log("{{{1")
+        // console.log("{{{1")
         addToGroup.mutate([group, "disconnect", String(channel?.id)]);
         toast.success(`${userTalking.nickname}'s role was removed.`);
         setPayload(SocketService.handleRequestFromUser(socket, group, "disconnect", channelId, userTalking.nickname));

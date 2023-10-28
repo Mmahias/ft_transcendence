@@ -25,7 +25,7 @@ const SearchBar: React.FC<{ onUserClick: (selectedUserID: string) => Promise<voi
     if (searchTerm) {
       UserService.searchUsers(searchTerm, 8).then((users: Partial<User>[]) => {
         setSearchResults(users); // update search results when searchTerm changes
-        console.log(users);
+        // console.log(users);
       });
     } else {
       setSearchResults([]); // clear search results if searchTerm is empty
@@ -59,7 +59,7 @@ const SearchBar: React.FC<{ onUserClick: (selectedUserID: string) => Promise<voi
       await onUserClick(receiverUserId);
       setSearchTerm(''); // clear search after adding the user to the conversation
     } catch (err: any) {
-      console.log("err", err);
+      // console.log("err", err);
       toast.error(`Error adding user to conversation: ${err.message}`);
     }
   };

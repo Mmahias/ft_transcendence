@@ -95,7 +95,8 @@ const Navbar: React.FC<NavbarProps> = () => {
       socketRef.current?.emit('forceDisconnectAll');
       navigate("/");
     } catch (error) {
-      console.log("logout error", error);
+      // console.log("logout error", error);
+      toast.error("logout error");
     }
   }, [logout, socketRef, navigate]);
 
@@ -107,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   // listening to logout from other tabs
   useEffect(() => {
     const handleForceLogout = () => {
-      console.log('force logout');
+      // console.log('force logout');
       handleLogout();
     }
     socketRef.current?.on('forceLogout', handleForceLogout);

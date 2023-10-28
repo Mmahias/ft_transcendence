@@ -107,7 +107,7 @@ const Login = () => {
 
     try {
       const enable2fa: boolean = await AuthService.login(username.toLowerCase(), password);
-      console.log(enable2fa);
+      // console.log(enable2fa);
       if (enable2fa) {
         navigate('/facode');
 
@@ -136,12 +136,12 @@ const Login = () => {
         <div className="form-container sign-up-container">
           <form action="#">
             <h1>Create Account</h1>
-            <input type="text" placeholder="Username" id="username" onChange={(event) => {
+            <input type="text" placeholder="Username" id="signup-username" onChange={(event) => {
               setUsername(event.target.value);
               setUsernameError(validateUsername(event.target.value));
             }} />
             {usernameError && <small className="error-message">{usernameError}</small>}
-            <input type="password" placeholder="Password" id="password" onChange={(event) => {
+            <input type="password" placeholder="Password" id="signup-password" onChange={(event) => {
               setPassword(event.target.value);
               setPasswordError(validatePassword(event.target.value));
             }} />

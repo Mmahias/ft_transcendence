@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: null,
       });
     } catch (error) {
-      console.log("User not authenticated");
+      // console.log("User not authenticated");
       setAuthState({
         isAuthenticated: false,
         isLoading: false,

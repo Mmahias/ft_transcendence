@@ -53,7 +53,7 @@ const OtherProfile: React.FC = () => {
   const fetchMatchProperties = async (match: Match, userId: number) => {
     const isWinner = match.winnerId === userId;
     const opponentName = isWinner ? match.loser.username : match.winner.username;
-    console.log(match);
+    // console.log(match);
     
     return {
       id: match.id,
@@ -130,7 +130,7 @@ const OtherProfile: React.FC = () => {
         
         // Mettez à jour l'état en conséquence
         setIsFriend(isFriend);
-        console.log(isFriend);
+        // console.log(isFriend);
       }
     }
   }, [myProfileQuery]);

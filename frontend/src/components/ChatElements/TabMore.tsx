@@ -70,7 +70,7 @@ export default function TabMore() {
       toast.success(`DM chan with ${receiverUsername} created!`);
       setSearchTerm(''); // clear search after creating a DM
     } catch (err: any) {
-      console.log("err", err);
+      // console.log("err", err);
       toast.error(`Error creating DM: ${err.message}`);
     }
   };

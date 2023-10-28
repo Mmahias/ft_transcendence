@@ -454,7 +454,7 @@
     height: calc(2.75rem + 2px);
     padding: .625rem .75rem;
     transition: all .2s cubic-bezier(.68, -.55, .265, 1.55);
-    color: #8898aa;
+    color: #8898aa !important;
     border: 1px solid #cad1d7;
     border-radius: .375rem;
     background-color: #fff;
@@ -474,7 +474,7 @@
   }
   
   .form-control:focus {
-    color: #8898aa;
+    color: #2b7a78;
     border-color: rgba(50, 151, 211, .25);
     outline: 0;
     background-color: #fff;
@@ -483,17 +483,17 @@
   
   .form-control:-ms-input-placeholder {
     opacity: 1;
-    color: #2b7a78;
+    color: gray;
   }
   
   .form-control::-ms-input-placeholder {
     opacity: 1;
-    color: #2b7a78;
+    color: gray;
   }
   
   .form-control::placeholder {
     opacity: 1;
-    color: #2b7a78;
+    color: gray;
   }
   
   .form-control:disabled,
@@ -1600,7 +1600,7 @@
   }
   
 .form-control {
-    color: #2b7a78;
+    color: #2b7a78 !important;
   }
   
   .form-control:-ms-input-placeholder {

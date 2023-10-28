@@ -44,7 +44,7 @@ export default function ChanCreationForm() {
       if (socket && channel.id) {
         SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
       }
-      console.log('channel.id', channel.id);
+      // console.log('channel.id', channel.id);
       setChannelId(channel.id);
     },
     onError: () => {
