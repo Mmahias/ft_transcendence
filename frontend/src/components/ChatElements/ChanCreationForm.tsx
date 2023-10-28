@@ -40,7 +40,7 @@ export default function ChanCreationForm() {
       toast.success(`Your channel ${channelName} was successfully created!`);
       
       const channel = await ChatService.getChannelByName(channelName);
-      console.log("Fetched channel:", channel);
+      // console.log("Fetched channel:", channel);
       if (socket && channel.id) {
         SocketService.sendNotificationToServer(socket, 'joinRoom', String(channel.id));
       }

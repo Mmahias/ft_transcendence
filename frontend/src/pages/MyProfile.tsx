@@ -52,7 +52,7 @@ const MyProfile: React.FC = () => {
     queryFn: UserService.getMe,
     enabled: isAuthenticated ? true : false,
     onSuccess: (data) => {
-      console.log('Fetched user profile', data);
+      // console.log('Fetched user profile', data);
     },
     onError: (error: any) => {
       if (error.response?.status === 401) {
