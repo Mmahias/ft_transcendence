@@ -20,8 +20,8 @@ export default function ChanCreationForm() {
 
   // Handlers
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length > 30) {
-      toast.error('Channel name length must be under 30!');
+    if (event.target.value.length > 10) {
+      toast.error('Channel name length must be under 10!');
     } else {
       setChannelName(event.target.value);
     }
@@ -59,7 +59,7 @@ export default function ChanCreationForm() {
         type="text"
         value={channelName}
         onChange={handleInputChange}
-        placeholder="Channel name (30 chars max)"
+        placeholder="Channel name (10 chars max)"
       />
       
       {/* Channel Mode Selection */}

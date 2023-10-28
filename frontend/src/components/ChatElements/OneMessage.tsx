@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/Tab_Chat.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGamepad, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faGamepad, faCheck, faXmark, faLock, faUnlock } from "@fortawesome/free-solid-svg-icons";
 import ChatService from "../../api/chat-api";
 import UserService from "../../api/users-api";
 import { Channel, Message } from "../../api/types";
@@ -22,7 +22,7 @@ const getDate = (message: Message) => {
 
 export function OneMessage({ conv, message, index, myUsername, fromUsername }: { conv: Channel, message: Message, index: number, myUsername: string, fromUsername: string }) {
 
-  const { auth } = useAuth();
+  const { isAuthenticated } = useAuth();
   const socket = useSocket();
   const queryClient = useQueryClient();
   const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
@@ -31,7 +31,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
   // Fetch my details
   const { data: userMe, error, isLoading } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
-    enabled: !!auth?.accessToken,
+    enabled: isAuthenticated,
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('user not connected');
@@ -55,6 +55,16 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     toast.success('Invitation sent', {id: 'invite'});
   }
   
+  const handleBlockUser = () => {
+    UserService.blockUser(fromUsername);
+    toast.success('User blocked', {id: 'user'});
+  }
+
+  const handleUnblockUser = () => {
+    UserService.unblockUser(fromUsername);
+    toast.success('User unblocked', {id: 'user'});
+  }
+
   socket?.on('match invitation declined', (username: string) => {
     toast.error(`${username} declined your invitation.`, {id: 'invite'});
   });
@@ -128,7 +138,14 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
       </div>
       {
         isMe === false &&
-        <FontAwesomeIcon className='options__icon' title="Invite to game" icon={faGamepad} onClick={handleInvitation}/>
+        <>
+          <FontAwesomeIcon className='options__icon' title="Invite to game" icon={faGamepad} onClick={handleInvitation}/>
+          {
+            userMe && userMe.blockedList.some((user) => user.username === fromUsername) === true ? 
+            <FontAwesomeIcon className='options__icon' title="Unblock user" icon={faUnlock} onClick={handleUnblockUser}/> :
+            <FontAwesomeIcon className='options__icon' title="Block user" icon={faLock} onClick={handleBlockUser}/>
+          }
+        </>
       }
       {
         conv.mode !== ChanMode.DM && isMe === false && 

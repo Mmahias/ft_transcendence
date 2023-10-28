@@ -84,8 +84,16 @@ class UserService{
     const imageUrl = URL.createObjectURL(response.data);
     return imageUrl;
   }
-  
 
+  static async blockUser(username: string): Promise<number> {
+    const response = await axiosPrivate.post<Blob>(`${USERS_API}/blockUser/${username}`);
+    return response.status;
+  }
+
+  static async unblockUser(username: string): Promise<number> {
+    const response = await axiosPrivate.post<Blob>(`${USERS_API}/unblockUser/${username}`);
+    return response.status;
+  }
 
 }
 
