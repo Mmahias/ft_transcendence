@@ -119,7 +119,9 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
       </div>
       <div className='one__msg_info'>
         <div key={index + 1} className='one__msg_header'>
+        <Link to={`/user/profile/${fromUsername}`} >
           <h4 style={{color: 'blue'}}>{fromUsername}</h4>
+        </Link >
           <h6>{getDate(message)}</h6>
         </div>
         <p className={`${isMe === true ? 'one__msg_content_me' : 'one__msg_content'}`} key={index}>{message.content}</p>
