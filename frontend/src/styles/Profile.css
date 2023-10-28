@@ -1228,8 +1228,10 @@
   }
   
   .avatar img {
-    width: 100%;
-    border-radius: 50%;
+      width: 100%;
+      height: 100%; /* assurez-vous que la hauteur est également à 100% */
+      border-radius: 50%;
+      object-fit: cover; /* ajout de cette propriété */
   }
   
   .avatar-sm {
