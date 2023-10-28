@@ -21,6 +21,7 @@ export class ChatController {
   // POST /chat/channel
   @Post('channel')
   async createChannel(@Body() body: CreateChannelDto) {
+    console.log("createChannel: ", body);
     return this.chatService.createChannel(body);
   }
 

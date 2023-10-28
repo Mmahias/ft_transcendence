@@ -15,6 +15,7 @@ class ChatService {
   static async createChannel(name: string, mode: ChanMode, password?: string)
     : Promise<Channel> {
     try {
+      console.log("createChannel: ", name, mode, password);
       const user: User = await UserService.getMe();
       const userId: number = user.id;
       const response = await axiosPrivate.post(`${CHAT_API}/channel`,

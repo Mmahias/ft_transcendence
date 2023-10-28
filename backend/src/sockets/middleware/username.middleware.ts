@@ -8,23 +8,21 @@ const prisma = new PrismaClient();
 
 export function usernameMiddleware(jwtService: JwtService) {
   return async (client: Socket, next: (err?: any) => void) => {
-
     // We extract the jwt from the cookies
-    const jwt: string = client.handshake.auth.token;
+    const cookies: string = client.handshake.headers.cookie;
+    const jwt  = cookies.split(';').find(c => c.trim().startsWith('Authorization=')).split('=')[1];
     if (!jwt)
-      return next(new UnauthorizedException('No token found.'));
-
+    return next(new UnauthorizedException('No token found.'));
+  
     // We unsign the jwt cookie to make it readable
     const unsignedJwt = cookieParser.signedCookie(decodeURIComponent(jwt), process.env.COOKIE_SECRET);
     if (!unsignedJwt)
       return next(new UnauthorizedException('Bad cookie signature.'));
-
     // We check the token's validity
     try {
       const payload = await jwtService.verifyAsync(unsignedJwt, {
         secret: process.env.JWT_SECRET,
       });
-
       if (!payload)
         return next(new UnauthorizedException('Bad token payload.'));
       const userId = payload.sub;

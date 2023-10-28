@@ -19,14 +19,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("isAuthenticated", isAuthenticated);
       let newSocket : Socket = io('/', {  // or just '/' if your server setup serves socket.io at the root
         path: '/socket.io', // Ensure this path matches with your backend socket.io path setup
         auth: {
           token: isAuthenticated,
         },
       });
-      console.log("newSocket", newSocket);
       newSocket.on("connect", () => {
         setSocket(newSocket);
         console.log('New socket created. Socket ID:', newSocket?.id || 'Not yet connected');

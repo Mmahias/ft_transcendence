@@ -35,7 +35,7 @@ export default function TabMore() {
     if (searchTerm) {
       UserService.searchUsers(searchTerm, 8).then((users: Partial<User>[]) => {
         setSearchResults(users); // update search results when searchTerm changes
-        console.log(users);
+        // console.log(users);
       });
     } else {
       setSearchResults([]); // clear search results if searchTerm is empty

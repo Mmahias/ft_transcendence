@@ -14,7 +14,7 @@ export class CreateChannelDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(2, 10)
+  @Length(2, 30)
   name: string;
 
   @IsOptional()
@@ -23,6 +23,7 @@ export class CreateChannelDto {
   @IsOptional()
   password: string;
 
+  @IsOptional()
   owner: User;
 
   @IsNumber()

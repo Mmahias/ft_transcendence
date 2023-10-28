@@ -28,6 +28,7 @@ export class ChatService {
 
   async createChannel(body: CreateChannelDto) {
     const { name, ownerId, password, mode } = body;
+    console.log('createChannel: ', name, ownerId, password, mode);
 
     let hashedPwd = null;
     if (mode === ChanMode.PROTECTED && password) {

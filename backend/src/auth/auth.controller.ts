@@ -48,10 +48,10 @@ export class AuthController {
 
     res.cookie('Authorization', tokenJwt, tokenJwt);
     if (user.authenticationEnabled) {
-      res.redirect('http://localhost:3001/facode');
+      res.redirect('http://10.33.8.5:3001/facode');
       return;
     }
-    res.redirect('http://localhost:3001/');
+    res.redirect('http://10.33.8.5:3001/');
   }
 
   /*
@@ -65,10 +65,10 @@ export class AuthController {
     res.cookie('Authorization', tokenJwt, tokenJwt);
 
     if (user.authenticationEnabled) {
-      res.redirect('http://localhost:3001/facode');
+      res.redirect('http://10.33.8.5:3001/facode');
       return;
     }
-    res.redirect('http://localhost:3001/');
+    res.redirect('http://10.33.8.5:3001/');
   }
 
   /*
@@ -159,6 +159,6 @@ export class AuthController {
   async logout(@Body('userId') userId: number, @Res() res) {
     await this.authService.logout(userId);
 
-    res.clearCookie('Authorization').redirect('http://localhost:3001/');
+    res.clearCookie('Authorization').redirect('http://10.33.8.5:3001/');
   }
 }
