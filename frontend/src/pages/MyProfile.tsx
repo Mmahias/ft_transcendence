@@ -24,7 +24,7 @@ type MatchDetail = {
 
 const MyProfile: React.FC = () => {
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const socket = useSocket();
   const navigate = useNavigate();
 
@@ -74,6 +74,12 @@ const MyProfile: React.FC = () => {
       duration: match.duration / 1000
     };
   };
+
+  useEffect(() => {
+    if (!isAuthenticated && !isLoading) {
+      navigate("/error");
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (userProfile) {
@@ -269,11 +275,6 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
   const handleSettingsClick = () => {
     setShowEditProfile(!showEditProfile);
   };
-
-  if (!isAuthenticated) {
-    navigate("/error");
-    return null;
-  }
 
   let editProfileForm = null;
   if (showEditProfile) {
