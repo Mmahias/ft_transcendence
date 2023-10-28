@@ -28,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   const blurTimeoutRef = useRef<number | null>(null); // Added ref for timeout
   const socketRef = useRef<typeof socket | null>(socket);
 
-  console.log("LOGGED", isAuthenticated)
+  // console.log("LOGGED", isAuthenticated)
   const { data: myDetails } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     enabled: isAuthenticated ? true : false,
