@@ -3,11 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '@app/user/users.service';
 import { authenticator } from 'otplib';
-import { User } from '@prisma/client';
+import { User, UserStatus } from '@prisma/client';
 import { toDataURL } from 'qrcode';
 import { JwtPayload } from '@app/auth/entities/jwt-payload';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { UserStatus } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -53,27 +52,11 @@ export class AuthService {
       sub: user.id,
       isTwoFactorAuthenticated: twoFAActivated
     };
-    await this.prismaService.user.update({
-      where: {
-        id: user.id
-      },
-      data: {
-        status: UserStatus.ONLINE
-      }
-    });
+    await this.userService.setUserStatus(user.id, UserStatus.ONLINE);
     return this.signToken(payload);
   }
 
-  async logout(id: number) {
-    if (id) {
-      await this.prismaService.user.update({
-        where: {
-          id: id
-        },
-        data: {
-          status: UserStatus.OFFLINE
-        }
-      });
-    }
+  async logout(userId: number) {
+    return this.userService.setUserStatus(userId, UserStatus.OFFLINE);
   }
 }

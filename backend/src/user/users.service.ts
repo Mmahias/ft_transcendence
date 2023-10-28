@@ -11,6 +11,8 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserUpdateDto } from './dto';
 import { PasswordService } from '@app/password/password.service';
 
+export type UserStatus = 'ONLINE' | 'OFFLINE' | 'IS_GAMING';
+
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
@@ -40,7 +42,7 @@ export class UserService {
             }
           },
           friendsRequestReceived: {
-            select: { 
+            select: {
               id: true,
               from: {
                 select: {
@@ -251,6 +253,22 @@ export class UserService {
       });
   }
 
+  async setUserStatus(userId: number, status: UserStatus) {
+    return this.prisma.user
+      .update({
+        where: { id: userId },
+        data: { status: status }
+      })
+
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          this.logger.log(`User id [${userId}] is not found`);
+          throw new NotFoundException(`User id [${userId}] is not found`);
+        }
+        throw error;
+      });
+  }
+
   async searchUsers(searchTerm: string, nbUsers: number) {
     try {
       const users = await this.prisma.user.findMany({
@@ -308,7 +326,6 @@ export class UserService {
     }
   }
 
-
   async unlockAchievement(userId: number, achievementTitle: string) {
     try {
       const achievement = await this.prisma.achievement.findFirst({
@@ -328,9 +345,9 @@ export class UserService {
           achievementId: achievement.id
         }
       });
-    
+
       if (existingAchievement) {
-        return ;
+        return;
       }
 
       // Unlock the achievement for the user
@@ -340,9 +357,8 @@ export class UserService {
           achievementId: achievement.id
         }
       });
-    
-      return unlockedAchievement;
 
+      return unlockedAchievement;
     } catch (error) {
       this.logger.error(error.message);
       if (error instanceof PrismaClientKnownRequestError) {
@@ -351,7 +367,6 @@ export class UserService {
       throw error;
     }
   }
-
 
   async getAchievements(userIdRaw: number | string) {
     try {
@@ -365,9 +380,8 @@ export class UserService {
           achievement: true
         }
       });
-      
-      return achievements;
 
+      return achievements;
     } catch (error) {
       this.logger.error(error.message);
       if (error instanceof PrismaClientKnownRequestError) {

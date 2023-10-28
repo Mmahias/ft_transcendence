@@ -170,7 +170,7 @@ const handleVerify2FACode = async (event: React.MouseEvent<HTMLButtonElement>) =
     if (response) {
       setQRCodeData(null);
       setVerificationCode('');
-      setIs2FAEnabled(true);;
+      setIs2FAEnabled(true);
     } else {
       console.error("New access token does not meet criteria.");
         toast.error("Error: Incorrect 2FA code", {
