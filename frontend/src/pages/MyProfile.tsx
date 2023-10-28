@@ -202,6 +202,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
       await UserService.updateNickname({ nickname: userNickUpdate });
       queryClient.invalidateQueries(['me']);
       resetSettings();
+      setShowEditProfile(false);
     } catch (error) {
       console.error('Failed to update nickname:', error);
     }
@@ -214,6 +215,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
         await UserService.uploadAvatar(userId, file);
         queryClient.invalidateQueries(['me']);
         resetSettings();
+        setShowEditProfile(false);
       } catch (error) {
         console.error('Failed to upload avatar:', error);
       }
