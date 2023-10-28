@@ -31,7 +31,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     queryKey: ['channelMessages', conv.id],
     queryFn: () => ChatService.getAllMessages(conv.id),
     onSuccess: (data) => {
-      console.log('{{{ data', data)
+      // console.log('{{{ data', data)
       setMessages(data);
       scrollToBottom();
       setTryToKickBan(true);
@@ -45,7 +45,7 @@ function TabChat({ conv, loggedUser }: { conv: Channel, loggedUser: User }) {
     },
     onSuccess: () => {
       const payload: string = `/msg***${conv?.id}***${inputValue}`;
-      console.log('{{{sending message', payload);
+      // console.log('{{{sending message', payload);
       socket?.emit('Chat', payload);
       setInputValue('');
     },

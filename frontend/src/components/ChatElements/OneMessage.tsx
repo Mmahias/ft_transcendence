@@ -81,8 +81,9 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     
     return (
       <div key={index + 2} className='one__msg_role'>
-        <div key={index + 1} className='one__msg_header_info'>
-          <p>{getDate(message)}</p>
+        <div key={index + 1} className='one__msg_header_info' style={{ display: 'flex', alignItems: 'center' }}>
+          <p style={{ margin: '0', marginRight: '10px' }}>{getDate(message)}</p>
+          <FontAwesomeIcon className='options__icon' title="Unblock user" icon={faUnlock} onClick={handleUnblockUser}/>
         </div>
         <p className='one_msg_announcement' key={index}>You blocked {fromUsername} so this message is censored.</p>
       </div>
@@ -140,11 +141,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
         isMe === false &&
         <>
           <FontAwesomeIcon className='options__icon' title="Invite to game" icon={faGamepad} onClick={handleInvitation}/>
-          {
-            userMe && userMe.blockedList.some((user) => user.username === fromUsername) === true ? 
-            <FontAwesomeIcon className='options__icon' title="Unblock user" icon={faUnlock} onClick={handleUnblockUser}/> :
-            <FontAwesomeIcon className='options__icon' title="Block user" icon={faLock} onClick={handleBlockUser}/>
-          }
+          <FontAwesomeIcon className='options__icon' title="Block user" icon={faLock} onClick={handleBlockUser}/>
         </>
       }
       {
