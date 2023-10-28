@@ -31,6 +31,7 @@ const MyProfile: React.FC = () => {
   const [userName, setUserName] = useState<string>('');
   const [userId, setUserId] = useState<number>(0);
   const [userNick, setUserNick] = useState<string>('');
+  const [userNickUpdate, setUserNickUpdate] = useState<string>('');
   const [userWins, setUserWins] = useState<number>(0);
   const [userLosses, setUserLosses] = useState<number>(0);
   const [userLevel, setUserLevel] = useState<number>(1);
@@ -44,6 +45,8 @@ const MyProfile: React.FC = () => {
   const [userRequestFriends, setUserRequestFriends] = useState<FriendRequest[]>([]);
   const [matchHistory, setMatchHistory] = useState<MatchDetail[]>([]);
   const [achievements, setAchievements] = useState<UserAchievement[]>([]);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
 
   const queryClient = useQueryClient();
 
@@ -196,36 +199,24 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
   // UPDATE AVATAR & NICKNAME
   const handleNicknameSave = async () => {
     try {
-      await UserService.updateNickname({ nickname: userNick });
+      await UserService.updateNickname({ nickname: userNickUpdate });
       queryClient.invalidateQueries(['me']);
     } catch (error) {
       console.error('Failed to update nickname:', error);
     }
   };
   
-  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileInput = event.target;
-    if (fileInput.files && fileInput.files.length > 0) {
-      const file = fileInput.files[0];
+  const handleAvatarUpload = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (fileInputRef.current?.files && fileInputRef.current.files.length > 0) {
+      const file = fileInputRef.current.files[0];
       try {
-        // Code pour télécharger le fichier avatar ici
         await UserService.uploadAvatar(userId, file);
-        // Mettez à jour les données de l'utilisateur après le téléchargement de l'avatar
         queryClient.invalidateQueries(['me']);
       } catch (error) {
         console.error('Failed to upload avatar:', error);
       }
     }
   };
-  
-  const handleAvatarSave = async () => {
-    try {
-      queryClient.invalidateQueries(['user']);
-    } catch (error) {
-      console.error('Failed to update avatar:', error);
-    }
-  };
-
 
   // ACCEPT / REFUSE FRIENDS REQUEST
   // Fonction pour accepter une demande d'ami
@@ -255,12 +246,15 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
       console.error('Failed to refuse friend request:', error);
     }
   };
-  
+
   const handleInvitation = (username: string) => {
     socket?.emit('invite match', username);
     toast.success('Invitation sent', {id: 'invite'});
   }
-  
+
+  // const resetSettings = () => {
+
+
   socket?.on('match invitation declined', (username: string) => {
     toast.error(`${username} declined your invitation.`, {id: 'invite'});
   });
@@ -285,14 +279,15 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
           <div className="col-lg-6">
             <div className="form-group focused">
               <label className="form-control-label" htmlFor="input-file">Avatar</label>
-              <input className="form-control" type="file" accept="image/*" onChange={handleAvatarUpload} id="formFile"/>
+              <input className="form-control" type="file" accept="image/*" id="formFile" ref={fileInputRef} />
+
             </div>
-            <button className="btn btn-sm btn-primary ghost" onClick={handleAvatarSave}>Save</button>
+            <button className="btn btn-sm btn-primary ghost" onClick={handleAvatarUpload}>Save</button>
           </div>
           <div className="col-lg-6">
             <div className="form-group focused">
               <label className="form-control-label" htmlFor="input-username">NickName</label>
-              <input type="text" id="input-username" value={userNick} onChange={e => setUserNick(e.target.value)} className="form-control form-control-alternative" placeholder="new Username" />
+              <input type="text" id="input-username" value={userNickUpdate} onChange={e => setUserNickUpdate(e.target.value)} className="form-control form-control-alternative" placeholder="new Username" />
             </div>
             <button className="btn btn-sm btn-primary ghost" onClick={handleNicknameSave}>Save</button>
           </div>

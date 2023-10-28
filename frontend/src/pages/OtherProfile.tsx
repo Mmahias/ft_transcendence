@@ -233,7 +233,7 @@ const OtherProfile: React.FC = () => {
                       <div className="card-profile-stats d-flex justify-content-center mt-md-5">
                         <div>
                           <span className="heading">{userProfileQuery.data?.level}</span>
-                          <span className="description">Level</span>
+                          <span className="description">Elo</span>
                         </div>
                         <div>
                           <span className="heading">{userProfileQuery.data?.wins}</span>
