@@ -26,14 +26,14 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
   const socket = useSocket();
   const queryClient = useQueryClient();
   const [displayInviteChoice, setdisplayInviteChoice] = useState<boolean>(true);
-  const [isMe, setIsMe] = useState<boolean | null>(null);
+  const [isMe, setIsMe] = useState<'true' | 'false' | 'isLoading'>('isLoading');
 
   // Fetch my details
   const { data: userMe, error, isLoading } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     enabled: isAuthenticated,
     onSuccess: (data: any) => {
-      setIsMe(data.id === message.from.id);
+      setIsMe(data.id === message.from.id ? 'true' : 'false');
     },
     onError: (error: any) => {
       if (error.response?.status === 401) {
@@ -97,7 +97,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     const content = message.content.replace('#INFO# ', '');
     const channelId = content.split(' ')[0];
     const censoredContent = content.replace(channelId, '');
-    if (content.includes(" been invited to the channel") && isMe === true) {
+    if (content.includes(" been invited to the channel") && isMe === 'true') {
       return (
         <div key={index + 2} className='one__msg_role'>
             <div key={index + 1} className='one__msg_header_info'>
@@ -125,7 +125,7 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
     }
   }
   return (
-    <div key={index + 2} className={`${isMe === true ? 'one__msg_me' : 'one__msg'}`} >
+    <div key={index + 2} className={`${isMe === 'true' ? 'one__msg_me' : 'one__msg'}`} >
       <div className="one__msg_avatar_container">
         <Link to={`/user/profile/${fromUsername}`} >
         {/* <img src={message.from.avatar} title="See profile" className='one__msg_avatar' alt="Avatar"/> */}
@@ -138,17 +138,17 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
         </Link >
           <h6>{getDate(message)}</h6>
         </div>
-        <p className={`${isMe === true ? 'one__msg_content_me' : 'one__msg_content'}`} key={index}>{message.content}</p>
+        <p className={`${isMe === 'true' ? 'one__msg_content_me' : 'one__msg_content'}`} key={index}>{message.content}</p>
       </div>
       {
-        isMe === false &&
+        isMe === 'false' &&
         <>
           <FontAwesomeIcon className='options__icon' title="Invite to game" icon={faGamepad} onClick={handleInvitation}/>
           <FontAwesomeIcon className='options__icon' title="Block user" icon={faLock} onClick={handleBlockUser}/>
         </>
       }
       {
-        conv.mode !== ChanMode.DM && isMe === false && 
+        conv.mode !== ChanMode.DM && isMe === 'false' &&
         conv.adminUsers.filter((admin) => admin.username === userMe?.username).length === 1 && 
         <AdminOptions channelId={conv.id}  userTalking={message.from}/>
       }
