@@ -118,9 +118,9 @@ const Login = () => {
     }
   };
 
-const handleOauth42Login = () => {
-  window.location.href = "/api/auth/42"
-};
+// const handleOauth42Login = () => {
+//   window.location.href = "/api/auth/42"
+// };
 
   return (
     <div className="login-page">
@@ -170,7 +170,7 @@ const handleOauth42Login = () => {
               </div>
             }
             <button onClick={handleLogin} disabled={!!(usernameError || passwordError)}>Log In</button>
-            <button style={{margin:'1%'}} onClick={handleOauth42Login}>Log 42</button>
+            <a style={{margin:'1%'}} href="/api/auth/42">Log 42</a>
           </form>
         </div>
         <div className="overlay-container">

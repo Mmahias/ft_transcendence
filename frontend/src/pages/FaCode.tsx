@@ -2,7 +2,7 @@ import '../styles/FaCode.css';
 import React, { useState, useEffect } from 'react';
 import AuthService from '../api/auth-api';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+// import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
 const FaCode: React.FC = () => {
@@ -11,11 +11,12 @@ const FaCode: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState<string>("");
   const [show2FAForm, setShow2FAForm] = useState<boolean>(false);
   const [twoFACode, setTwoFACode] = useState<string>('');
+  // const { setAuthentication } = useAuth();
 
   const handleVerifyCode = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response = await AuthService.authenticate2FA(twoFACode);
+      await AuthService.authenticate2FA(twoFACode);
       toast.success("Successfully authenticated with 2FA!", {
         id: "2fa",
         icon: "🎮⌛",
@@ -24,10 +25,6 @@ const FaCode: React.FC = () => {
       setTimeout(() => {
         navigate('/user/profile');
       }, 500);
-      console.error("New access token does not meet criteria.");
-      toast.error("Error: Incorrect 2FA code", {
-        duration: 2000,
-      });
     } catch (error) {
       console.error('Error verifying 2FA code:', error);
       toast.error("Error: Incorrect 2FA code", {

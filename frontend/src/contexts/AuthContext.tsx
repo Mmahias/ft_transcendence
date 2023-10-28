@@ -18,7 +18,10 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const AuthContext = createContext<(AuthState & { logout: () => Promise<void> }) | undefined>(undefined);
+const AuthContext = createContext<(AuthState & { 
+  logout: () => Promise<void>; 
+  setAuthentication: (value: boolean) => void;
+}) | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>(initialState);
@@ -29,7 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthState({
         isAuthenticated: !!response,
         isLoading: false,
-        error: null
+        error: null,
       });
     } catch (error) {
       console.log("User not authenticated");
@@ -53,6 +56,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const setAuthentication = (value: boolean) => {
+    setAuthState(prevState => ({
+      ...prevState,
+      isAuthenticated: value
+    }));
+  };
+
   useEffect(() => {
     checkIsLoggedIn();
     const intervalId = setInterval(checkIsLoggedIn, 30000);
@@ -60,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...authState, logout }}>
+    <AuthContext.Provider value={{ ...authState, logout, setAuthentication }}>
       {children}
     </AuthContext.Provider>
   );
