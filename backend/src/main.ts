@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use(cookieParser());
+  app.use(cookieParser('tres_tres_long_secret_cookie_a_changer'));
   app.setGlobalPrefix('api');
   // FIX IT
   app.enableCors({

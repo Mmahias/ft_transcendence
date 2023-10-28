@@ -17,6 +17,7 @@ import { TwoFaAuth } from '@app/auth/dto/two-fa-auth';
 import { User } from '@app/user/decorator';
 import { LocalAuthGuard } from '@app/auth/strategies/local/local-auth.guard';
 import { Jwt2faAuthGuard } from '@app/auth/strategies/jwt-2fa/jwt-2fa-auth-guard';
+import { ConfigService } from '@nestjs/config';
 
 const cookieAuthConfig = {
   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -29,7 +30,8 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private config: ConfigService
   ) {}
 
   /*
@@ -46,12 +48,12 @@ export class AuthController {
   async oauthRedirect(@User() user, @Res() res) {
     const tokenJwt = await this.authService.login(user, false);
 
-    res.cookie('Authorization', tokenJwt, tokenJwt);
+    res.cookie('Authorization', tokenJwt, cookieAuthConfig);
     if (user.authenticationEnabled) {
-      res.redirect('http://localhost:3001/facode');
+      res.redirect(`http://${this.config.get('HOST_FRONTEND')}:3001/facode`);
       return;
     }
-    res.redirect('http://localhost:3001/');
+    res.redirect(`http://${this.config.get('HOST_FRONTEND')}:3001/`);
   }
 
   /*
@@ -62,7 +64,7 @@ export class AuthController {
   @Post('login')
   async login(@User() user, @Res() res) {
     const tokenJwt = await this.authService.login(user, false);
-    res.cookie('Authorization', tokenJwt, tokenJwt)
+    res.cookie('Authorization', tokenJwt, cookieAuthConfig)
     .send(user.authenticationEnabled);
   }
 
@@ -78,7 +80,7 @@ export class AuthController {
     );
 
     const tokenJwt = await this.authService.login(user, false);
-    res.cookie('Authorization', tokenJwt, tokenJwt).send('');
+    res.cookie('Authorization', tokenJwt, cookieAuthConfig).send('');
   }
 
   /*
@@ -154,6 +156,6 @@ export class AuthController {
   async logout(@Body('userId') userId: number, @Res() res) {
     await this.authService.logout(userId);
 
-    res.clearCookie('Authorization').redirect('http://localhost:3001/');
+    res.clearCookie('Authorization').redirect(`http://${this.config.get('HOST_FRONTEND')}:3001/`);
   }
 }

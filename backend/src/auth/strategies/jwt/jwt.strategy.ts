@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '@app/user/users.service';
+import cookieParser from 'cookie-parser';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -14,6 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: any) => {
           const data = request?.cookies['Authorization'];
+          const jwtCookie = cookieParser.signedCookie(data, config.get('COOKIE_SECRET'));
           if (!data) {
             return null;
           }
@@ -34,14 +36,3 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     return userWithoutPasswd;
   }
 }
-
-/*jwtFromRequest: ExtractJwt.fromExtractors([
-  (request: any) => {
-    console.log(request);
-    const data = request?.cookies['auth-cookie'];
-    if (!data) {
-      return null;
-    }
-    return data.token;
-  }
-]),*/
