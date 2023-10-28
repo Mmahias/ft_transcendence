@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/Home.css';
-import { useAuth, useSocket } from '../hooks';
+import { useAuth } from '../hooks';
 import { Link as RouterLink } from "react-router-dom";
 
 

@@ -5,7 +5,10 @@ const axiosPublic = axios.create({
 
 const axiosPrivate = axios.create({
   baseURL: '/api',
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json', 
+    'Expires': '-1',
+  },
   withCredentials: true
 });
 

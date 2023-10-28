@@ -190,7 +190,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
   // UPDATE AVATAR & NICKNAME
   const handleNicknameSave = async () => {
     try {
-      await UserService.updateNickname(userId, { nickname: userNick });
+      await UserService.updateNickname({ nickname: userNick });
       queryClient.invalidateQueries(['me']);
     } catch (error) {
       console.error('Failed to update nickname:', error);
@@ -289,7 +289,7 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
             <button className="btn btn-sm btn-primary ghost" onClick={handleAvatarSave}>Save</button>
           </div>
           <div className="col-lg-6">
-            <div className="form-group">
+            <div className="form-group focused">
               <label className="form-control-label" htmlFor="input-username">NickName</label>
               <input type="text" id="input-username" value={userNick} onChange={e => setUserNick(e.target.value)} className="form-control form-control-alternative" placeholder="new Username" />
             </div>

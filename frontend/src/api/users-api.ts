@@ -36,10 +36,8 @@ class UserService{
     return response.data;
   }
 
-  static async updateNickname(userId: number, userUpdate: UserUpdateDto): Promise<User> {
-    const response = await axiosPrivate.put<User>(`${USERS_API}/update`, userUpdate, {
-      params: { userId },
-    });
+  static async updateNickname(userUpdate: UserUpdateDto): Promise<User> {
+    const response = await axiosPrivate.post<User>(`${USERS_API}/update`, userUpdate);
     return response.data;
   }
   

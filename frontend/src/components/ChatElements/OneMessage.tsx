@@ -32,6 +32,10 @@ export function OneMessage({ conv, message, index, myUsername, fromUsername }: {
   const { data: userMe, error, isLoading } = useQuery(['me'], UserService.getMe, {
     refetchOnWindowFocus: false,
     enabled: isAuthenticated,
+    onSuccess: () => {
+      console.log('message', message);
+      console.log('userMe', userMe);
+    },
     onError: (error: any) => {
       if (error.response?.status === 401) {
         console.error('user not connected');

@@ -19,16 +19,12 @@ const Chat = () => {
   const {data: userMe, status: statusMe } = useQuery({queryKey: ['user'], queryFn: UserService.getMe});
   const { activeTab, setActiveTab, activeChan, setActiveChan, isExpanded, setIsExpanded } = useContext(ChatStatusContext);
 
-  useEffect(() => {
-    if (!window.location.search.includes('load')) {
-      // Rafraîchissez la page et ajoutez le paramètre "refreshed"
-      window.location.href = window.location.href + '?load';
-    }
-  }, []);
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  // useEffect(() => {
+  //   if (!window.location.search.includes('load')) {
+  //     // Rafraîchissez la page et ajoutez le paramètre "refreshed"
+  //     window.location.href = window.location.href + '?load';
+  //   }
+  // }, []);
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
@@ -50,19 +46,11 @@ const Chat = () => {
   ];
 
   return (
-    // <div className={`chat ${isExpanded ? 'expanded' : 'collapsed'}`}>
-    //   <div className="toggle-button" onClick={toggleExpand}>
-    //   {isExpanded ? <FontAwesomeIcon icon={faAnglesLeft}/> : <FontAwesomeIcon icon={faAnglesRight}/>} 
-    //   </div>
     <div className='container-chatbox'>
       <aside className='aside-content'>
         <ul className='ul_items'>
         {
           tabs.map((tab, index) => (
-            // <div
-            //   key={index}
-            //   className={`tab ${index === activeTab ? 'active' : ''}`}
-            //   onClick={() => handleTabClick(index)}>
               <li className={`tab ${index === activeTab ? 'active' : ''}`} key={index} onClick={() => handleTabClick(index)}>
                 <div>
                   <h2>{tab.label}</h2>

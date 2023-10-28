@@ -48,7 +48,7 @@ export class UserController {
     return otherUserFields;
   }
 
-  @Put('update')
+  @Post('update')
   async updateNickname(@User('id') userId: number, @Body() userUpdate: UserUpdateDto) {
     return this.userService.updateUser(userId, userUpdate);
   }
