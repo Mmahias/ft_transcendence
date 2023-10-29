@@ -14,7 +14,6 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: any) => {
           const data = request?.cookies['Authorization'];
-          console.log(data);
           if (!data) {
             return null;
           }
@@ -25,9 +24,7 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
     });
   }
   async validate(payload: any) {
-    console.log(payload);
     const user = await this.userService.getUserById(payload.sub);
-    console.log(user);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPasswd } = user;
