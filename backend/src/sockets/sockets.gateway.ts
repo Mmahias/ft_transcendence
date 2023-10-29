@@ -115,16 +115,12 @@ export class SocketsGateway
    */
   @SubscribeMessage('Chat')
   async handleMessage(client: Socket, payload: string): Promise<void> {
-    console.log("ChatSocket PING: '", payload, "'");
     const splitStr: string[] = payload.split('***');
     
     const action = splitStr[0];
     const room = splitStr[1];
     const msgToTransfer = splitStr[2];
-    console.log("action = '", action, "'");
-    console.log("msgToTransfer = '", msgToTransfer, "'");
     if (action === "/msg") {
-      console.log("MSG: '", payload, "'");
       const message = {
         date: new Date(),
         from: client.data.username,
@@ -136,7 +132,6 @@ export class SocketsGateway
       this.server.to(room).emit('newMessage', message);
     }
     else if (action === '/action') {
-      console.log("ACTION: '", payload, "'");
       const message = {
         date: new Date(),
         from: client.data.username,
@@ -159,15 +154,11 @@ export class SocketsGateway
     const socketId = client.id;
     
     this.gameService.cleanupMatches();
-    console.log("JOIN QUEUE 1", this.gameService.queue);
     if (this.gameService.usersInGame.has(userId)) { return; }
-    console.log("JOIN QUEUE 2", this.gameService.queue);
     const userIndex = this.gameService.addToQueue(userId, username, mode, socketId);
-    console.log("JOIN QUEUE 3", this.gameService.queue);
   
     const matchedPlayerIndex = this.gameService.findMatchFromQueue(userId, mode);
   
-    console.log("JOIN QUEUE", this.gameService.queue);
     if (typeof matchedPlayerIndex === "number") {
       const player1 = this.gameService.removeFromQueue(userIndex);
       const player2 = this.gameService.removeFromQueue(matchedPlayerIndex);
@@ -221,13 +212,13 @@ export class SocketsGateway
     void (payload);
     const userId = client.data.userId;
     this.gameService.removeUserIdFromQueue(userId);
-    console.log("LEAVE QUEUE", this.gameService.queue);
   }
 
   @SubscribeMessage('accept match invitation')
   async handleAcceptMatchInvitation(client: Socket, username2: string): Promise<void> {
 
     try {
+      this.gameService.cleanupMatches();
       const userId1 = client.data.userId;
       const username1 = client.data.username;
 
