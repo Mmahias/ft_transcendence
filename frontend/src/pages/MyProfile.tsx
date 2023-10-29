@@ -158,6 +158,15 @@ const MyProfile: React.FC = () => {
     }
   };
 
+  const handleDisable2FA = async () => {
+    try {
+      await AuthService.disable2FA();
+      setIs2FAEnabled(false);
+    } catch (error) {
+      toast.error('Error disabled 2FA');
+    }
+  };
+
 const handleVerify2FACode = async (event: React.FormEvent) => {
   // Empêcher le comportement par défaut (comme la soumission du formulaire)
   event.preventDefault();
@@ -294,18 +303,29 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
         <h6 className="heading-small text-muted mb-4" style={{textAlign: 'center'}}>2FA</h6>
         <div className="pl-lg-4">
           <div className="form-group focused">
-            {!is2FAEnabled &&
+            {is2FAEnabled ? 
               <Checkbox
                 size="md"
                 type="checkbox"
-                checked={is2FAEnabled}
-                onChange={handleEnable2FA}
+                onChange={handleDisable2FA}
                 disabled={!!qrCodeData}
                 className="form-control form-control-alternative"
                 style={{margin: 'auto', display: 'flex'}}
               >
-                Active 2FA
-              </Checkbox>
+                Unactive 2FA
+              </Checkbox> 
+              : 
+              <Checkbox
+              size="md"
+              type="checkbox"
+              checked={is2FAEnabled}
+              onChange={handleEnable2FA}
+              disabled={!!qrCodeData}
+              className="form-control form-control-alternative"
+              style={{margin: 'auto', display: 'flex'}}
+            >
+              Active 2FA
+            </Checkbox>
             }
             {qrCodeData && (
               <div className="pl-lg-4">
