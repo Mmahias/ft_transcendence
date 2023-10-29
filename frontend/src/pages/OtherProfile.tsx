@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth, useSocket } from "../hooks";
 import { UserAchievement } from "../api/types";
 import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
 
 type MatchDetail = {
   id: number;
@@ -138,14 +139,18 @@ const OtherProfile: React.FC = () => {
   const handleAddFriend = async () => {
     try {
       // Utilisez votre propre fonction pour envoyer une demande d'ami
-      await FriendsService.sendFriendRequest(reqUsername);
+      const response = await FriendsService.sendFriendRequest(reqUsername);
+      if (response.status === 400) {
+        toast.error(response.statusText, {
+          duration: 2000
+        });
+      }
       setIsFriend(true);
       toast.success('Your friend request has been sent successfully!', {
         duration: 2000,
       });
-    } catch (error) {
-      console.error("Error sending friend request:", error);
-      toast.error("Error sending your friend request", {
+    } catch (error: any) {
+      toast.error(`Error sending your friend request: ${error.response.data.message}`, {
         duration: 2000,
     })
     }
@@ -160,7 +165,6 @@ const OtherProfile: React.FC = () => {
         duration: 2000,
       });
     } catch (error) {
-      console.error("Error deleting friend:", error);
       toast.error('Error removing the friend', {
         duration: 2000,
       });

@@ -8,9 +8,8 @@ const FRIENDS_API = '/friends';
 /*****************/
 
 class FriendsService {
-    static async sendFriendRequest(username: string): Promise<void> {
-      const response = await axiosPrivate.post(`${FRIENDS_API}/request`, { username });
-      return response.data;
+    static async sendFriendRequest(username: string): Promise<Response> {
+      return axiosPrivate.post(`${FRIENDS_API}/request`, { username });
     }
   
     static async acceptFriendRequest(friendUsername: string): Promise<void> {
