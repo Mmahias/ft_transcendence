@@ -201,8 +201,10 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
       queryClient.invalidateQueries(['me']);
       resetSettings();
       setShowEditProfile(false);
-    } catch (error) {
-      console.error('Failed to update nickname:', error);
+    } catch (error: any) {
+      toast.error(`Failed to update nickname: ${error.response.data.message}`, {
+        duration: 2000
+      });
     }
   };
   

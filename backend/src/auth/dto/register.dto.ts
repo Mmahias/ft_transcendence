@@ -2,7 +2,8 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Length
+  Length,
+  IsStrongPassword
 } from 'class-validator';
 
 export class RegisterDto {
@@ -14,17 +15,18 @@ export class RegisterDto {
   // FIX IT: Uncomment policy
   @IsString()
   @IsNotEmpty()
-  //@IsStrongPassword({
-  // minLength: 2,
-  // minLowercase: 1,
-  // minUppercase: 1,
-  // minNumbers: 1,
-  // minSymbols: 1
-  //})
+  @IsStrongPassword({
+   minLength: 4,
+   minLowercase: 1,
+   minUppercase: 1,
+   minNumbers: 1,
+   minSymbols: 1
+  })
   password: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
+  @Length(2, 20)
   nickname?: string;
 }
