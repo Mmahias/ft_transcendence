@@ -50,6 +50,16 @@ export class UserService {
                 }
               }
             }
+          },
+          friendsRequestSent: {
+            select: {
+              id: true,
+              to: {
+                select: {
+                  username: true
+                }
+              }
+            }
           }
         }
       })

@@ -9,8 +9,16 @@ export class FriendService {
     private prisma: PrismaService,
     private userService: UserService
   ) {}
-  async createRequest(userId: number, friendNickname: string) {
-    const { id } = await this.userService.getUserByUsername(friendNickname);
+  async createRequest(userId: number, friendUsername: string) {
+    const { friendsRequestSent } = await this.userService.getUserById(userId);
+    const res = friendsRequestSent.find((obj) => obj.to.username === friendUsername);
+    if (res) {
+      const error = 'This request already exist.';
+      this.logger.error(error);
+      throw new BadRequestException(error);
+    }
+
+    const { id } = await this.userService.getUserByUsername(friendUsername);
 
     return this.prisma.friendRequest.create({
       data: {
