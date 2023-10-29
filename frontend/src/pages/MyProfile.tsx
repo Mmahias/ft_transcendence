@@ -214,8 +214,10 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
         queryClient.invalidateQueries(['me']);
         resetSettings();
         setShowEditProfile(false);
-      } catch (error) {
-        console.error('Failed to upload avatar:', error);
+      } catch (error: any) {
+        toast.error(error.response.data.message, {
+          duration: 2000
+        })
       }
     }
   };
@@ -232,7 +234,9 @@ const handleVerify2FACode = async (event: React.FormEvent) => {
       setUserFriends(updatedUserProfile.friends);
       toast.success('Friend request accepted', {id: 'friend'});
     } catch (error) {
-      console.error('Échec de l\'acceptation de la demande d\'ami :', error);
+      toast.error("Échec de l'acceptation de la demande d'ami :", {
+        duration: 2000
+      });
     }
   };
   
