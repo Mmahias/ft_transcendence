@@ -15,3 +15,7 @@ This project is about creating a website for the mighty Pong contest:
 ``` bash
 docker-compose up --build (or make)
 ```
+
+## Demo:
+
+[demo_transcendence.webm](https://github.com/Mmahias/ft_transcendence/assets/76960878/d31cf232-147a-482c-befa-9d66cdf1330f)
