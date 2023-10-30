@@ -13,8 +13,13 @@ This project is about creating a website for the mighty Pong contest:
 ## Starting project:
 
 ``` bash
-docker-compose up --build (or make)
+docker-compose up --build
 ```
+or 
+``` bash
+make
+```
+
 
 ## Demo:
 
