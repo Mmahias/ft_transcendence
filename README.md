@@ -24,3 +24,9 @@ make
 ## Demo:
 
 [demo_transcendence.webm](https://github.com/Mmahias/ft_transcendence/assets/76960878/d31cf232-147a-482c-befa-9d66cdf1330f)
+
+
+<br> 
+
+#### Team:
+Lfrederi, Lkrief & Mmahias
