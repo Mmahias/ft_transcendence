@@ -28,5 +28,5 @@ make
 
 <hr> 
 
-##### Team:
+##### Team 👽:
 [Lfrederi](https://github.com/Laurent45) & [Lkrief](https://github.com/leonardkrief) & [Mmahias](https://github.com/mmahias)
