@@ -26,7 +26,7 @@ make
 [demo_transcendence.webm](https://github.com/Mmahias/ft_transcendence/assets/76960878/d31cf232-147a-482c-befa-9d66cdf1330f)
 
 
-<br> 
+<hr> 
 
-#### Team:
-Lfrederi, Lkrief & Mmahias
+##### Team:
+[Lfrederi](https://github.com/Laurent45) & [Lkrief](https://github.com/leonardkrief) & [Mmahias](https://github.com/mmahias)
